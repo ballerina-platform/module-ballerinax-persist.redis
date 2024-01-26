@@ -86,6 +86,45 @@ public isolated client class RedisClient {
         return stream from record{} rec in result select rec;
     }
 
+    # Performs a batch `HMSET` operation to insert entity instances into a table.
+    #
+    # + insertRecords - The entity records to be inserted into the table
+    # + return - An `sql:ExecutionResult[]` containing the metadata of the query execution
+    # or a `persist:Error` if the operation fails
+    public isolated function runBatchInsertQuery(record {}[] insertRecords) returns string|persist:Error|error {
+
+        string|error result;
+
+        // for each record do HMSET
+        foreach var insertRecord in insertRecords {
+
+            // Create the key
+            string key = "";
+            foreach string keyField in self.keyFields {
+                key = key + ":" + insertRecord[keyField].toString(); // get the key field value by member access method.
+            }
+
+            // check for duplicate keys withing the collection
+            int isKeyExists = check self.dbClient->exists([self.collectionName+key]);
+            if isKeyExists != 0 {
+                return persist:getAlreadyExistsError(self.collectionName, key);
+            }
+
+            // inserting the object
+            result = self.dbClient->hMSet(self.collectionName+key, insertRecord);
+            if result is error{
+                return error persist:Error(result.message());
+            }
+        }
+
+        // Decide how to log queries
+        // logQuery("RQL insert query: ", insertQueries);
+        if result is string {
+            return result;
+        }
+        return error persist:Error(result.message());
+    }
+
     public isolated function querySimpleFieldsByKey(string key, string[] fields) returns record {}|persist:Error{
         // hadling the simple fields
         string[] simpleFields = self.getSimpleFields(fields);
