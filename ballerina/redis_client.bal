@@ -86,10 +86,10 @@ public isolated client class RedisClient {
         return stream from record{} rec in result select rec;
     }
 
-    # Performs a batch `HMSET` operation to insert entity instances into a table.
+    # Performs a batch `HMSET` operation to insert entity instances into a collection.
     #
-    # + insertRecords - The entity records to be inserted into the table
-    # + return - An `sql:ExecutionResult[]` containing the metadata of the query execution
+    # + insertRecords - The entity records to be inserted into the collection
+    # + return - A `string` containing the information of the query execution
     # or a `persist:Error` if the operation fails
     public isolated function runBatchInsertQuery(record {}[] insertRecords) returns string|persist:Error|error {
 
@@ -123,6 +123,61 @@ public isolated client class RedisClient {
             return result;
         }
         return error persist:Error(result.message());
+    }
+
+    # Performs redis `DEL` operation to delete an entity record from the database.
+    #
+    # + keyFieldValues - The ordered keys used to delete an entity record
+    # + return - `()` if the operation is performed successfully or a `persist:Error` if the operation fails
+    public isolated function runDeleteQuery(any [] keyFieldValues) returns persist:Error?|error {
+        // Validate fields
+        if (keyFieldValues.length() != self.keyFields.length()){
+            return error("Missing keyfields");
+        }
+
+        // Generate the key
+        string recordKey = self.collectionName;
+        foreach any value in keyFieldValues{
+            recordKey += ":"+value.toString();
+        }
+
+        // Delete the record
+        _ = check self.dbClient->del([recordKey]);
+    }
+
+    # Performs redis `HSET` operation to delete an entity record from the database.
+    #
+    # + keyFieldValues - The ordered keys used to update an entity record
+    # + updateRecord - The new record to be updated
+    # + return - An Error if the new record is missing a keyfield
+    public isolated function runUpdateQuery(any [] keyFieldValues, record {} updateRecord) returns error? {
+        // Validate fields
+        if (keyFieldValues.length() != self.keyFields.length()){
+            return error("Missing keyfields");
+        }
+
+        // Generate the key
+        string key = self.collectionName;
+        foreach any keyFieldValue in keyFieldValues{
+            key += ":"+keyFieldValue.toString();
+        }
+
+        // decide on how to update only the given fields that is not equals to ()
+        foreach [string, FieldMetadata & readonly] metaDataEntry in self.fieldMetadata.entries() {
+            FieldMetadata & readonly fieldMetadataValue = metaDataEntry[1];
+
+            // if the field is a simple field
+            if(fieldMetadataValue is SimpleFieldMetadata){
+                if (updateRecord.hasKey(fieldMetadataValue.fieldName) && updateRecord[fieldMetadataValue.fieldName] != ()){
+                    // updating the object
+                    _ = check self.dbClient->hSet(key, fieldMetadataValue.fieldName, updateRecord[fieldMetadataValue.fieldName].toString());
+                }
+            }
+            // if the field is a relation field
+            else{
+
+            }
+        }
     }
 
     public isolated function querySimpleFieldsByKey(string key, string[] fields) returns record {}|persist:Error{
