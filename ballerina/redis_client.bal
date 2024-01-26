@@ -56,6 +56,36 @@ public isolated client class RedisClient {
         }
     }
 
+    # Performs a batch `HGET` operation to get entity instances as a stream
+    # 
+    # + rowType - The type description of the entity to be retrieved
+    # + fields - The fields to be retrieved
+    # + include - The associations to be retrieved
+    # + return - A stream of `record{||} & readonly` containing the requested records
+    public isolated function runReadQuery(typedesc<record {}> rowType, string[] fields = [], string[] include = []) returns stream<record{}|error>|error {
+        // Get all the keys
+        string[]keys = check self.dbClient->keys(self.collectionName+":*");
+
+        // Get data one by one using the key
+        record{}[] result = [];
+        foreach string key in keys {
+            do{
+                // handling simple fields
+                record{} 'object = check self.querySimpleFieldsByKey(key, fields);
+                check self.getManyRelations('object, fields, include);
+                self.removeUnwantedFields('object, fields);
+
+                result.push(check 'object.cloneWithType(rowType));
+                // handling relation fields later 
+            } on fail error e {
+                return <persist:Error>e;
+            }
+            
+        }
+
+        return stream from record{} rec in result select rec;
+    }
+
     public isolated function querySimpleFieldsByKey(string key, string[] fields) returns record {}|persist:Error{
         // hadling the simple fields
         string[] simpleFields = self.getSimpleFields(fields);
