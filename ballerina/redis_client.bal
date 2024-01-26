@@ -180,6 +180,10 @@ public isolated client class RedisClient {
         }
     }
 
+    public isolated function getKeyFields() returns string[] {
+        return self.keyFields;
+    }
+
     public isolated function querySimpleFieldsByKey(string key, string[] fields) returns record {}|persist:Error{
         // hadling the simple fields
         string[] simpleFields = self.getSimpleFields(fields);
