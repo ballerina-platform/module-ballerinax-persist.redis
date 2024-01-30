@@ -1,4 +1,5 @@
 import ballerina/persist;
+import ballerina/io;
 
 public class PersistRedisStream {
 
@@ -9,12 +10,14 @@ public class PersistRedisStream {
     private typedesc<record {}>[] typeDescriptions;
     private RedisClient? persistClient;
     private typedesc<record {}> targetType;
+    private map<anydata> typeMap;
 
-    public isolated function init(stream<record {}, error?>? anydataStream, typedesc<record {}> targetType, string[] fields, string[] include, any[] typeDescriptions, RedisClient persistClient, persist:Error? err = ()) {
+    public isolated function init(stream<record {}, error?>? anydataStream, typedesc<record {}> targetType, map<anydata> typeMap, string[] fields, string[] include, any[] typeDescriptions, RedisClient persistClient, persist:Error? err = ()) {
         self.anydataStream = anydataStream;
         self.fields = fields;
         self.include = include;
         self.targetType = targetType;
+        self.typeMap = typeMap;
 
         typedesc<record {}>[] typeDescriptionsArray = [];
         foreach any typeDescription in typeDescriptions {
@@ -41,7 +44,7 @@ public class PersistRedisStream {
                 if value is error {
                     return <persist:Error>error(value.message());
                 }
-                check (<RedisClient>self.persistClient).getManyRelations(value, self.fields, self.include);
+                check (<RedisClient>self.persistClient).getManyRelations(self.typeMap, value, self.fields, self.include);
 
                 string[] keyFields = (<RedisClient>self.persistClient).getKeyFields();
                 foreach string keyField in keyFields {
@@ -49,7 +52,10 @@ public class PersistRedisStream {
                         _ = value.remove(keyField);
                     }
                 }
+                // return value;
+                io:println(value);
                 record {|record {} value;|} nextRecord = {value: checkpanic value.cloneWithType(self.targetType)};
+                // record {|record {} value;|} nextRecord = {value: value};
                 return nextRecord;
             }
         } else {

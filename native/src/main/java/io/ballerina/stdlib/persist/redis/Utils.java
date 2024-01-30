@@ -47,25 +47,25 @@ public class Utils {
         return typeMap;
     }
 
-    private static BObject createPersistRedisStream(BStream sqlStream, BTypedesc targetType, BArray fields,
+    private static BObject createPersistRedisStream(BStream redisStream, BTypedesc targetType, BMap<BString, Object> typeMap, BArray fields,
                                                   BArray includes, BArray typeDescriptions, BObject persistClient,
                                                   BError persistError) {
         return ValueCreator.createObjectValue(getModule(), PERSIST_REDIS_STREAM,
-                sqlStream, targetType, fields, includes, typeDescriptions, persistClient, persistError);
+        redisStream, targetType, typeMap, fields, includes, typeDescriptions, persistClient, persistError);
     }
 
-    private static BStream createPersistRedisStreamValue(BTypedesc targetType, BObject persistSQLStream) {
+    private static BStream createPersistRedisStreamValue(BTypedesc targetType, BObject persistRedisStream) {
         RecordType streamConstraint =
                 (RecordType) TypeUtils.getReferredType(targetType.getDescribingType());
         return ValueCreator.createStreamValue(
-                TypeCreator.createStreamType(streamConstraint, PredefinedTypes.TYPE_NULL), persistSQLStream);
+                TypeCreator.createStreamType(streamConstraint, PredefinedTypes.TYPE_NULL), persistRedisStream);
     }
 
-    public static BStream createPersistRedisStreamValue(BStream sqlStream, BTypedesc targetType, BArray fields,
+    public static BStream createPersistRedisStreamValue(BStream redisStream, BTypedesc targetType, BArray fields,
                                                       BArray includes, BArray typeDescriptions, BObject persistClient,
                                                       BError persistError) {
-        BObject persistSQLStream = createPersistRedisStream(sqlStream, targetType, fields, includes,
+        BObject persistRedisStream = createPersistRedisStream(redisStream, targetType, Utils.getFieldTypes((RecordType) targetType.getDescribingType()), fields, includes,
                 typeDescriptions, persistClient, persistError);
-        return createPersistRedisStreamValue(targetType, persistSQLStream);
+        return createPersistRedisStreamValue(targetType, persistRedisStream);
     }
 }

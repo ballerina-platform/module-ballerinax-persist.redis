@@ -86,7 +86,7 @@ def moduleVersion = project.version.replace("-SNAPSHOT", "")
 // }
 
 task build {
-    // dependsOn(":${packageName}-ballerina:build")
+    dependsOn(":${packageName}-ballerina:build")
 }
 
 publishToMavenLocal.dependsOn build

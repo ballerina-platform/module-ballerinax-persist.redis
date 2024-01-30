@@ -1,5 +1,6 @@
 import ballerinax/redis;
 import ballerina/persist;
+import ballerina/io;
 
 # The client used by the generated persist clients to abstract and 
 # execute Redis queries that are required to perform CRUD operations.
@@ -28,13 +29,13 @@ public isolated client class RedisClient {
     # Performs a batch `HGET` operation to get entity instances as a stream
     # 
     # + rowType - The type description of the entity to be retrieved
+    # + typeMap - The data type map of the target type
     # + key - Key for the record
     # + fields - The fields to be retrieved
     # + include - The associations to be retrieved
     # + typeDescriptions - The type descriptions of the relations to be retrieved
     # + return - An `record{||} & readonly` containing the requested record
-    public isolated function runReadByKeyQuery(typedesc<record {}> rowType, anydata key, string[] fields = [], string[] include = [], typedesc<record {}>[] typeDescriptions = []) returns record{}|error {
-        
+    public isolated function runReadByKeyQuery(typedesc<record {}> rowType, map<anydata> typeMap, anydata key, string[] fields = [], string[] include = [], typedesc<record {}>[] typeDescriptions = []) returns record{}|error {
         if key is string[]{
             string recordKey = self.collectionName;
             // assume the key fields are in the same order as when inserting a new record
@@ -44,8 +45,8 @@ public isolated client class RedisClient {
 
             do {
                 // return check self.querySimpleFieldsByKey(recordKey, fields).cloneWithType(rowType);
-                record{} 'object = check self.querySimpleFieldsByKey(recordKey, fields);
-                check self.getManyRelations('object, fields, include);
+                record{} 'object = check self.querySimpleFieldsByKey(typeMap, recordKey, fields);
+                check self.getManyRelations('object, typeMap, fields, include);
                 self.removeUnwantedFields('object, fields);
                 return check 'object.cloneWithType(rowType);
             } on fail error e {
@@ -58,28 +59,27 @@ public isolated client class RedisClient {
 
     # Performs a batch `HGET` operation to get entity instances as a stream
     # 
-    # + rowType - The type description of the entity to be retrieved
+    # + typeMap - The data types of the record
     # + fields - The fields to be retrieved
     # + include - The associations to be retrieved
     # + return - A stream of `record{||} & readonly` containing the requested records
-    public isolated function runReadQuery(typedesc<record {}> rowType, string[] fields = [], string[] include = []) returns stream<record{}|error>|error {
+    public isolated function runReadQuery(map<anydata> typeMap, string[] fields = [], string[] include = []) returns stream<record{}|error?>|persist:Error {
         // Get all the keys
-        string[]keys = check self.dbClient->keys(self.collectionName+":*");
+        string[]|error keys = self.dbClient->keys(self.collectionName+":*");
+        if keys is error {
+            return error persist:Error(keys.message());
+        }
 
         // Get data one by one using the key
         record{}[] result = [];
         foreach string key in keys {
-            do{
-                // handling simple fields
-                record{} 'object = check self.querySimpleFieldsByKey(key, fields);
-                check self.getManyRelations('object, fields, include);
-                self.removeUnwantedFields('object, fields);
+            // handling simple fields
+            record{} 'object = check self.querySimpleFieldsByKey(typeMap, key, fields);
+            // check self.getManyRelations('object, fields, include);
+            self.removeUnwantedFields('object, fields);
+            self.removeNonExistOptionalFields('object);
 
-                result.push(check 'object.cloneWithType(rowType));
-                // handling relation fields later 
-            } on fail error e {
-                return <persist:Error>e;
-            }
+            result.push('object);
             
         }
 
@@ -184,9 +184,9 @@ public isolated client class RedisClient {
         return self.keyFields;
     }
 
-    public isolated function querySimpleFieldsByKey(string key, string[] fields) returns record {}|persist:Error{
+    public isolated function querySimpleFieldsByKey(map<anydata> typeMap, string key, string[] fields) returns record {}|persist:Error{
         // hadling the simple fields
-        string[] simpleFields = self.getSimpleFields(fields);
+        string[] simpleFields = self.getTargetSimpleFields(fields, typeMap);
         if simpleFields == [] { // then add all the fields by default
             foreach [string, FieldMetadata & readonly] metaDataEntry in self.fieldMetadata.entries() {
                 FieldMetadata & readonly fieldMetadataValue = metaDataEntry[1];
@@ -212,14 +212,14 @@ public isolated client class RedisClient {
         }
     }
 
-    public isolated function getSimpleFields(string[] fields) returns string[] {
+    public isolated function getTargetSimpleFields(string[] fields, map<anydata> typeMap) returns string[] {
         string[] simpleFields = from string 'field in fields
-            where !'field.includes("[].")
+            where !'field.includes("[].") && typeMap.hasKey('field)
             select 'field;
         return simpleFields;
     }
 
-    public isolated function getManyRelations(record {} 'object,string[] fields, string[] include) returns persist:Error? {
+    public isolated function getManyRelations(map<anydata> typeMap, record {} 'object,string[] fields, string[] include) returns persist:Error? {
         foreach int i in 0 ..< include.length() {
             string entity = include[i];
             string[] relationFields = from string 'field in fields
@@ -236,7 +236,7 @@ public isolated client class RedisClient {
             record{}[] associatedRecords = [];
             foreach string key in keys {
                 // handling simple fields
-                record{} valueToRecord = check self.querySimpleFieldsByKey(key, relationFields);
+                record{} valueToRecord = check self.querySimpleFieldsByKey(typeMap, key, relationFields);
 
                 foreach string fieldKey in valueToRecord.keys() {
                     // convert the data type from 'any' to required type
@@ -261,6 +261,14 @@ public isolated client class RedisClient {
             'object[entity] = associatedRecords;
         } on fail var e {
         	return <persist:Error>e;
+        }
+    }
+
+    private isolated function removeNonExistOptionalFields(record {} 'object){
+        foreach string key in 'object.keys(){
+            if 'object[key] == () {
+                _ = 'object.remove(key);
+            }
         }
     }
 
@@ -298,5 +306,27 @@ public isolated client class RedisClient {
         }
     }
 
+    public isolated function objectConverter(record {} 'object, map<anydata> typeMap) returns record {}|error{
+        foreach string key in typeMap.keys(){
+            if (typeMap[key] == "string" && 'object[key] != ()){
+                io:println("it's the string");
+                'object[key] = 'object[key].toString();
+            }else if(typeMap[key] == "int" && 'object[key] != ()){
+                io:println("it's the int");
+                'object[key] = check int:fromString('object[key].toString());
+            }else if(typeMap[key] == "float" && 'object[key] != ()){
+                io:println("it's the float");
+                'object[key] = check float:fromString('object[key].toString());
+            }else if(typeMap[key] == "boolean" && 'object[key] != ()){
+                io:println("it's the boolean");
+                // 'object[key] = check boolean:fromString(<string>'object[key]);
+            }else{
+                // many other data types
+                'object[key] = ();
+            }
+        }
+
+        return 'object;
+    }
 
 }
