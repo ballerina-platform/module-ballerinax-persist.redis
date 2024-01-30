@@ -1,6 +1,5 @@
 import ballerinax/redis;
 import ballerina/persist;
-import ballerina/io;
 
 # The client used by the generated persist clients to abstract and 
 # execute Redis queries that are required to perform CRUD operations.
@@ -35,35 +34,29 @@ public isolated client class RedisClient {
     # + include - The associations to be retrieved
     # + typeDescriptions - The type descriptions of the relations to be retrieved
     # + return - An `record{||} & readonly` containing the requested record
-    public isolated function runReadByKeyQuery(typedesc<record {}> rowType, map<anydata> typeMap, anydata key, string[] fields = [], string[] include = [], typedesc<record {}>[] typeDescriptions = []) returns record{}|error {
-        if key is string[]{
-            string recordKey = self.collectionName;
-            // assume the key fields are in the same order as when inserting a new record
-            foreach string keyField in key{
-                recordKey += ":"+keyField;
-            }
-
-            do {
-                // return check self.querySimpleFieldsByKey(recordKey, fields).cloneWithType(rowType);
-                record{} 'object = check self.querySimpleFieldsByKey(typeMap, recordKey, fields);
-                check self.getManyRelations('object, typeMap, fields, include);
-                self.removeUnwantedFields('object, fields);
-                return check 'object.cloneWithType(rowType);
-            } on fail error e {
-                return <persist:Error>e;
-            }
-        }else{
-            return error("Invalid data type for key");
+    public isolated function runReadByKeyQuery(typedesc<record {}> rowType, map<anydata> typeMap, anydata key, string[] fields = [], string[] include = [], typedesc<record {}>[] typeDescriptions = []) returns record {|anydata...;|}|error {
+        string recordKey = self.collectionName;
+        // assume the key fields are in the same order as when inserting a new record
+        recordKey += self.getKey(key);
+        do {
+            record{} 'object = check self.querySimpleFieldsByKey(typeMap, recordKey, fields);
+            check self.getManyRelations(typeMap, 'object, fields, include);
+            self.removeUnwantedFields('object, fields);
+            self.removeNonExistOptionalFields('object);
+            return check 'object.cloneWithType(rowType);
+        } on fail error e {
+            return <persist:Error>e;
         }
     }
 
     # Performs a batch `HGET` operation to get entity instances as a stream
     # 
+    # + rowType - The type description of the entity to be retrieved
     # + typeMap - The data types of the record
     # + fields - The fields to be retrieved
     # + include - The associations to be retrieved
     # + return - A stream of `record{||} & readonly` containing the requested records
-    public isolated function runReadQuery(map<anydata> typeMap, string[] fields = [], string[] include = []) returns stream<record{}|error?>|persist:Error {
+    public isolated function runReadQuery(typedesc<record {}> rowType, map<anydata> typeMap, string[] fields = [], string[] include = []) returns stream<record{}|error?>|persist:Error {
         // Get all the keys
         string[]|error keys = self.dbClient->keys(self.collectionName+":*");
         if keys is error {
@@ -75,10 +68,8 @@ public isolated client class RedisClient {
         foreach string key in keys {
             // handling simple fields
             record{} 'object = check self.querySimpleFieldsByKey(typeMap, key, fields);
-            // check self.getManyRelations('object, fields, include);
             self.removeUnwantedFields('object, fields);
             self.removeNonExistOptionalFields('object);
-
             result.push('object);
             
         }
@@ -184,42 +175,19 @@ public isolated client class RedisClient {
         return self.keyFields;
     }
 
-    public isolated function querySimpleFieldsByKey(map<anydata> typeMap, string key, string[] fields) returns record {}|persist:Error{
-        // hadling the simple fields
-        string[] simpleFields = self.getTargetSimpleFields(fields, typeMap);
-        if simpleFields == [] { // then add all the fields by default
-            foreach [string, FieldMetadata & readonly] metaDataEntry in self.fieldMetadata.entries() {
-                FieldMetadata & readonly fieldMetadataValue = metaDataEntry[1];
-
-                // if the field is a simple field
-                if(fieldMetadataValue is SimpleFieldMetadata){
-                    simpleFields.push(fieldMetadataValue.fieldName);
-                }
+    private isolated function getKey(anydata key) returns string {
+        string keyValue = "";
+        if key is map<any> {
+            foreach string compositeKey in key.keys(){
+                keyValue += ":"+key[compositeKey].toString();
             }
-        }
-
-        do {
-	
-	        map<any> value = check self.dbClient->hMGet(key, simpleFields);
-            record{} valueToRecord = {};
-            foreach string fieldKey in value.keys() {
-                // convert the data type from 'any' to required type
-                valueToRecord[fieldKey] = check self.dataConverter(<FieldMetadata & readonly>self.fieldMetadata[fieldKey], value[fieldKey]);
-            }
-            return valueToRecord;
-        } on fail var e {
-        	return <persist:Error>e;
+            return keyValue;
+        } else {
+            return ":"+key.toString();
         }
     }
 
-    public isolated function getTargetSimpleFields(string[] fields, map<anydata> typeMap) returns string[] {
-        string[] simpleFields = from string 'field in fields
-            where !'field.includes("[].") && typeMap.hasKey('field)
-            select 'field;
-        return simpleFields;
-    }
-
-    public isolated function getManyRelations(map<anydata> typeMap, record {} 'object,string[] fields, string[] include) returns persist:Error? {
+    public isolated function getManyRelations(map<anydata> typeMap, record {} 'object, string[] fields, string[] include) returns persist:Error? {
         foreach int i in 0 ..< include.length() {
             string entity = include[i];
             string[] relationFields = from string 'field in fields
@@ -236,23 +204,24 @@ public isolated client class RedisClient {
             record{}[] associatedRecords = [];
             foreach string key in keys {
                 // handling simple fields
-                record{} valueToRecord = check self.querySimpleFieldsByKey(typeMap, key, relationFields);
-
-                foreach string fieldKey in valueToRecord.keys() {
-                    // convert the data type from 'any' to required type
-                    valueToRecord[fieldKey] = check self.dataConverter(<FieldMetadata & readonly>self.fieldMetadata[entity+"[]."+fieldKey], valueToRecord[fieldKey]);
-                }
+                record{} valueToRecord = check self.queryRelationFieldsByKey(entity, key, relationFields);
 
                 // check whether the record is associated with the current object
                 boolean isAssociated = true;
                 foreach string keyField in self.keyFields{
-                    boolean isSimilar = valueToRecord[entity+keyField.substring(0,1).toUpperAscii()+keyField.substring(1)] == 'object[keyField];
+                    string refField = self.entityName.substring(0,1).toLowerAscii()+self.entityName.substring(1)+keyField.substring(0,1).toUpperAscii()+keyField.substring(1);
+                    boolean isSimilar = valueToRecord[refField] == 'object[keyField];
                     if !isSimilar {
                         isAssociated = false;
                     }
                 }
-
                 if isAssociated {
+
+                    foreach string refField in valueToRecord.keys() {
+                        if relationFields.indexOf(refField) is () {
+                            _ = valueToRecord.remove(refField);
+                        }
+                    }
                     associatedRecords.push(valueToRecord);
                 }
                 
@@ -264,12 +233,91 @@ public isolated client class RedisClient {
         }
     }
 
+    private isolated function querySimpleFieldsByKey(map<anydata> typeMap, string key, string[] fields) returns record {|anydata...;|}|persist:Error{
+        // hadling the simple fields
+        string[] simpleFields = self.getTargetSimpleFields(fields, typeMap);
+        if simpleFields == [] { // then add all the fields by default
+            foreach [string, FieldMetadata & readonly] metaDataEntry in self.fieldMetadata.entries() {
+                FieldMetadata & readonly fieldMetadataValue = metaDataEntry[1];
+
+                // if the field is a simple field
+                if(fieldMetadataValue is SimpleFieldMetadata){
+                    simpleFields.push(fieldMetadataValue.fieldName);
+                }
+            }
+        }
+
+        do {
+	
+	        map<any> value = check self.dbClient->hMGet(key, simpleFields);
+            if self.isNoRecordFound(value) {
+                return error persist:Error("No "+self.entityName+" found for the given key");
+            }
+            record{} valueToRecord = {};
+            foreach string fieldKey in value.keys() {
+                // convert the data type from 'any' to required type
+                valueToRecord[fieldKey] = check self.dataConverter(<FieldMetadata & readonly>self.fieldMetadata[fieldKey], value[fieldKey]);
+            }
+            return valueToRecord;
+        } on fail var e {
+        	return <persist:Error>e;
+        }
+    }
+
+    private isolated function queryRelationFieldsByKey(string entity, string key, string[] fields) returns record {|anydata...;|}|persist:Error{
+        // if the field doesn't containes reference fields
+        // add them here
+        string[] relationFields = fields.clone();
+        foreach string keyField in self.keyFields {
+            string refField = self.entityName.substring(0,1).toLowerAscii()+self.entityName.substring(1)
+            +keyField.substring(0,1).toUpperAscii()+keyField.substring(1);
+            if relationFields.indexOf(refField) is () {
+                relationFields.push(refField);
+            }
+        }
+
+        do {
+	        map<any> value = check self.dbClient->hMGet(key, relationFields);
+            if self.isNoRecordFound(value) {
+                return error persist:Error("No "+self.entityName+" found for the given key");
+            }
+
+            record{} valueToRecord = {};
+            string fieldMetadataKeyPrefix = entity+"[].";
+            foreach string fieldKey in value.keys() {
+                // convert the data type from 'any' to required type
+                valueToRecord[fieldKey] = check self.dataConverter(<FieldMetadata & readonly>self.fieldMetadata[fieldMetadataKeyPrefix+fieldKey], value[fieldKey]);
+            }
+            return valueToRecord;
+        } on fail var e {
+        	return <persist:Error>e;
+        }
+    }
+
+    private isolated function getTargetSimpleFields(string[] fields, map<anydata> typeMap) returns string[] {
+        string[] simpleFields = from string 'field in fields
+            where !'field.includes("[].") && typeMap.hasKey('field)
+            select 'field;
+        return simpleFields;
+    }
+
+
     private isolated function removeNonExistOptionalFields(record {} 'object){
         foreach string key in 'object.keys(){
             if 'object[key] == () {
                 _ = 'object.remove(key);
             }
         }
+    }
+
+    private isolated function isNoRecordFound(map<any> value) returns boolean{
+        boolean isNoRecordExists = true;
+        foreach string key in value.keys(){
+            if value[key] != () {
+                isNoRecordExists = false;
+            }
+        }
+        return isNoRecordExists;
     }
 
     private isolated function removeUnwantedFields(record {} 'object, string[] fields) {
@@ -282,7 +330,7 @@ public isolated client class RedisClient {
         }
     }
 
-    public isolated function dataConverter(FieldMetadata & readonly fieldMetaData, any value) returns ()|boolean|string|float|error|int {
+    private isolated function dataConverter(FieldMetadata & readonly fieldMetaData, any value) returns ()|boolean|string|float|error|int {
 
         // Return nil if value is nil
         if(value is ()){
@@ -304,29 +352,6 @@ public isolated client class RedisClient {
         }else{
             return error("Unsupported Data Format");
         }
-    }
-
-    public isolated function objectConverter(record {} 'object, map<anydata> typeMap) returns record {}|error{
-        foreach string key in typeMap.keys(){
-            if (typeMap[key] == "string" && 'object[key] != ()){
-                io:println("it's the string");
-                'object[key] = 'object[key].toString();
-            }else if(typeMap[key] == "int" && 'object[key] != ()){
-                io:println("it's the int");
-                'object[key] = check int:fromString('object[key].toString());
-            }else if(typeMap[key] == "float" && 'object[key] != ()){
-                io:println("it's the float");
-                'object[key] = check float:fromString('object[key].toString());
-            }else if(typeMap[key] == "boolean" && 'object[key] != ()){
-                io:println("it's the boolean");
-                // 'object[key] = check boolean:fromString(<string>'object[key]);
-            }else{
-                // many other data types
-                'object[key] = ();
-            }
-        }
-
-        return 'object;
     }
 
 }
