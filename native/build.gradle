@@ -4,7 +4,7 @@ plugins {
     id 'com.github.spotbugs'
     id 'checkstyle'
     id 'jacoco'
-    // id 'maven-publish'
+    id 'maven-publish'
 }
 
 description = 'Ballerina - Persist Java Native'
@@ -27,7 +27,7 @@ tasks.withType(JavaCompile) {
     options.encoding = 'UTF-8'
 }
 
-// sourceCompatibility = JavaVersion.VERSION_17
+sourceCompatibility = JavaVersion.VERSION_17
 
 jacoco {
     toolVersion = "0.8.6"
@@ -104,39 +104,39 @@ spotbugsMain.finalizedBy validateSpotbugs
 checkstyleMain.dependsOn ':checkstyle:downloadCheckstyleRuleFiles'
 checkstyleTest.dependsOn ':checkstyle:downloadCheckstyleRuleFiles'
 
-// publishing {
-//     publications {
-//         mavenJava(MavenPublication) {
-//             groupId project.group
-//             artifactId "persist.redis-native"
-//             version = project.version
-//             artifact jar
-//         }
-//     }
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            groupId project.group
+            artifactId "persist.redis-native"
+            version = project.version
+            artifact jar
+        }
+    }
 
-//     repositories {
-//         maven {
-//             name = "GitHubPackages"
-//             url = uri("https://maven.pkg.github.com/ballerina-platform/module-ballerina-persist")
-//             credentials {
-//                 username = System.getenv("publishUser")
-//                 password = System.getenv("publishPAT")
-//             }
-//         }
-//         maven {
-//             name = "WSO2Nexus"
-//             if(project.version.endsWith('-SNAPSHOT')) {
-//                 url "https://maven.wso2.org/nexus/content/repositories/snapshots/"
-//             } else {
-//                 url "https://maven.wso2.org/nexus/service/local/staging/deploy/maven2/"
-//             }
-//             credentials {
-//                 username System.getenv("nexusUser")
-//                 password System.getenv("nexusPassword")
-//             }
-//         }
-//     }
-// }
+    repositories {
+        maven {
+            name = "GitHubPackages"
+            url = uri("https://maven.pkg.github.com/ballerina-platform/module-ballerina-persist")
+            credentials {
+                username = System.getenv("publishUser")
+                password = System.getenv("publishPAT")
+            }
+        }
+        maven {
+            name = "WSO2Nexus"
+            if(project.version.endsWith('-SNAPSHOT')) {
+                url "https://maven.wso2.org/nexus/content/repositories/snapshots/"
+            } else {
+                url "https://maven.wso2.org/nexus/service/local/staging/deploy/maven2/"
+            }
+            credentials {
+                username System.getenv("nexusUser")
+                password System.getenv("nexusPassword")
+            }
+        }
+    }
+}
 
 compileJava {
     doFirst {

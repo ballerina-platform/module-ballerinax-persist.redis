@@ -6,11 +6,11 @@ import io.ballerina.runtime.api.Future;
 import io.ballerina.runtime.api.PredefinedTypes;
 import io.ballerina.runtime.api.async.Callback;
 import io.ballerina.runtime.api.creators.TypeCreator;
-import io.ballerina.runtime.api.creators.ValueCreator;
 import io.ballerina.runtime.api.types.RecordType;
 import io.ballerina.runtime.api.types.StreamType;
 import io.ballerina.runtime.api.values.BArray;
 import io.ballerina.runtime.api.values.BError;
+import io.ballerina.runtime.api.values.BMap;
 import io.ballerina.runtime.api.values.BObject;
 import io.ballerina.runtime.api.values.BStream;
 import io.ballerina.runtime.api.values.BString;
@@ -27,6 +27,7 @@ import static io.ballerina.stdlib.persist.Utils.getMetadata;
 import static io.ballerina.stdlib.persist.Utils.getPersistClient;
 import static io.ballerina.stdlib.persist.Utils.getRecordTypeWithKeyFields;
 import static io.ballerina.stdlib.persist.Utils.getTransactionContextProperties;
+import static io.ballerina.stdlib.persist.redis.Utils.getFieldTypes;
 
 public class RedisProcessor {
 
@@ -34,7 +35,7 @@ public class RedisProcessor {
 
     }
     
-    static BStream query(Environment env, BObject client, BTypedesc targetType) {
+    public static BStream query(Environment env, BObject client, BTypedesc targetType) {
         // This method will return `stream<targetType, persist:Error?>`
 
         BString entity = getEntity(env);
@@ -43,7 +44,6 @@ public class RedisProcessor {
         RecordType recordType = (RecordType) targetType.getDescribingType();
 
         RecordType recordTypeWithIdFields = getRecordTypeWithKeyFields(keyFields, recordType);
-        BTypedesc targetTypeWithIdFields = ValueCreator.createTypedescValue(recordTypeWithIdFields);
         StreamType streamTypeWithIdFields = TypeCreator.createStreamType(recordTypeWithIdFields,
                 PredefinedTypes.TYPE_NULL);
 
@@ -54,20 +54,21 @@ public class RedisProcessor {
         BArray fields = metadata[0];
         BArray includes = metadata[1];
         BArray typeDescriptions = metadata[2];
+        BMap<BString, Object> typeMap = getFieldTypes(recordType);
 
         Future balFuture = env.markAsync();
         env.getRuntime().invokeMethodAsyncSequentially(
-                // Call `SQLClient.runReadQuery(
-                //      typedesc<record {}> rowType, string[] fields = [], string[] include = []
+                // Call `RedisClient.runReadQuery(
+                //      map<anydata> typeMap, string[] fields = [], string[] include = []
                 // )`
-                // which returns `stream<record {}, sql:Error?>|persist:Error`
+                // which returns `stream<record{}|error?>|persist:Error`
 
                 persistClient, Constants.RUN_READ_QUERY_METHOD, strandName, env.getStrandMetadata(), new Callback() {
                     @Override
                     public void notifySuccess(Object o) {
-                        if (o instanceof BStream) { // stream<record {}, sql:Error?>
-                            BStream sqlStream = (BStream) o;
-                            balFuture.complete(Utils.createPersistRedisStreamValue(sqlStream, targetType, fields,
+                        if (o instanceof BStream) { // stream<record {}, redis:Error?>
+                            BStream redisStream = (BStream) o;
+                            balFuture.complete(Utils.createPersistRedisStreamValue(redisStream, targetType, fields,
                                     includes, typeDescriptions, persistClient, null));
                         } else { // persist:Error
                             balFuture.complete(Utils.createPersistRedisStreamValue(null, targetType, fields, includes,
@@ -81,7 +82,7 @@ public class RedisProcessor {
                                 typeDescriptions, persistClient, wrapError(bError)));
                     }
                 }, trxContextProperties, streamTypeWithIdFields,
-                targetTypeWithIdFields, true, fields, true, includes, true
+                typeMap, true, fields, true, includes, true
         );
 
         return null;
