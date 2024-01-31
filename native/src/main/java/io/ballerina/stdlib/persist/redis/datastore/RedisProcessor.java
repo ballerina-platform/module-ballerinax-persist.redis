@@ -88,7 +88,7 @@ public class RedisProcessor {
                                 typeDescriptions, persistClient, wrapError(bError)));
                     }
                 }, trxContextProperties, streamTypeWithIdFields,
-                typeMap, true, fields, true, includes, true
+                targetType, true, typeMap, true, fields, true, includes, true
         );
 
         return null;

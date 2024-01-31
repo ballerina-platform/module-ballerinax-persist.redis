@@ -1,5 +1,5 @@
 import ballerina/persist;
-import ballerina/io;
+// import ballerina/io;
 
 public class PersistRedisStream {
 
@@ -53,9 +53,7 @@ public class PersistRedisStream {
                     }
                 }
                 // return value;
-                io:println(value);
                 record {|record {} value;|} nextRecord = {value: checkpanic value.cloneWithType(self.targetType)};
-                // record {|record {} value;|} nextRecord = {value: value};
                 return nextRecord;
             }
         } else {
