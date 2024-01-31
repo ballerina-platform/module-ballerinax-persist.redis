@@ -72,7 +72,8 @@ public enum DataType {
     STRING,
     FLOAT,
     BOOLEAN,
-    TIME
+    TIME,
+    ENUM
 }
 
 # Represents the types of Metadata a RQL client can hold.
