@@ -4,11 +4,13 @@
 # + collectionName - Collection name of the entity
 # + fieldMetadata - Metadata of all the fields of the entity
 # + keyFields - Names of the identity fields
+# + refMetadata - Metadata of the fields that is being reffered
 public type RedisMetadata record {|
     string entityName;
     string collectionName;
     map<FieldMetadata> fieldMetadata;
     string[] keyFields;
+    map<RefMetadata> refMetadata?;
 |};
 
 # Represents the metadata associated with a field from a related entity.
@@ -46,8 +48,32 @@ public type RelationMetadata record {|
     DataType refFieldDataType;
 |};
 
+# Represents the metadata associated with relations
+# Only used by the generated persist clients and `persist:RedisClient`.
+#
+# + entity - The name of the entity that is being joined  
+# + fieldName - The name of the field in the `entity` that is being joined  
+# + refCollection - The name of the Redis collection to be joined  
+# + refFields - The names of the referenced columns of the referenced table
+# + joinFields - The names of the join columns
+# + joinCollection - The name of the joining table used for a many-to-many relation
+# + joiningRefFields - The names of the referenced columns in the joining table     
+# + joiningJoinFields - The names of the join columns in the joining table     
+# + 'type - The type of the relation
+public type RefMetadata record {|
+    typedesc<record {}> entity;
+    string fieldName;
+    string refCollection;
+    string[] refFields;
+    string[] joinFields;
+    string joinCollection?;
+    string[] joiningRefFields?;
+    string[] joiningJoinFields?;
+    JoinType 'type;
+|};
+
 # Represents the type of the relation used in a `JOIN` operation.
-# Only used by the generated persist clients and `rql:SQLClient`.
+# Only used by the generated persist clients and `persist.redis:RedisClient`.
 #
 # + ONE_TO_ONE - The association type is a one-to-one association
 # + ONE_TO_MANY - The entity is in the 'one' side of a one-to-many association
@@ -72,7 +98,8 @@ public enum DataType {
     STRING,
     FLOAT,
     BOOLEAN,
-    TIME
+    TIME,
+    ENUM
 }
 
 # Represents the types of Metadata a RQL client can hold.
