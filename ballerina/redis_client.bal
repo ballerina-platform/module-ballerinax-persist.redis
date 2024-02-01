@@ -1,6 +1,6 @@
 import ballerinax/redis;
 import ballerina/persist;
-import ballerina/io;
+// import ballerina/io;
 
 # The client used by the generated persist clients to abstract and 
 # execute Redis queries that are required to perform CRUD operations.
@@ -40,8 +40,11 @@ public isolated client class RedisClient {
         // assume the key fields are in the same order as when inserting a new record
         recordKey += self.getKey(key);
         do {
+            // handling simple fields
             record{} 'object = check self.querySimpleFieldsByKey(typeMap, recordKey, fields);
+            // handling relation fields
             check self.getManyRelations(typeMap, 'object, fields, include);
+
             self.removeUnwantedFields('object, fields);
             self.removeNonExistOptionalFields('object);
             return check 'object.cloneWithType(rowType);
@@ -67,8 +70,9 @@ public isolated client class RedisClient {
         // Get data one by one using the key
         record{}[] result = [];
         foreach string key in keys {
-            // handling simple fields
+            // handling simple fields only for batch read
             record{} 'object = check self.querySimpleFieldsByKey(typeMap, key, fields);
+            
             self.removeUnwantedFields('object, fields);
             self.removeNonExistOptionalFields('object);
             result.push('object);
@@ -110,7 +114,6 @@ public isolated client class RedisClient {
         }
 
         // Decide how to log queries
-        // logQuery("RQL insert query: ", insertQueries);
         if result is string {
             return result;
         }
@@ -197,7 +200,6 @@ public isolated client class RedisClient {
             string[] relationFields = from string 'field in fields
                 where 'field.startsWith(entity + "[].")
                 select 'field.substring(entity.length() + 3, 'field.length());
-            io:println(relationFields);
             // checking for one to one relationships
             if relationFields.length() == 0 {
 
@@ -276,7 +278,9 @@ public isolated client class RedisClient {
             record{} valueToRecord = {};
             foreach string fieldKey in value.keys() {
                 // convert the data type from 'any' to required type
-                valueToRecord[fieldKey] = check self.dataConverter(<FieldMetadata & readonly>self.fieldMetadata[fieldKey], value[fieldKey]);
+                valueToRecord[fieldKey] = check self.dataConverter(
+                    <FieldMetadata & readonly>self.fieldMetadata[fieldKey]
+                    , value[fieldKey]);
             }
             return valueToRecord;
         } on fail var e {
@@ -313,8 +317,9 @@ public isolated client class RedisClient {
 
             foreach string fieldKey in value.keys() {
                 // convert the data type from 'any' to required type
-                io:println(fieldMetadataKeyPrefix+fieldKey);
-                valueToRecord[fieldKey] = check self.dataConverter(<FieldMetadata & readonly>self.fieldMetadata[fieldMetadataKeyPrefix+fieldKey], value[fieldKey]);
+                valueToRecord[fieldKey] = check self.dataConverter(
+                    <FieldMetadata & readonly>self.fieldMetadata[fieldMetadataKeyPrefix+fieldKey]
+                    , value[fieldKey]);
             }
             return valueToRecord;
         } on fail var e {
