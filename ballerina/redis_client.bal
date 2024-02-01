@@ -1,5 +1,6 @@
 import ballerinax/redis;
 import ballerina/persist;
+import ballerina/io;
 // import ballerina/io;
 
 # The client used by the generated persist clients to abstract and 
@@ -12,6 +13,7 @@ public isolated client class RedisClient {
     private final string & readonly collectionName;
     private final map<FieldMetadata> & readonly fieldMetadata;
     private final string[] & readonly keyFields;
+    private final map<RefMetadata> & readonly refMetadata;
 
     # Initializes the `RedisClient`.
     #
@@ -24,6 +26,11 @@ public isolated client class RedisClient {
         self.fieldMetadata = metadata.fieldMetadata;
         self.keyFields = metadata.keyFields;
         self.dbClient = dbClient;
+        if metadata.refMetadata is map<RefMetadata> {
+            self.refMetadata = <map<RefMetadata> & readonly>metadata.refMetadata;
+        } else {
+            self.refMetadata = {};
+        }
     }
 
     # Performs a batch `HGET` operation to get entity instances as a stream
@@ -35,7 +42,7 @@ public isolated client class RedisClient {
     # + include - The associations to be retrieved
     # + typeDescriptions - The type descriptions of the relations to be retrieved
     # + return - An `record{||} & readonly` containing the requested record
-    public isolated function runReadByKeyQuery(typedesc<record {}> rowType, map<anydata> typeMap, anydata key, string[] fields = [], string[] include = [], typedesc<record {}>[] typeDescriptions = []) returns record {|anydata...;|}|error {
+    public isolated function runReadByKeyQuery(typedesc<record {}> rowType, map<anydata> typeMap, anydata key, string[] fields = [], string[] include = [], typedesc<record {}>[] typeDescriptions = []) returns record {|anydata...;|}|persist:Error {
         string recordKey = self.collectionName;
         // assume the key fields are in the same order as when inserting a new record
         recordKey += self.getKey(key);
@@ -103,8 +110,11 @@ public isolated client class RedisClient {
             // check for duplicate keys withing the collection
             int isKeyExists = check self.dbClient->exists([self.collectionName+key]);
             if isKeyExists != 0 {
-                return persist:getAlreadyExistsError(self.collectionName, key);
+                return persist:getAlreadyExistsError(self.collectionName, self.collectionName+key);
             }
+
+            // check for any relation field constraints
+            check self.checkRelationFieldConstraints(insertRecord);
 
             // inserting the object
             result = self.dbClient->hMSet(self.collectionName+key, insertRecord);
@@ -273,7 +283,7 @@ public isolated client class RedisClient {
 	
 	        map<any> value = check self.dbClient->hMGet(key, simpleFields);
             if self.isNoRecordFound(value) {
-                return error persist:Error("No "+self.entityName+" found for the given key");
+                return persist:getNotFoundError(self.entityName, key);
             }
             record{} valueToRecord = {};
             foreach string fieldKey in value.keys() {
@@ -361,6 +371,54 @@ public isolated client class RedisClient {
                 _ = 'object.remove(keyField);
             }
         }
+    }
+
+    private isolated function checkRelationFieldConstraints(record {} insertRecord) returns persist:Error? {
+        
+        // check if refMetaData has mappings
+        // if a mapping exist
+            // if the 'type is MANY_TO_ONE ingore that.
+            // if the 'type is ONE_TO_MANY OR ONE_TO_ONE and the joinField exist in the record
+                // verify whether refered collection has a record with that key.
+                // if not return foreignKeyFail error
+        io:println("checking constraints");
+        if self.refMetadata != {} {
+                foreach RefMetadata & readonly refMetadataValue in self.refMetadata {
+                    //  if the entity is not the relation owner
+                    if refMetadataValue.joinFields == self.keyFields {
+                        continue;
+                    }
+
+                    boolean isRelationConstraintFalied = true;
+                    io:println(refMetadataValue.'type);
+                    //if the mandatory reference field is not exist or being null
+                    foreach string joinField in refMetadataValue.joinFields {
+                        if (insertRecord.hasKey(joinField) && insertRecord[joinField] != ()) {
+
+                            isRelationConstraintFalied = false;
+                            break;
+                        }
+                    }
+
+                    if !isRelationConstraintFalied {
+                        // generate the key to reference record
+                        string refRecordKey = refMetadataValue.refCollection;
+                        foreach string joinField in refMetadataValue.joinFields {
+                            refRecordKey += ":"+insertRecord[joinField].toString();
+                        }
+                        io:println(refRecordKey);
+
+                        map<any> value = check self.dbClient->hMGet(refRecordKey, refMetadataValue.refFields);
+                        io:println(value);
+                        if self.isNoRecordFound(value) {
+                            io:println("this should throw a foreign key constraint fail");
+                            return getConstraintViolationError(self.entityName, refMetadataValue.refCollection);
+                        }
+                    }
+                } on fail var e {
+                	return <persist:Error>e;
+                }
+            }
     }
 
     private isolated function dataConverter(FieldMetadata & readonly fieldMetaData, any value) returns ()|boolean|string|float|error|int {
