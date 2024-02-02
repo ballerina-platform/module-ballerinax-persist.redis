@@ -1,5 +1,4 @@
 import ballerina/persist;
-// import ballerina/io;
 
 public class PersistRedisStream {
 
@@ -52,7 +51,6 @@ public class PersistRedisStream {
                         _ = value.remove(keyField);
                     }
                 }
-                // return value;
                 record {|record {} value;|} nextRecord = {value: checkpanic value.cloneWithType(self.targetType)};
                 return nextRecord;
             }

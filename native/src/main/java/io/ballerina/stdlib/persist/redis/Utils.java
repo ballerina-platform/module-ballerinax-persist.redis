@@ -47,7 +47,8 @@ public class Utils {
         return typeMap;
     }
 
-    private static BObject createPersistRedisStream(BStream redisStream, BTypedesc targetType, BMap<BString, Object> typeMap, BArray fields,
+    private static BObject createPersistRedisStream(BStream redisStream, 
+                                                  BTypedesc targetType, BMap<BString, Object> typeMap, BArray fields,
                                                   BArray includes, BArray typeDescriptions, BObject persistClient,
                                                   BError persistError) {
         return ValueCreator.createObjectValue(getModule(), PERSIST_REDIS_STREAM,
@@ -64,7 +65,8 @@ public class Utils {
     public static BStream createPersistRedisStreamValue(BStream redisStream, BTypedesc targetType, BArray fields,
                                                       BArray includes, BArray typeDescriptions, BObject persistClient,
                                                       BError persistError) {
-        BObject persistRedisStream = createPersistRedisStream(redisStream, targetType, Utils.getFieldTypes((RecordType) targetType.getDescribingType()), fields, includes,
+        BObject persistRedisStream = createPersistRedisStream(redisStream, targetType, 
+                Utils.getFieldTypes((RecordType) targetType.getDescribingType()), fields, includes,
                 typeDescriptions, persistClient, persistError);
         return createPersistRedisStreamValue(targetType, persistRedisStream);
     }
