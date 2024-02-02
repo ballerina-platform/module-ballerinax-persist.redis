@@ -30,16 +30,16 @@ public type SimpleFieldMetadata record {|
 |};
 
 # Represents the metadata associated with a field of an entity.
-# Only used by the generated persist clients and `persist:RQLClient`.
+# Only used by the generated persist clients and `persist:RedisClient`.
 #
 public type FieldMetadata SimpleFieldMetadata|EntityFieldMetadata;
 
 # Represents the metadata associated with a relation.
-# Only used by the generated persist clients and `persist:RQLClient`.
+# Only used by the generated persist clients and `persist:RedisClient`.
 #
 # + entityName - The name of the entity represented in the relation  
-# + refField - The name of the referenced field in the Redis document
-# + refFieldDataType - The data type of the object field to which the referenced field in 
+# + refField - The name of the refered field in the Redis document
+# + refFieldDataType - The data type of the object field to which the refered field in 
 # Redis document is mapped
 
 public type RelationMetadata record {|
@@ -54,11 +54,11 @@ public type RelationMetadata record {|
 # + entity - The name of the entity that is being joined  
 # + fieldName - The name of the field in the `entity` that is being joined  
 # + refCollection - The name of the Redis collection to be joined  
-# + refFields - The names of the referenced columns of the referenced table
-# + joinFields - The names of the join columns
-# + joinCollection - The name of the joining table used for a many-to-many relation
-# + joiningRefFields - The names of the referenced columns in the joining table     
-# + joiningJoinFields - The names of the join columns in the joining table     
+# + refFields - The names of the fields of the refered collection
+# + joinFields - The names of the join fields
+# + joinCollection - The name of the joining collection used for a many-to-many relation
+# + joiningRefFields - The names of the refered fields in the joining collection     
+# + joiningJoinFields - The names of the join fields in the joining collection     
 # + 'type - The type of the relation
 public type RefMetadata record {|
     typedesc<record {}> entity;
@@ -69,16 +69,16 @@ public type RefMetadata record {|
     string joinCollection?;
     string[] joiningRefFields?;
     string[] joiningJoinFields?;
-    JoinType 'type;
+    CardinalityType 'type;
 |};
 
-# Represents the type of the relation used in a `JOIN` operation.
-# Only used by the generated persist clients and `persist.redis:RedisClient`.
+# Represents the cardinality of the relationship
+# Only used by the generated persist clients and `persist:RedisClient`.
 #
 # + ONE_TO_ONE - The association type is a one-to-one association
 # + ONE_TO_MANY - The entity is in the 'one' side of a one-to-many association
 # + MANY_TO_ONE - The entity is in the 'many' side of a one-to-many association
-public enum JoinType {
+public enum CardinalityType {
     ONE_TO_ONE,
     ONE_TO_MANY,
     MANY_TO_ONE
@@ -86,7 +86,7 @@ public enum JoinType {
 
 
 # Represents the type of the field data.
-# Only used by the generated persist clients and `rql:RQLClient`.
+# Only used by the generated persist clients and `persist:RedisClient`.
 #
 # + INT - `int` type
 # + STRING - `string` type
@@ -102,8 +102,20 @@ public enum DataType {
     ENUM
 }
 
-# Represents the types of Metadata a RQL client can hold.
-# Only used by the generated persist clients and `rql:RQLClient`.
+# Represents the type of the redis supported data structures.
+# Only used by the generated persist clients and `persist:RedisClient`.
+#
+# + REDIS_STRING - `string` type
+# + REDIS_SET - `set` type
+# + REDIS_HASH - `hash` type
+public enum RedisDataType {
+    REDIS_STRING = "string",
+    REDIS_SET = "set",
+    REDIS_HASH = "hash"
+}
+
+# Represents the types of Metadata in a `persist:RedisClient`.
+# Only used by the generated persist clients and `persist:RedisClient`.
 #
 # + FIELD_DATA_TYPE - `int` type
 # + RELATION - `string` type

@@ -17,8 +17,8 @@ import io.ballerina.runtime.api.values.BObject;
 import io.ballerina.runtime.api.values.BStream;
 import io.ballerina.runtime.api.values.BString;
 import io.ballerina.runtime.api.values.BTypedesc;
-import io.ballerina.stdlib.persist.ModuleUtils;
 import io.ballerina.stdlib.persist.Constants;
+import io.ballerina.stdlib.persist.ModuleUtils;
 import io.ballerina.stdlib.persist.redis.Utils;
 
 import java.util.Map;
@@ -65,7 +65,7 @@ public class RedisProcessor {
         Future balFuture = env.markAsync();
         env.getRuntime().invokeMethodAsyncSequentially(
                 // Call `RedisClient.runReadQuery(
-                //      map<anydata> typeMap, string[] fields = [], string[] include = []
+                //      typedesc<record {}> rowType, map<anydata> typeMap, string[] fields = [], string[] include = []
                 // )`
                 // which returns `stream<record{}|error?>|persist:Error`
 
