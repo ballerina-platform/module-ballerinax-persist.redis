@@ -100,7 +100,6 @@ public enum CardinalityType {
     MANY_TO_ONE
 }
 
-
 # Represents the type of the field data.
 # Only used by the generated persist clients and `persist:RedisClient`.
 #

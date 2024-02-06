@@ -16,7 +16,7 @@
  * under the License.
  */
 
- package io.ballerina.stdlib.persist.redis;
+package io.ballerina.stdlib.persist.redis;
 
 import io.ballerina.runtime.api.Environment;
 import io.ballerina.runtime.api.PredefinedTypes;
@@ -43,7 +43,6 @@ import static io.ballerina.runtime.api.utils.StringUtils.fromString;
 import static io.ballerina.stdlib.persist.redis.Constants.PERSIST_REDIS_STREAM;
 import static io.ballerina.stdlib.persist.redis.ModuleUtils.getModule;
 
-
 public class Utils {
 
     public static BString getEntityFromStreamMethod(Environment env) {
@@ -51,7 +50,7 @@ public class Utils {
         String entity = functionName.substring(5, functionName.length() - 6).toLowerCase(Locale.ENGLISH);
         return fromString(entity);
     }
-    
+
     public static BMap<BString, Object> getFieldTypes(RecordType recordType) {
         MapType stringMapType = TypeCreator.createMapType(PredefinedTypes.TYPE_STRING);
         BMap<BString, Object> typeMap = ValueCreator.createMapValue(stringMapType);
@@ -65,25 +64,24 @@ public class Utils {
         return typeMap;
     }
 
-    private static BObject createPersistRedisStream(BStream redisStream, 
-                                                  BTypedesc targetType, BMap<BString, Object> typeMap, BArray fields,
-                                                  BArray includes, BArray typeDescriptions, BObject persistClient,
-                                                  BError persistError) {
+    private static BObject createPersistRedisStream(BStream redisStream,
+            BTypedesc targetType, BMap<BString, Object> typeMap, BArray fields,
+            BArray includes, BArray typeDescriptions, BObject persistClient,
+            BError persistError) {
         return ValueCreator.createObjectValue(getModule(), PERSIST_REDIS_STREAM,
-        redisStream, targetType, typeMap, fields, includes, typeDescriptions, persistClient, persistError);
+                redisStream, targetType, typeMap, fields, includes, typeDescriptions, persistClient, persistError);
     }
 
     private static BStream createPersistRedisStreamValue(BTypedesc targetType, BObject persistRedisStream) {
-        RecordType streamConstraint =
-                (RecordType) TypeUtils.getReferredType(targetType.getDescribingType());
+        RecordType streamConstraint = (RecordType) TypeUtils.getReferredType(targetType.getDescribingType());
         return ValueCreator.createStreamValue(
                 TypeCreator.createStreamType(streamConstraint, PredefinedTypes.TYPE_NULL), persistRedisStream);
     }
 
     public static BStream createPersistRedisStreamValue(BStream redisStream, BTypedesc targetType, BArray fields,
-                                                      BArray includes, BArray typeDescriptions, BObject persistClient,
-                                                      BError persistError) {
-        BObject persistRedisStream = createPersistRedisStream(redisStream, targetType, 
+            BArray includes, BArray typeDescriptions, BObject persistClient,
+            BError persistError) {
+        BObject persistRedisStream = createPersistRedisStream(redisStream, targetType,
                 Utils.getFieldTypes((RecordType) targetType.getDescribingType()), fields, includes,
                 typeDescriptions, persistClient, persistError);
         return createPersistRedisStreamValue(targetType, persistRedisStream);
