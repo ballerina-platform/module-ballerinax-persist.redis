@@ -57,7 +57,7 @@ public class RedisProcessor {
     private RedisProcessor() {
 
     }
-    
+
     public static BStream query(Environment env, BObject client, BTypedesc targetType) {
         // This method will return `stream<targetType, persist:Error?>`
 
@@ -82,7 +82,8 @@ public class RedisProcessor {
         Future balFuture = env.markAsync();
         env.getRuntime().invokeMethodAsyncSequentially(
                 // Call `RedisClient.runReadQuery(
-                //      typedesc<record {}> rowType, map<anydata> typeMap, string[] fields = [], string[] include = []
+                // typedesc<record {}> rowType, map<anydata> typeMap, string[] fields = [],
+                // string[] include = []
                 // )`
                 // which returns `stream<record{}|error?>|persist:Error`
 
@@ -105,8 +106,7 @@ public class RedisProcessor {
                                 typeDescriptions, persistClient, wrapError(bError)));
                     }
                 }, trxContextProperties, streamTypeWithIdFields,
-                targetType, true, typeMap, true, fields, true, includes, true
-        );
+                targetType, true, typeMap, true, fields, true, includes, true);
 
         return null;
     }
@@ -137,8 +137,9 @@ public class RedisProcessor {
         Future balFuture = env.markAsync();
         env.getRuntime().invokeMethodAsyncSequentially(
                 // Call `RedisClient.runReadByKeyQuery(
-                //      typedesc<record {}> rowType, anydata key, string[] fields = [], string[] include = [],
-                //      typedesc<record {}>[] typeDescriptions = []
+                // typedesc<record {}> rowType, anydata key, string[] fields = [], string[]
+                // include = [],
+                // typedesc<record {}>[] typeDescriptions = []
                 // )`
                 // which returns `record {}|persist:Error`
 
@@ -153,10 +154,9 @@ public class RedisProcessor {
                     public void notifyFailure(BError bError) {
                         balFuture.complete(wrapError(bError));
                     }
-                },  trxContextProperties, unionType,
+                }, trxContextProperties, unionType,
                 targetType, true, typeMap, true, key, true, fields, true, includes, true,
-                typeDescriptions, true
-        );
+                typeDescriptions, true);
 
         return null;
     }
