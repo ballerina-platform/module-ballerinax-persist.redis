@@ -57,7 +57,6 @@ public type FieldMetadata SimpleFieldMetadata|EntityFieldMetadata;
 # + refField - The name of the refered field in the Redis document
 # + refFieldDataType - The data type of the object field to which the refered field in 
 # Redis document is mapped
-
 public type RelationMetadata record {|
     string entityName;
     string refField;
@@ -112,8 +111,12 @@ public enum DataType {
     INT,
     STRING,
     FLOAT,
+    DECIMAL,
     BOOLEAN,
-    TIME,
+    DATE,
+    TIME_OF_DAY,
+    CIVIL,
+    UTC,
     ENUM
 }
 
