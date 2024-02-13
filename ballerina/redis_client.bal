@@ -72,6 +72,8 @@ public isolated client class RedisClient {
             check self.getManyRelations(typeMap, 'object, fields, include);
             self.removeUnwantedFields('object, fields);
             self.removeNonExistOptionalFields('object);
+            io:println("cloneType in read by key");
+            io:println(rowType);
             return check 'object.cloneWithType(rowType);
         } on fail error e {
             return error persist:Error(e.message());
@@ -127,7 +129,7 @@ public isolated client class RedisClient {
         foreach var insertRecord in insertRecords {
 
             // Convert tye 'time:Date' and 'time:TimeOfDay' data types to string
-            record {} newInsertRecord = check self.getRecordWithDateTime(insertRecord);
+            record {} newInsertRecord = check self.newRecordWithDateTime(insertRecord);
 
             // Generate the key
             string key = "";
@@ -142,7 +144,10 @@ public isolated client class RedisClient {
             }
 
             // Check for any relation field constraints
-            check self.checkRelationFieldConstraints(key, insertRecord);
+            persist:Error? checkConstraints = self.checkRelationFieldConstraints(key, insertRecord);
+            if checkConstraints is persist:ConstraintViolationError{
+                return checkConstraints;
+            }
 
             // Insert the object
             result = self.dbClient->hMSet(self.collectionName + key, newInsertRecord);
@@ -183,7 +188,7 @@ public isolated client class RedisClient {
     # + key - The ordered keys used to update an entity record
     # + updateRecord - The new record to be updated
     # + return - An Error if the new record is missing a keyfield
-    public isolated function runUpdateQuery(anydata key, record {} updateRecord) returns error? {
+    public isolated function runUpdateQuery(anydata key, record {} updateRecord) returns persist:Error? {
         // Generate the key
         string recordKey = string `${self.collectionName}${self.getKey(key)}`;
 
@@ -202,6 +207,8 @@ public isolated client class RedisClient {
             } else {
                 // If the field is a relation field
             }
+        } on fail error e {
+            return error persist:Error(e.message());
         }
     }
 
@@ -214,7 +221,7 @@ public isolated client class RedisClient {
     # + return - A `persist:Error` if the operation fails
     public isolated function getManyRelations(map<anydata> typeMap, record {} 'object, string[] fields, 
     string[] include) returns persist:Error? {
-
+        io:println(include);
         foreach int i in 0 ..< include.length() {
             string entity = include[i];
             CardinalityType cardinalityType = ONE_TO_MANY;
@@ -223,6 +230,8 @@ public isolated client class RedisClient {
             string[] relationFields = from string 'field in fields
                 where 'field.startsWith(string `${entity}${MANY_ASSOCIATION_SEPERATOR}`)
                 select 'field.substring(entity.length() + 3, 'field.length());
+            io:println("one to many check");
+            io:println(relationFields);
 
             // checking for one to one relationships
             if relationFields.length() == 0 {
@@ -234,6 +243,8 @@ public isolated client class RedisClient {
                     cardinalityType = ONE_TO_ONE;
                 }
             }
+            io:println("one to one check");
+            io:println(relationFields);
 
             if relationFields.length() == 0 {
                 continue;
@@ -241,8 +252,11 @@ public isolated client class RedisClient {
 
             string[]|error keys = self.dbClient->keys(
                 string `${entity.substring(0, 1).toUpperAscii()}${entity.substring(1)}${KEY_SEPERATOR}*`);
+            io:println(keys);
             if keys is error || keys.length() == 0 {
+                io:println("this should be printed");
                 if cardinalityType == ONE_TO_MANY {
+                    io:println("this should be printed too");
                     'object[entity] = [];
                 } else {
                     'object[entity] = {};
@@ -282,6 +296,8 @@ public isolated client class RedisClient {
                     'object[entity] = associatedRecords[0];
                 } else {
                     'object[entity] = associatedRecords;
+                    io:println("Object with one to many associations");
+                    io:println('object);
                 }
             }
         } on fail persist:Error e {
@@ -458,7 +474,7 @@ public isolated client class RedisClient {
         }
     }
 
-    private isolated function getRecordWithDateTime(record {} insertRecord) returns record {}|persist:Error {
+    private isolated function newRecordWithDateTime(record {} insertRecord) returns record {}|persist:Error {
         record {} newRecord = {};
         foreach string recordfield in insertRecord.keys() {
             (FieldMetadata & readonly)? fieldMetaDataValue = self.fieldMetadata[recordfield];
