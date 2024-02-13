@@ -62,7 +62,7 @@ public class PersistRedisStream {
 
                 string[] keyFields = (<RedisClient>self.persistClient).getKeyFields();
                 foreach string keyField in keyFields {
-                    if self.fields.indexOf(keyField) is () {
+                    if self.fields.indexOf(keyField) is () && value.hasKey(keyField) {
                         _ = value.remove(keyField);
                     }
                 }

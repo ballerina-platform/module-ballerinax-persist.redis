@@ -112,11 +112,34 @@ publishing {
     }
 }
 
+static def checkExecResult(executionResult, failText, standardOutput) {
+    if (executionResult != null) {
+        Provider<ExecResult> execResultProvider = executionResult.getProvider()
+        int exitCode = execResultProvider.get().getExitValue()
+        if (exitCode != 0) {
+            throw new GradleException('Non-zero exit value: ' + exitCode)
+        }
+        if (standardOutput.toString().contains(failText)) {
+            throw new GradleException('"' + failText + '" string in output: ' + standardOutput.toString())
+        }
+    } else {
+        throw new GradleException('Returned a null execResult object')
+    }
+}
+
 task createRedisTestDockerImage(type: Exec) {
     if (!Os.isFamily(Os.FAMILY_WINDOWS)) {
         def standardOutput = new ByteArrayOutputStream()
         commandLine 'sh', '-c', "docker build -f ${project.projectDir}/tests/resources/Dockerfile -t ballerina-persist-redis" +
                 " -q ${project.projectDir}/tests/resources"
+        doLast {
+            checkExecResult(executionResult, 'Error', standardOutput)
+            sleep(10 * 1000)
+        }
+    } else {
+        def standardOutput = new ByteArrayOutputStream()
+        commandLine 'cmd', '/c', "docker build -f ${project.projectDir}\\tests\\resources\\Dockerfile -t ballerina-persist-redis" +
+                " -q ${project.projectDir}\\tests\\resources\\"
         doLast {
             checkExecResult(executionResult, 'Error', standardOutput)
             sleep(10 * 1000)
@@ -128,7 +151,15 @@ def checkRedisTestDockerContainerStatus(containerName) {
     if (!Os.isFamily(Os.FAMILY_WINDOWS)) {
         try {
             return exec {
-                commandLine 'sh', '-c', "docker exec -it ${containerName} redis-cli"
+                commandLine 'sh', '-c', "docker exec ${containerName} redis-cli"
+            }.exitValue
+        } catch (all) {
+            return 1;
+        }
+    } else {
+        try {
+            return exec {
+                commandLine 'cmd', '/c', "docker exec ${containerName} redis-cli"
             }.exitValue
         } catch (all) {
             return 1;
@@ -154,6 +185,23 @@ task startRedisTestDockerContainer(type: Exec) {
                 throw new GradleException("Docker container 'ballerina-persist-redis' health test exceeded timeout!")
             }
         }
+    } else {
+        def standardOutput = new ByteArrayOutputStream()
+        commandLine 'cmd', '/c',
+                "docker run --rm -d --name ballerina-persist-redis -p 6379:6379 -d ballerina-persist-redis"
+        def healthCheck = 1;
+        def counter = 0;
+        doLast {
+            checkExecResult(executionResult, 'Error', standardOutput)
+            while (healthCheck != 0 && counter < 12) {
+                sleep(5 * 1000)
+                healthCheck = checkRedisTestDockerContainerStatus("ballerina-persist-redis")
+                counter = counter + 1;
+            }
+            if (healthCheck != 0) {
+                throw new GradleException("Docker container 'ballerina-persist-redis' health test exceeded timeout!")
+            }
+        }
     }
 }
 
@@ -164,6 +212,16 @@ task stopRedisTestDockerContainer() {
                 def stdOut = new ByteArrayOutputStream()
                 exec {
                     commandLine 'sh', '-c', "docker stop ballerina-persist-redis"
+                    standardOutput = stdOut
+                }
+            } catch (all) {
+                println("Process can safely ignore stopRedisTestDockerContainer task")
+            }
+        } else {
+            try {
+                def stdOut = new ByteArrayOutputStream()
+                exec {
+                    commandLine 'cmd', '/c', "docker stop ballerina-persist-redis"
                     standardOutput = stdOut
                 }
             } catch (all) {

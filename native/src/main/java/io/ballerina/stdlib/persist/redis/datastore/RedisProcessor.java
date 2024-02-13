@@ -23,6 +23,7 @@ import io.ballerina.runtime.api.Future;
 import io.ballerina.runtime.api.PredefinedTypes;
 import io.ballerina.runtime.api.async.Callback;
 import io.ballerina.runtime.api.creators.TypeCreator;
+import io.ballerina.runtime.api.creators.ValueCreator;
 import io.ballerina.runtime.api.types.ErrorType;
 import io.ballerina.runtime.api.types.RecordType;
 import io.ballerina.runtime.api.types.StreamType;
@@ -67,6 +68,7 @@ public class RedisProcessor {
         RecordType recordType = (RecordType) targetType.getDescribingType();
 
         RecordType recordTypeWithIdFields = getRecordTypeWithKeyFields(keyFields, recordType);
+        BTypedesc targetTypeWithIdFields = ValueCreator.createTypedescValue(recordTypeWithIdFields);
         StreamType streamTypeWithIdFields = TypeCreator.createStreamType(recordTypeWithIdFields,
                 PredefinedTypes.TYPE_NULL);
 
@@ -106,7 +108,7 @@ public class RedisProcessor {
                                 typeDescriptions, persistClient, wrapError(bError)));
                     }
                 }, trxContextProperties, streamTypeWithIdFields,
-                targetType, true, typeMap, true, fields, true, includes, true);
+                targetTypeWithIdFields, true, typeMap, true, fields, true, includes, true);
 
         return null;
     }
