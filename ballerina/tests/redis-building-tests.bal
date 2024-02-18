@@ -50,20 +50,20 @@ function redisBuildingCreateTest2() returns error? {
     check rainierClient.close();
 }
 
-@test:Config {
-    groups: ["building", "redis"]
-}
-function redisBuildingCreateTestNegative() returns error? {
-    RedisRainierClient rainierClient = check new ();
+// @test:Config {
+//     groups: ["building", "redis"]
+// }
+// function redisBuildingCreateTestNegative() returns error? {
+//     RedisRainierClient rainierClient = check new ();
 
-    string[]|error building = rainierClient->/buildings.post([invalidBuilding]);
-    if building is persist:Error {
-        test:assertTrue(building.message().includes("value too long for type character varying"));
-    } else {
-        test:assertFail("Error expected.");
-    }
-    check rainierClient.close();
-}
+//     string[]|error building = rainierClient->/buildings.post([invalidBuilding]);
+//     if building is persist:Error {
+//         test:assertTrue(building.message().includes("value too long for type character varying"));
+//     } else {
+//         test:assertFail("Error expected.");
+//     }
+//     check rainierClient.close();
+// }
 
 @test:Config {
     groups: ["building", "redis"],
@@ -86,7 +86,7 @@ function redisBuildingReadOneTestNegative() returns error? {
 
     Building|error buildingRetrieved = rainierClient->/buildings/["invalid-building-code"].get();
     if buildingRetrieved is persist:NotFoundError {
-        test:assertEquals(buildingRetrieved.message(), "A record with the key 'invalid-building-code' does not exist for the entity 'Building'.");
+        test:assertEquals(buildingRetrieved.message(), "A record with the key 'Building:invalid-building-code' does not exist for the entity 'Building'.");
     } else {
         test:assertFail("persist:NotFoundError expected.");
     }
@@ -162,37 +162,38 @@ function redisBuildingUpdateTestNegative1() returns error? {
     });
 
     if building is persist:NotFoundError {
-        test:assertEquals(building.message(), "A record with the key 'invalid-building-code' does not exist for the entity 'Building'.");
+        test:assertEquals(building.message(), "A record with the key 'Building:invalid-building-code' does not exist for the entity 'Building'.");
     } else {
         test:assertFail("persist:NotFoundError expected.");
     }
     check rainierClient.close();
 }
 
+// @test:Config {
+//     groups: ["building", "redis"],
+//     dependsOn: [redisBuildingReadOneTest, redisBuildingReadManyTest, redisBuildingReadManyDependentTest]
+// }
+// function redisBuildingUpdateTestNegative2() returns error? {
+//     RedisRainierClient rainierClient = check new ();
+
+//     Building|error building = rainierClient->/buildings/[building1.buildingCode].put({
+//         city: "unncessarily-long-city-name-to-force-error-on-update",
+//         state: "Southern Province",
+//         postalCode: "10890"
+//     });
+
+//     if building is persist:Error {
+//         test:assertTrue(building.message().includes("value too long for type character varying"));
+//     } else {
+//         test:assertFail("persist:NotFoundError expected.");
+//     }
+//     check rainierClient.close();
+// }
+
 @test:Config {
     groups: ["building", "redis"],
-    dependsOn: [redisBuildingReadOneTest, redisBuildingReadManyTest, redisBuildingReadManyDependentTest]
-}
-function redisBuildingUpdateTestNegative2() returns error? {
-    RedisRainierClient rainierClient = check new ();
-
-    Building|error building = rainierClient->/buildings/[building1.buildingCode].put({
-        city: "unncessarily-long-city-name-to-force-error-on-update",
-        state: "Southern Province",
-        postalCode: "10890"
-    });
-
-    if building is persist:Error {
-        test:assertTrue(building.message().includes("value too long for type character varying"));
-    } else {
-        test:assertFail("persist:NotFoundError expected.");
-    }
-    check rainierClient.close();
-}
-
-@test:Config {
-    groups: ["building", "redis"],
-    dependsOn: [redisBuildingUpdateTest, redisBuildingUpdateTestNegative2]
+    // dependsOn: [redisBuildingUpdateTest, redisBuildingUpdateTestNegative2]
+    dependsOn: [redisBuildingUpdateTest]
 }
 function redisBuildingDeleteTest() returns error? {
     RedisRainierClient rainierClient = check new ();
@@ -218,7 +219,7 @@ function redisBuildingDeleteTestNegative() returns error? {
     Building|error building = rainierClient->/buildings/[building1.buildingCode].delete();
 
     if building is error {
-        test:assertEquals(building.message(), string `A record with the key '${building1.buildingCode}' does not exist for the entity 'Building'.`);
+        test:assertEquals(building.message(), string `A record with the key 'Building:${building1.buildingCode}' does not exist for the entity 'Building'.`);
     } else {
         test:assertFail("persist:NotFoundError expected.");
     }

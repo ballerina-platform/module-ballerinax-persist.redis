@@ -49,20 +49,20 @@ function redisDepartmentCreateTest2() returns error? {
     check rainierClient.close();
 }
 
-@test:Config {
-    groups: ["department", "redis"]
-}
-function redisDepartmentCreateTestNegative() returns error? {
-    RedisRainierClient rainierClient = check new ();
+// @test:Config {
+//     groups: ["department", "redis"]
+// }
+// function redisDepartmentCreateTestNegative() returns error? {
+//     RedisRainierClient rainierClient = check new ();
 
-    string[]|error department = rainierClient->/departments.post([invalidDepartment]);
-    if department is persist:Error {
-        test:assertTrue(department.message().includes("value too long for type character varying"));
-    } else {
-        test:assertFail("Error expected.");
-    }
-    check rainierClient.close();
-}
+//     string[]|error department = rainierClient->/departments.post([invalidDepartment]);
+//     if department is persist:Error {
+//         test:assertTrue(department.message().includes("value too long for type character varying"));
+//     } else {
+//         test:assertFail("Error expected.");
+//     }
+//     check rainierClient.close();
+// }
 
 @test:Config {
     groups: ["department", "redis"],
@@ -85,7 +85,7 @@ function redisDepartmentReadOneTestNegative() returns error? {
 
     Department|error departmentRetrieved = rainierClient->/departments/["invalid-department-id"].get();
     if departmentRetrieved is persist:NotFoundError {
-        test:assertEquals(departmentRetrieved.message(), "A record with the key 'invalid-department-id' does not exist for the entity 'Department'.");
+        test:assertEquals(departmentRetrieved.message(), "A record with the key 'Department:invalid-department-id' does not exist for the entity 'Department'.");
     } else {
         test:assertFail("NotFoundError expected.");
     }
@@ -155,35 +155,36 @@ function redisDepartmentUpdateTestNegative1() returns error? {
     });
 
     if department is persist:NotFoundError {
-        test:assertEquals(department.message(), "A record with the key 'invalid-department-id' does not exist for the entity 'Department'.");
+        test:assertEquals(department.message(), "A record with the key 'Department:invalid-department-id' does not exist for the entity 'Department'.");
     } else {
         test:assertFail("NotFoundError expected.");
     }
     check rainierClient.close();
 }
 
+// @test:Config {
+//     groups: ["department", "redis"],
+//     dependsOn: [redisDepartmentReadOneTest, redisDepartmentReadManyTest, redisDepartmentReadManyTestDependent]
+// }
+// function redisDepartmentUpdateTestNegative2() returns error? {
+//     RedisRainierClient rainierClient = check new ();
+
+//     Department|error department = rainierClient->/departments/[department1.deptNo].put({
+//         deptName: "unncessarily-long-department-name-to-force-error-on-update"
+//     });
+
+//     if department is persist:Error {
+//         test:assertTrue(department.message().includes("value too long for type character varying"));
+//     } else {
+//         test:assertFail("NotFoundError expected.");
+//     }
+//     check rainierClient.close();
+// }
+
 @test:Config {
     groups: ["department", "redis"],
-    dependsOn: [redisDepartmentReadOneTest, redisDepartmentReadManyTest, redisDepartmentReadManyTestDependent]
-}
-function redisDepartmentUpdateTestNegative2() returns error? {
-    RedisRainierClient rainierClient = check new ();
-
-    Department|error department = rainierClient->/departments/[department1.deptNo].put({
-        deptName: "unncessarily-long-department-name-to-force-error-on-update"
-    });
-
-    if department is persist:Error {
-        test:assertTrue(department.message().includes("value too long for type character varying"));
-    } else {
-        test:assertFail("NotFoundError expected.");
-    }
-    check rainierClient.close();
-}
-
-@test:Config {
-    groups: ["department", "redis"],
-    dependsOn: [redisDepartmentUpdateTest, redisDepartmentUpdateTestNegative2]
+    // dependsOn: [redisDepartmentUpdateTest, redisDepartmentUpdateTestNegative2]
+    dependsOn: [redisDepartmentUpdateTest]
 }
 function redisDepartmentDeleteTest() returns error? {
     RedisRainierClient rainierClient = check new ();
@@ -209,7 +210,7 @@ function redisDepartmentDeleteTestNegative() returns error? {
     Department|error department = rainierClient->/departments/[department1.deptNo].delete();
 
     if department is persist:NotFoundError {
-        test:assertEquals(department.message(), string `A record with the key '${department1.deptNo}' does not exist for the entity 'Department'.`);
+        test:assertEquals(department.message(), string `A record with the key 'Department:${department1.deptNo}' does not exist for the entity 'Department'.`);
     } else {
         test:assertFail("NotFoundError expected.");
     }

@@ -14,7 +14,6 @@
 // specific language governing permissions and limitations
 // under the License.
 import ballerina/persist;
-import ballerina/io;
 
 public class PersistRedisStream {
 
@@ -63,14 +62,10 @@ public class PersistRedisStream {
 
                 string[] keyFields = (<RedisClient>self.persistClient).getKeyFields();
                 foreach string keyField in keyFields {
-                    if self.fields.indexOf(keyField) is () {
+                    if self.fields.indexOf(keyField) is () && value.hasKey(keyField) {
                         _ = value.remove(keyField);
                     }
                 }
-                
-                io:println("value in the strea_types.bal");
-                io:println(value);
-                io:println(self.targetType);
                 // return {value: value};
                 record {|record {} value;|} nextRecord = {value: checkpanic value.cloneWithType(self.targetType)};
                 return nextRecord;

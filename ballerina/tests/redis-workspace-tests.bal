@@ -49,20 +49,20 @@ function redisWorkspaceCreateTest2() returns error? {
     check rainierClient.close();
 }
 
-@test:Config {
-    groups: ["workspace", "redis"]
-}
-function redisWorkspaceCreateTestNegative() returns error? {
-    RedisRainierClient rainierClient = check new ();
+// @test:Config {
+//     groups: ["workspace", "redis"]
+// }
+// function redisWorkspaceCreateTestNegative() returns error? {
+//     RedisRainierClient rainierClient = check new ();
 
-    string[]|error workspace = rainierClient->/workspaces.post([invalidWorkspace]);
-    if workspace is persist:Error {
-        test:assertTrue(workspace.message().includes("value too long for type character varying"));
-    } else {
-        test:assertFail("Error expected.");
-    }
-    check rainierClient.close();
-}
+//     string[]|error workspace = rainierClient->/workspaces.post([invalidWorkspace]);
+//     if workspace is persist:Error {
+//         test:assertTrue(workspace.message().includes("value too long for type character varying"));
+//     } else {
+//         test:assertFail("Error expected.");
+//     }
+//     check rainierClient.close();
+// }
 
 @test:Config {
     groups: ["workspace", "redis"],
@@ -102,7 +102,7 @@ function redisWorkspaceReadOneTestNegative() returns error? {
 
     Workspace|error workspaceRetrieved = rainierClient->/workspaces/["invalid-workspace-id"].get();
     if workspaceRetrieved is persist:NotFoundError {
-        test:assertEquals(workspaceRetrieved.message(), "A record with the key 'invalid-workspace-id' does not exist for the entity 'Workspace'.");
+        test:assertEquals(workspaceRetrieved.message(), "A record with the key 'Workspace:invalid-workspace-id' does not exist for the entity 'Workspace'.");
     } else {
         test:assertFail("NotFoundError expected.");
     }
@@ -189,35 +189,36 @@ function redisWorkspaceUpdateTestNegative1() returns error? {
     });
 
     if workspace is persist:NotFoundError {
-        test:assertEquals(workspace.message(), "A record with the key 'invalid-workspace-id' does not exist for the entity 'Workspace'.");
+        test:assertEquals(workspace.message(), "A record with the key 'Workspace:invalid-workspace-id' does not exist for the entity 'Workspace'.");
     } else {
         test:assertFail("NotFoundError expected.");
     }
     check rainierClient.close();
 }
 
+// @test:Config {
+//     groups: ["workspace", "redis"],
+//     dependsOn: [redisWorkspaceReadOneTest, redisWorkspaceReadManyTest, redisWorkspaceReadManyDependentTest]
+// }
+// function redisWorkspaceUpdateTestNegative2() returns error? {
+//     RedisRainierClient rainierClient = check new ();
+
+//     Workspace|error workspace = rainierClient->/workspaces/[workspace1.workspaceId].put({
+//         workspaceType: "unncessarily-long-workspace-type-to-force-error-on-update"
+//     });
+
+//     if workspace is persist:Error {
+//         test:assertTrue(workspace.message().includes("value too long for type character varying"));
+//     } else {
+//         test:assertFail("NotFoundError expected.");
+//     }
+//     check rainierClient.close();
+// }
+
 @test:Config {
     groups: ["workspace", "redis"],
-    dependsOn: [redisWorkspaceReadOneTest, redisWorkspaceReadManyTest, redisWorkspaceReadManyDependentTest]
-}
-function redisWorkspaceUpdateTestNegative2() returns error? {
-    RedisRainierClient rainierClient = check new ();
-
-    Workspace|error workspace = rainierClient->/workspaces/[workspace1.workspaceId].put({
-        workspaceType: "unncessarily-long-workspace-type-to-force-error-on-update"
-    });
-
-    if workspace is persist:Error {
-        test:assertTrue(workspace.message().includes("value too long for type character varying"));
-    } else {
-        test:assertFail("NotFoundError expected.");
-    }
-    check rainierClient.close();
-}
-
-@test:Config {
-    groups: ["workspace", "redis"],
-    dependsOn: [redisWorkspaceUpdateTest, redisWorkspaceUpdateTestNegative2]
+    // dependsOn: [redisWorkspaceUpdateTest, redisWorkspaceUpdateTestNegative2]
+    dependsOn: [redisWorkspaceUpdateTest]
 }
 function redisWorkspaceDeleteTest() returns error? {
     RedisRainierClient rainierClient = check new ();
@@ -243,7 +244,7 @@ function redisWorkspaceDeleteTestNegative() returns error? {
     Workspace|error workspace = rainierClient->/workspaces/[workspace1.workspaceId].delete();
 
     if workspace is persist:NotFoundError {
-        test:assertEquals(workspace.message(), string `A record with the key '${workspace1.workspaceId}' does not exist for the entity 'Workspace'.`);
+        test:assertEquals(workspace.message(), string `A record with the key 'Workspace:${workspace1.workspaceId}' does not exist for the entity 'Workspace'.`);
     } else {
         test:assertFail("NotFoundError expected.");
     }

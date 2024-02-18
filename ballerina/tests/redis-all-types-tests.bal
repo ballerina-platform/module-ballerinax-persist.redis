@@ -84,14 +84,7 @@ function redisAllTypesReadDependentTest() returns error? {
             decimalType: allTypes3Expected.decimalType,
             stringType: allTypes3Expected.stringType,
             dateType: allTypes3Expected.dateType,
-            timeOfDayType: allTypes3Expected.timeOfDayType,
-            booleanTypeOptional: allTypes3Expected.booleanTypeOptional,
-            intTypeOptional: allTypes3Expected.intTypeOptional,
-            floatTypeOptional: allTypes3Expected.floatTypeOptional,
-            decimalTypeOptional: allTypes3Expected.decimalTypeOptional,
-            stringTypeOptional: allTypes3Expected.stringTypeOptional,
-            dateTypeOptional: allTypes3Expected.dateTypeOptional,
-            timeOfDayTypeOptional: allTypes3Expected.timeOfDayTypeOptional
+            timeOfDayType: allTypes3Expected.timeOfDayType
         },
         {
             booleanType: allTypes1Expected.booleanType,
@@ -156,7 +149,7 @@ function redisAllTypesReadOneTestNegative() returns error? {
 
     AllTypes|persist:Error allTypesRetrieved = testEntitiesClient->/alltypes/[4].get();
     if allTypesRetrieved is persist:NotFoundError {
-        test:assertEquals(allTypesRetrieved.message(), "A record with the key '4' does not exist for the entity 'AllTypes'.");
+        test:assertEquals(allTypesRetrieved.message(), "A record with the key 'AllTypes:4' does not exist for the entity 'AllTypes'.");
     }
     else {
         test:assertFail("persist:NotFoundError expected.");

@@ -71,7 +71,7 @@ function redisIntIdFieldTest() returns error? {
     test:assertEquals(intIdRecord2, retrievedRecord2);
     intIdRecords = check from IntIdRecord intIdRecord in testEntitiesClient->/intidrecords.get(IntIdRecord)
         select intIdRecord;
-    test:assertEquals(intIdRecords, [intIdRecord3, intIdRecord1Updated]);
+    test:assertEquals(intIdRecords, [intIdRecord1Updated, intIdRecord3]);
 
     check testEntitiesClient.close();
 }
@@ -131,7 +131,7 @@ function redisStringIdFieldTest() returns error? {
     test:assertEquals(stringIdRecord2, retrievedRecord2);
     stringIdRecords = check from StringIdRecord stringIdRecord in testEntitiesClient->/stringidrecords.get(StringIdRecord)
         select stringIdRecord;
-    test:assertEquals(stringIdRecords, [stringIdRecord3, stringIdRecord1Updated]);
+    test:assertEquals(stringIdRecords, [stringIdRecord1Updated, stringIdRecord3]);
 
     check testEntitiesClient.close();
 }
@@ -191,7 +191,7 @@ function redisFloatIdFieldTest() returns error? {
     test:assertEquals(floatIdRecord2, retrievedRecord2);
     floatIdRecords = check from FloatIdRecord floatIdRecord in testEntitiesClient->/floatidrecords.get(FloatIdRecord)
         select floatIdRecord;
-    test:assertEquals(floatIdRecords, [floatIdRecord3, floatIdRecord1Updated]);
+    test:assertEquals(floatIdRecords, [floatIdRecord1Updated, floatIdRecord3]);
 }
 
 @test:Config {
@@ -249,7 +249,7 @@ function redisDecimalIdFieldTest() returns error? {
     test:assertEquals(decimalIdRecord2, retrievedRecord2);
     decimalIdRecords = check from DecimalIdRecord decimalIdRecord in testEntitiesClient->/decimalidrecords.get(DecimalIdRecord)
         select decimalIdRecord;
-    test:assertEquals(decimalIdRecords, [decimalIdRecord3, decimalIdRecord1Updated]);
+    test:assertEquals(decimalIdRecords, [decimalIdRecord1Updated, decimalIdRecord3]);
 
     check testEntitiesClient.close();
 }

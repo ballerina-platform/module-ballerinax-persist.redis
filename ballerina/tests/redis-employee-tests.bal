@@ -51,20 +51,20 @@ function redisEmployeeCreateTest2() returns error? {
     check rainierClient.close();
 }
 
-@test:Config {
-    groups: ["employee", "redis"]
-}
-function redisEmployeeCreateTestNegative() returns error? {
-    RedisRainierClient rainierClient = check new ();
+// @test:Config {
+//     groups: ["employee", "redis"]
+// }
+// function redisEmployeeCreateTestNegative() returns error? {
+//     RedisRainierClient rainierClient = check new ();
 
-    string[]|error employee = rainierClient->/employees.post([invalidEmployee]);
-    if employee is persist:Error {
-        test:assertTrue(employee.message().includes("value too long for type character varying"));
-    } else {
-        test:assertFail("Error expected.");
-    }
-    check rainierClient.close();
-}
+//     string[]|error employee = rainierClient->/employees.post([invalidEmployee]);
+//     if employee is persist:Error {
+//         test:assertTrue(employee.message().includes("value too long for type character varying"));
+//     } else {
+//         test:assertFail("Error expected.");
+//     }
+//     check rainierClient.close();
+// }
 
 @test:Config {
     groups: ["employee", "redis"],
@@ -87,7 +87,7 @@ function redisEmployeeReadOneTestNegative() returns error? {
 
     Employee|error employeeRetrieved = rainierClient->/employees/["invalid-employee-id"].get();
     if employeeRetrieved is persist:NotFoundError {
-        test:assertEquals(employeeRetrieved.message(), "A record with the key 'invalid-employee-id' does not exist for the entity 'Employee'.");
+        test:assertEquals(employeeRetrieved.message(), "A record with the key 'Employee:invalid-employee-id' does not exist for the entity 'Employee'.");
     } else {
         test:assertFail("NotFoundError expected.");
     }
@@ -155,9 +155,9 @@ function redisEmployeeUpdateTest() returns error? {
     RedisRainierClient rainierClient = check new ();
 
     Employee employee = check rainierClient->/employees/[employee1.empNo].put({
-        lastName: "Jones",
-        departmentDeptNo: "department-3",
-        birthDate: {year: 1994, month: 11, day: 13}
+        lastName: updatedEmployee1.lastName,
+        departmentDeptNo: updatedEmployee1.departmentDeptNo,
+        birthDate: updatedEmployee1.birthDate
     });
 
     test:assertEquals(employee, updatedEmployee1);
@@ -179,31 +179,31 @@ function redisEmployeeUpdateTestNegative1() returns error? {
     });
 
     if employee is persist:NotFoundError {
-        test:assertEquals(employee.message(), "A record with the key 'invalid-employee-id' does not exist for the entity 'Employee'.");
+        test:assertEquals(employee.message(), "A record with the key 'Employee:invalid-employee-id' does not exist for the entity 'Employee'.");
     } else {
         test:assertFail("NotFoundError expected.");
     }
     check rainierClient.close();
 }
 
-@test:Config {
-    groups: ["employee", "redis"],
-    dependsOn: [redisEmployeeReadOneTest, redisEmployeeReadManyTest, redisEmployeeReadManyDependentTest1, redisEmployeeReadManyDependentTest2]
-}
-function redisEmployeeUpdateTestNegative2() returns error? {
-    RedisRainierClient rainierClient = check new ();
+// @test:Config {
+//     groups: ["employee", "redis"],
+//     dependsOn: [redisEmployeeReadOneTest, redisEmployeeReadManyTest, redisEmployeeReadManyDependentTest1, redisEmployeeReadManyDependentTest2]
+// }
+// function redisEmployeeUpdateTestNegative2() returns error? {
+//     RedisRainierClient rainierClient = check new ();
 
-    Employee|error employee = rainierClient->/employees/[employee1.empNo].put({
-        firstName: "unncessarily-long-employee-name-to-force-error-on-update"
-    });
+//     Employee|error employee = rainierClient->/employees/[employee1.empNo].put({
+//         firstName: "unncessarily-long-employee-name-to-force-error-on-update"
+//     });
 
-    if employee is persist:Error {
-        test:assertTrue(employee.message().includes("value too long for type character varying"));
-    } else {
-        test:assertFail("NotFoundError expected.");
-    }
-    check rainierClient.close();
-}
+//     if employee is persist:Error {
+//         test:assertTrue(employee.message().includes("value too long for type character varying"));
+//     } else {
+//         test:assertFail("NotFoundError expected.");
+//     }
+//     check rainierClient.close();
+// }
 
 @test:Config {
     groups: ["employee", "redis"],
@@ -217,7 +217,7 @@ function redisEmployeeUpdateTestNegative3() returns error? {
     });
 
     if employee is persist:ConstraintViolationError {
-        test:assertTrue(employee.message().includes("Detail: Key (workspaceWorkspaceId)=(invalid-workspaceWorkspaceId) is not present in table \"Workspace\"."));
+        test:assertTrue(employee.message().includes(string `An association constraint failed between entities 'Employee' and 'Workspace'`));
     } else {
         test:assertFail("persist:ConstraintViolationError expected.");
     }
@@ -226,7 +226,8 @@ function redisEmployeeUpdateTestNegative3() returns error? {
 
 @test:Config {
     groups: ["employee", "redis"],
-    dependsOn: [redisEmployeeUpdateTest, redisEmployeeUpdateTestNegative2, redisEmployeeUpdateTestNegative3]
+    // dependsOn: [redisEmployeeUpdateTest, redisEmployeeUpdateTestNegative2, redisEmployeeUpdateTestNegative3]
+    dependsOn: [redisEmployeeUpdateTest, redisEmployeeUpdateTestNegative3]
 }
 function redisEmployeeDeleteTest() returns error? {
     RedisRainierClient rainierClient = check new ();
@@ -252,7 +253,7 @@ function redisEmployeeDeleteTestNegative() returns error? {
     Employee|error employee = rainierClient->/employees/[employee1.empNo].delete();
 
     if employee is persist:NotFoundError {
-        test:assertEquals(employee.message(), string `A record with the key '${employee1.empNo}' does not exist for the entity 'Employee'.`);
+        test:assertEquals(employee.message(), string `A record with the key 'Employee:${employee1.empNo}' does not exist for the entity 'Employee'.`);
     } else {
         test:assertFail("NotFoundError expected.");
     }

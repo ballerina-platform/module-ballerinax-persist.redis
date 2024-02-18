@@ -37,15 +37,15 @@ public type AllTypes record {|
     string stringType;
     time:Date dateType;
     time:TimeOfDay timeOfDayType;
-    boolean? booleanTypeOptional;
-    int? intTypeOptional;
-    float? floatTypeOptional;
-    decimal? decimalTypeOptional;
-    string? stringTypeOptional;
-    time:Date? dateTypeOptional;
-    time:TimeOfDay? timeOfDayTypeOptional;
     EnumType enumType;
-    EnumType? enumTypeOptional;
+    boolean booleanTypeOptional?;
+    int intTypeOptional?;
+    float floatTypeOptional?;
+    decimal decimalTypeOptional?;
+    string stringTypeOptional?;
+    time:Date dateTypeOptional?;
+    time:TimeOfDay timeOfDayTypeOptional?;
+    EnumType enumTypeOptional?;
 |};
 
 public type AllTypesOptionalized record {|
@@ -57,15 +57,15 @@ public type AllTypesOptionalized record {|
     string stringType?;
     time:Date dateType?;
     time:TimeOfDay timeOfDayType?;
-    boolean? booleanTypeOptional?;
-    int? intTypeOptional?;
-    float? floatTypeOptional?;
-    decimal? decimalTypeOptional?;
-    string? stringTypeOptional?;
-    time:Date? dateTypeOptional?;
-    time:TimeOfDay? timeOfDayTypeOptional?;
-    EnumType? enumType?;
-    EnumType? enumTypeOptional?;
+    EnumType enumType?;
+    boolean booleanTypeOptional?;
+    int intTypeOptional?;
+    float floatTypeOptional?;
+    decimal decimalTypeOptional?;
+    string stringTypeOptional?;
+    time:Date dateTypeOptional?;
+    time:TimeOfDay timeOfDayTypeOptional?;
+    EnumType enumTypeOptional?;
 |};
 
 public type AllTypesTargetType typedesc<AllTypesOptionalized>;
@@ -80,15 +80,15 @@ public type AllTypesUpdate record {|
     string stringType?;
     time:Date dateType?;
     time:TimeOfDay timeOfDayType?;
-    boolean? booleanTypeOptional?;
-    int? intTypeOptional?;
-    float? floatTypeOptional?;
-    decimal? decimalTypeOptional?;
-    string? stringTypeOptional?;
-    time:Date? dateTypeOptional?;
-    time:TimeOfDay? timeOfDayTypeOptional?;
-    EnumType? enumType?;
-    EnumType? enumTypeOptional?;
+    EnumType enumType?;
+    boolean booleanTypeOptional?;
+    int intTypeOptional?;
+    float floatTypeOptional?;
+    decimal decimalTypeOptional?;
+    string stringTypeOptional?;
+    time:Date dateTypeOptional?;
+    time:TimeOfDay timeOfDayTypeOptional?;
+    EnumType enumTypeOptional?;
 |};
 
 public type StringIdRecord record {|

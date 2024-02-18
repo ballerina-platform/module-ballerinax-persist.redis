@@ -138,8 +138,8 @@ task createRedisTestDockerImage(type: Exec) {
         }
     } else {
         def standardOutput = new ByteArrayOutputStream()
-        commandLine 'cmd', '/c', "docker build -f ${project.projectDir}/tests/resources/Dockerfile -t ballerina-persist-redis" +
-                " -q ${project.projectDir}/tests/resources"
+        commandLine 'cmd', '/c', "docker build -f ${project.projectDir}\\tests\\resources\\Dockerfile -t ballerina-persist-redis" +
+                " -q ${project.projectDir}\\tests\\resources\\"
         doLast {
             checkExecResult(executionResult, 'Error', standardOutput)
             sleep(10 * 1000)
@@ -232,11 +232,11 @@ task stopRedisTestDockerContainer() {
 }
 
 updateTomlFiles.dependsOn copyStdlibs
-// startRedisTestDockerContainer.dependsOn createRedisTestDockerImage
+startRedisTestDockerContainer.dependsOn createRedisTestDockerImage
 
-// build.dependsOn "generatePomFileForMavenPublication"
+build.dependsOn "generatePomFileForMavenPublication"
 build.dependsOn ":${packageName}-native:build"
-// build.finalizedBy stopRedisTestDockerContainer
+build.finalizedBy stopRedisTestDockerContainer
 
 test.dependsOn ":${packageName}-native:build"
-// test.dependsOn startRedisTestDockerContainer
+test.dependsOn startRedisTestDockerContainer

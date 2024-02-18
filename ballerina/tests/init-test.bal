@@ -121,15 +121,7 @@ AllTypes allTypes3 = {
     stringType: "test2",
     dateType: {year: 1996, month: 11, day: 3},
     timeOfDayType: {hour: 17, minute: 32, second: 34},
-    booleanTypeOptional: (),
-    intTypeOptional: (),
-    floatTypeOptional: (),
-    decimalTypeOptional: (),
-    stringTypeOptional: (),
-    dateTypeOptional: (),
-    timeOfDayTypeOptional: (),
-    enumType: "TYPE_1",
-    enumTypeOptional: ()
+    enumType: "TYPE_1"
 };
 
 AllTypes allTypes3Expected = {
@@ -141,15 +133,7 @@ AllTypes allTypes3Expected = {
     stringType: allTypes3.stringType,
     dateType: allTypes3.dateType,
     timeOfDayType: allTypes3.timeOfDayType,
-    booleanTypeOptional: allTypes3.booleanTypeOptional,
-    intTypeOptional: allTypes3.intTypeOptional,
-    floatTypeOptional: allTypes3.floatTypeOptional,
-    decimalTypeOptional: allTypes3.decimalTypeOptional,
-    stringTypeOptional: allTypes3.stringTypeOptional,
-    dateTypeOptional: allTypes3.dateTypeOptional,
-    timeOfDayTypeOptional: allTypes3.timeOfDayTypeOptional,
-    enumType: allTypes3.enumType,
-    enumTypeOptional: allTypes3.enumTypeOptional
+    enumType: allTypes3.enumType
 };
 
 AllTypes allTypes1Updated = {
@@ -200,13 +184,13 @@ public type AllTypesDependent record {|
     string stringType;
     time:Date dateType;
     time:TimeOfDay timeOfDayType;
-    boolean? booleanTypeOptional;
-    int? intTypeOptional;
-    float? floatTypeOptional;
-    decimal? decimalTypeOptional;
-    string? stringTypeOptional;
-    time:Date? dateTypeOptional;
-    time:TimeOfDay? timeOfDayTypeOptional;
+    boolean booleanTypeOptional?;
+    int intTypeOptional?;
+    float floatTypeOptional?;
+    decimal decimalTypeOptional?;
+    string stringTypeOptional?;
+    time:Date dateTypeOptional?;
+    time:TimeOfDay timeOfDayTypeOptional?;
 |};
 
 OrderItemExtended orderItemExtended1 = {
@@ -251,7 +235,7 @@ public type EmployeeInfo record {|
     record {|
         string deptName;
     |} department;
-    Workspace workspace;
+    Workspace workspace?;
 |};
 
 OrderItemExtended orderItemExtended2Retrieved = {
