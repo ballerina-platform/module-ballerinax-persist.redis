@@ -13,19 +13,20 @@
 // KIND, either express or implied.  See the License for the
 // specific language governing permissions and limitations
 // under the License.
-import ballerina/persist;
+import ballerina/time;
 
-// public type ConstraintViolationError {
-//     *persist:ConstraintViolationError;
-// };
-
-# Generates a new `persist:ConstraintViolationError` with the given parameters.
+# Generic type that can used to store any of the types supported by Redis
 #
-# + entity - The name of the entity  
-# + refEntity - The entity is being reffered
-# + return - The generated `persist:ConstraintViolationError`
-public isolated function getConstraintViolationError(string entity, string refEntity) 
-returns persist:ConstraintViolationError {
-    string message = string `An association constraint failed between entities '${entity}' and '${refEntity}'`;
-    return error persist:ConstraintViolationError(message);
-}
+public type RedisFieldType string|int|decimal|boolean|float|time:Date|time:TimeOfDay|time:Civil|time:Utc;
+
+# Generic type that can used to store any of time types supported by Redis
+#
+public type RedisTimeType time:Date|time:TimeOfDay;
+
+# Generic type that can used to store any of basic numeric types supported by Redis
+#
+public type RedisNumericType int|decimal|boolean|float;
+
+# Generic type that can used to store any of basic types supported by Redis
+#
+public type RedisBasicType int|string|decimal|boolean|float;

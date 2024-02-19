@@ -44,24 +44,25 @@ public class PersistRedisStream {
 
     public isolated function next() returns record {|record {} value;|}|persist:Error? {
         if self.err is persist:Error {
-            return <persist:Error>self.err;
+            return self.err;
         } else if self.anydataStream is stream<record {}, persist:Error?> {
             var anydataStream = <stream<record {}, error?>>self.anydataStream;
             var streamValue = anydataStream.next();
             if streamValue is () {
                 return streamValue;
             } else if (streamValue is error) {
-                return <persist:Error>error(streamValue.message());
+                return error persist:Error(streamValue.message());
             } else {
                 record {}|error value = streamValue.value;
                 if value is error {
-                    return <persist:Error>error(value.message());
+                    return error persist:Error(value.message());
                 }
-                check (<RedisClient>self.persistClient).getManyRelations(self.typeMap, value, self.fields, self.include);
+                check (<RedisClient>self.persistClient).getManyRelations(self.typeMap, value, self.fields, 
+                self.include);
 
                 string[] keyFields = (<RedisClient>self.persistClient).getKeyFields();
                 foreach string keyField in keyFields {
-                    if self.fields.indexOf(keyField) is () {
+                    if self.fields.indexOf(keyField) is () && value.hasKey(keyField) {
                         _ = value.remove(keyField);
                     }
                 }
@@ -74,10 +75,11 @@ public class PersistRedisStream {
     }
 
     public isolated function close() returns persist:Error? {
-        if self.anydataStream is stream<anydata, error?> {
-            error? e = (<stream<anydata, error?>>self.anydataStream).close();
+        (stream<anydata, error?>)? str = self.anydataStream;
+        if str is stream<anydata, error?> {
+            error? e = str.close();
             if e is error {
-                return <persist:Error>error(e.message());
+                return error persist:Error(e.message());
             }
         }
     }
