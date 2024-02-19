@@ -478,14 +478,6 @@ public isolated client class RedisTestEntitiesClient {
         return result;
     }
 
-    // remote isolated function queryNativeSQL(redis:ParameterizedQuery redisQuery, typedesc<record {}> rowType = <>) returns stream<rowType, persist:Error?> = @java:Method {
-    //     'class: "io.ballerina.stdlib.persist.redis.datastore.RedisProcessor"
-    // } external;
-
-    // remote isolated function executeNativeSQL(redis:ParameterizedQuery redisQuery) returns ExecutionResult|persist:Error = @java:Method {
-    //     'class: "io.ballerina.stdlib.persist.redis.datastore.RedisProcessor"
-    // } external;
-
     public isolated function close() returns persist:Error? {
         error? result = self.dbClient.stop();
         if result is error {

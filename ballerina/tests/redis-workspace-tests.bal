@@ -49,21 +49,6 @@ function redisWorkspaceCreateTest2() returns error? {
     check rainierClient.close();
 }
 
-// @test:Config {
-//     groups: ["workspace", "redis"]
-// }
-// function redisWorkspaceCreateTestNegative() returns error? {
-//     RedisRainierClient rainierClient = check new ();
-
-//     string[]|error workspace = rainierClient->/workspaces.post([invalidWorkspace]);
-//     if workspace is persist:Error {
-//         test:assertTrue(workspace.message().includes("value too long for type character varying"));
-//     } else {
-//         test:assertFail("Error expected.");
-//     }
-//     check rainierClient.close();
-// }
-
 @test:Config {
     groups: ["workspace", "redis"],
     dependsOn: [redisWorkspaceCreateTest]
@@ -161,22 +146,6 @@ function redisWorkspaceUpdateTest() returns error? {
     check rainierClient.close();
 }
 
-// @test:Config {
-//     groups: ["workspace", "redis"],
-//     dependsOn: [redisWorkspaceCreateTest, redisWorkspaceCreateTest2]
-// }
-// function redisWorkspaceReadWithClauses() returns error? {
-//     RedisRainierClient rainierClient = check new ();
-//     string value = "small";
-//     string id = "\"Workspace\".\"workspaceId\"";
-//     int count = 2;
-//     stream<Workspace, error?> workspaceStream = rainierClient->/workspaces.get(whereClause = `"Workspace"."workspaceType" = ${value} OR "Workspace"."workspaceType" = 'medium'`, orderByClause = `"Workspace"."workspaceId" DESC `, limitClause = ` ${count}`, groupByClause = `${id}`);
-//     Workspace[] workspaces = check from Workspace workspace in workspaceStream
-//             select workspace;
-//     test:assertEquals(workspaces, [workspace3, workspace2]);
-//     check rainierClient.close();
-// }
-
 @test:Config {
     groups: ["workspace", "redis"],
     dependsOn: [redisWorkspaceReadOneTest, redisWorkspaceReadManyTest, redisWorkspaceReadManyDependentTest]
@@ -196,28 +165,8 @@ function redisWorkspaceUpdateTestNegative1() returns error? {
     check rainierClient.close();
 }
 
-// @test:Config {
-//     groups: ["workspace", "redis"],
-//     dependsOn: [redisWorkspaceReadOneTest, redisWorkspaceReadManyTest, redisWorkspaceReadManyDependentTest]
-// }
-// function redisWorkspaceUpdateTestNegative2() returns error? {
-//     RedisRainierClient rainierClient = check new ();
-
-//     Workspace|error workspace = rainierClient->/workspaces/[workspace1.workspaceId].put({
-//         workspaceType: "unncessarily-long-workspace-type-to-force-error-on-update"
-//     });
-
-//     if workspace is persist:Error {
-//         test:assertTrue(workspace.message().includes("value too long for type character varying"));
-//     } else {
-//         test:assertFail("NotFoundError expected.");
-//     }
-//     check rainierClient.close();
-// }
-
 @test:Config {
     groups: ["workspace", "redis"],
-    // dependsOn: [redisWorkspaceUpdateTest, redisWorkspaceUpdateTestNegative2]
     dependsOn: [redisWorkspaceUpdateTest]
 }
 function redisWorkspaceDeleteTest() returns error? {

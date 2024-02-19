@@ -15,7 +15,7 @@
 // under the License.
 
 import ballerina/test;
-// import ballerina/persist;
+import ballerina/persist;
 
 @test:Config {
     groups: ["associations", "redis"],
@@ -60,9 +60,9 @@ function redisEmployeeRelationsTest() returns error? {
     _ = check rainierClient->/workspaces.post([workspace22]);
     _ = check rainierClient->/employees.post([employee21]);
 
-    // stream<EmployeeInfo, persist:Error?> employeeStream = rainierClient->/employees.get();
-    // EmployeeInfo[] employees = check from EmployeeInfo employee in employeeStream
-    //     select employee;
+    stream<EmployeeInfo, persist:Error?> employeeStream = rainierClient->/employees.get();
+    EmployeeInfo[] employees = check from EmployeeInfo employee in employeeStream
+        select employee;
 
     EmployeeInfo retrieved = check rainierClient->/employees/["employee-21"].get();
 
@@ -80,7 +80,7 @@ function redisEmployeeRelationsTest() returns error? {
     };
 
     test:assertEquals(retrieved, expected);
-    // test:assertTrue(employees.indexOf(expected) is int, "Expected EmployeeInfo not found.");
+    test:assertTrue(employees.indexOf(expected) is int, "Expected EmployeeInfo not found.");
     check rainierClient.close();
 }
 
@@ -138,9 +138,9 @@ function redisDepartmentRelationsTest() returns error? {
     _ = check rainierClient->/workspaces.post([workspace12]);
     _ = check rainierClient->/employees.post([employee11, employee12]);
 
-    // stream<DepartmentInfo, error?> departmentStream = rainierClient->/departments.get();
-    // DepartmentInfo[] departments = check from DepartmentInfo department in departmentStream
-    //     select department;
+    stream<DepartmentInfo, error?> departmentStream = rainierClient->/departments.get();
+    DepartmentInfo[] departments = check from DepartmentInfo department in departmentStream
+        select department;
 
     DepartmentInfo retrieved = check rainierClient->/departments/["department-12"].get();
 
@@ -159,8 +159,8 @@ function redisDepartmentRelationsTest() returns error? {
         ]
     };
 
+    test:assertTrue(departments.indexOf(expected) is int, "Expected DepartmentInfo not found.");
     test:assertEquals(retrieved, expected);
-    // test:assertTrue(departments.indexOf(expected) is int, "Expected DepartmentInfo not found.");
     check rainierClient.close();
 }
 

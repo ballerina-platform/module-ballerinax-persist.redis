@@ -208,6 +208,7 @@ public isolated client class RedisClient {
     public isolated function runUpdateQuery(anydata key, record {} updateRecord) returns persist:Error? {
         // Generate the key
         string recordKey = string `${self.collectionName}${self.getKey(key)}`;
+        string recordKeySuffix = self.getKey(key);
 
         // Verify the existence of the key
         do {
@@ -315,17 +316,26 @@ public isolated client class RedisClient {
                 } 
                 string[] joinFields = refMetaData.joinFields;
                 string newRelatedRecordKey = refMetaData.refCollection;
+                string prevRelatedRecordKey = refMetaData.refCollection;
                 foreach string joinField in joinFields{
                     if newUpdateRecord.hasKey(joinField){
                         newRelatedRecordKey += string `${KEY_SEPERATOR}${newUpdateRecord[joinField].toString()}`;
                     }else{
                         newRelatedRecordKey += string `${KEY_SEPERATOR}${prevRecord[joinField].toString()}`;
                     }
+                    prevRelatedRecordKey += string `${KEY_SEPERATOR}${prevRecord[joinField].toString()}`;
                 }
+                // Attach to new association
                 int|error sAdd = self.dbClient->sAdd(
-                    string `${newRelatedRecordKey}${KEY_SEPERATOR}${self.collectionName}`, [recordKey]);
+                    string `${newRelatedRecordKey}${KEY_SEPERATOR}${self.collectionName}`, [recordKeySuffix]);
                 if sAdd is error {
                     return error persist:Error(sAdd.message());
+                }
+                // Detach from previous association
+                int|error sRem = self.dbClient->sRem(
+                    string `${prevRelatedRecordKey}${KEY_SEPERATOR}${self.collectionName}`, [recordKeySuffix]);
+                if sRem is error {
+                    return error persist:Error(sRem.message());
                 }
             }
         }

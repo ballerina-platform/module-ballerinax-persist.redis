@@ -49,21 +49,6 @@ function redisDepartmentCreateTest2() returns error? {
     check rainierClient.close();
 }
 
-// @test:Config {
-//     groups: ["department", "redis"]
-// }
-// function redisDepartmentCreateTestNegative() returns error? {
-//     RedisRainierClient rainierClient = check new ();
-
-//     string[]|error department = rainierClient->/departments.post([invalidDepartment]);
-//     if department is persist:Error {
-//         test:assertTrue(department.message().includes("value too long for type character varying"));
-//     } else {
-//         test:assertFail("Error expected.");
-//     }
-//     check rainierClient.close();
-// }
-
 @test:Config {
     groups: ["department", "redis"],
     dependsOn: [redisDepartmentCreateTest]
@@ -162,28 +147,8 @@ function redisDepartmentUpdateTestNegative1() returns error? {
     check rainierClient.close();
 }
 
-// @test:Config {
-//     groups: ["department", "redis"],
-//     dependsOn: [redisDepartmentReadOneTest, redisDepartmentReadManyTest, redisDepartmentReadManyTestDependent]
-// }
-// function redisDepartmentUpdateTestNegative2() returns error? {
-//     RedisRainierClient rainierClient = check new ();
-
-//     Department|error department = rainierClient->/departments/[department1.deptNo].put({
-//         deptName: "unncessarily-long-department-name-to-force-error-on-update"
-//     });
-
-//     if department is persist:Error {
-//         test:assertTrue(department.message().includes("value too long for type character varying"));
-//     } else {
-//         test:assertFail("NotFoundError expected.");
-//     }
-//     check rainierClient.close();
-// }
-
 @test:Config {
     groups: ["department", "redis"],
-    // dependsOn: [redisDepartmentUpdateTest, redisDepartmentUpdateTestNegative2]
     dependsOn: [redisDepartmentUpdateTest]
 }
 function redisDepartmentDeleteTest() returns error? {

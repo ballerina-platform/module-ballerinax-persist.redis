@@ -51,21 +51,6 @@ function redisEmployeeCreateTest2() returns error? {
     check rainierClient.close();
 }
 
-// @test:Config {
-//     groups: ["employee", "redis"]
-// }
-// function redisEmployeeCreateTestNegative() returns error? {
-//     RedisRainierClient rainierClient = check new ();
-
-//     string[]|error employee = rainierClient->/employees.post([invalidEmployee]);
-//     if employee is persist:Error {
-//         test:assertTrue(employee.message().includes("value too long for type character varying"));
-//     } else {
-//         test:assertFail("Error expected.");
-//     }
-//     check rainierClient.close();
-// }
-
 @test:Config {
     groups: ["employee", "redis"],
     dependsOn: [redisEmployeeCreateTest]
@@ -186,25 +171,6 @@ function redisEmployeeUpdateTestNegative1() returns error? {
     check rainierClient.close();
 }
 
-// @test:Config {
-//     groups: ["employee", "redis"],
-//     dependsOn: [redisEmployeeReadOneTest, redisEmployeeReadManyTest, redisEmployeeReadManyDependentTest1, redisEmployeeReadManyDependentTest2]
-// }
-// function redisEmployeeUpdateTestNegative2() returns error? {
-//     RedisRainierClient rainierClient = check new ();
-
-//     Employee|error employee = rainierClient->/employees/[employee1.empNo].put({
-//         firstName: "unncessarily-long-employee-name-to-force-error-on-update"
-//     });
-
-//     if employee is persist:Error {
-//         test:assertTrue(employee.message().includes("value too long for type character varying"));
-//     } else {
-//         test:assertFail("NotFoundError expected.");
-//     }
-//     check rainierClient.close();
-// }
-
 @test:Config {
     groups: ["employee", "redis"],
     dependsOn: [redisEmployeeReadOneTest, redisEmployeeReadManyTest, redisEmployeeReadManyDependentTest1, redisEmployeeReadManyDependentTest2]
@@ -226,7 +192,6 @@ function redisEmployeeUpdateTestNegative3() returns error? {
 
 @test:Config {
     groups: ["employee", "redis"],
-    // dependsOn: [redisEmployeeUpdateTest, redisEmployeeUpdateTestNegative2, redisEmployeeUpdateTestNegative3]
     dependsOn: [redisEmployeeUpdateTest, redisEmployeeUpdateTestNegative3]
 }
 function redisEmployeeDeleteTest() returns error? {

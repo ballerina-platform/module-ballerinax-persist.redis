@@ -50,21 +50,6 @@ function redisBuildingCreateTest2() returns error? {
     check rainierClient.close();
 }
 
-// @test:Config {
-//     groups: ["building", "redis"]
-// }
-// function redisBuildingCreateTestNegative() returns error? {
-//     RedisRainierClient rainierClient = check new ();
-
-//     string[]|error building = rainierClient->/buildings.post([invalidBuilding]);
-//     if building is persist:Error {
-//         test:assertTrue(building.message().includes("value too long for type character varying"));
-//     } else {
-//         test:assertFail("Error expected.");
-//     }
-//     check rainierClient.close();
-// }
-
 @test:Config {
     groups: ["building", "redis"],
     dependsOn: [redisBuildingCreateTest]
@@ -169,30 +154,8 @@ function redisBuildingUpdateTestNegative1() returns error? {
     check rainierClient.close();
 }
 
-// @test:Config {
-//     groups: ["building", "redis"],
-//     dependsOn: [redisBuildingReadOneTest, redisBuildingReadManyTest, redisBuildingReadManyDependentTest]
-// }
-// function redisBuildingUpdateTestNegative2() returns error? {
-//     RedisRainierClient rainierClient = check new ();
-
-//     Building|error building = rainierClient->/buildings/[building1.buildingCode].put({
-//         city: "unncessarily-long-city-name-to-force-error-on-update",
-//         state: "Southern Province",
-//         postalCode: "10890"
-//     });
-
-//     if building is persist:Error {
-//         test:assertTrue(building.message().includes("value too long for type character varying"));
-//     } else {
-//         test:assertFail("persist:NotFoundError expected.");
-//     }
-//     check rainierClient.close();
-// }
-
 @test:Config {
     groups: ["building", "redis"],
-    // dependsOn: [redisBuildingUpdateTest, redisBuildingUpdateTestNegative2]
     dependsOn: [redisBuildingUpdateTest]
 }
 function redisBuildingDeleteTest() returns error? {

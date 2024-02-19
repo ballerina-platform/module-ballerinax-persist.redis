@@ -66,7 +66,6 @@ public class PersistRedisStream {
                         _ = value.remove(keyField);
                     }
                 }
-                // return {value: value};
                 record {|record {} value;|} nextRecord = {value: checkpanic value.cloneWithType(self.targetType)};
                 return nextRecord;
             }
