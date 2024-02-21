@@ -231,6 +231,25 @@ task stopRedisTestDockerContainer() {
     }
 }
 
+task pullRedisDependency(type: Exec) {
+    ignoreExitValue(true)
+    if (!Os.isFamily(Os.FAMILY_WINDOWS)) {
+        try {
+            String distributionBinPath = project.projectDir.absolutePath + "/build/jballerina-tools-${project.extensions.ballerina.langVersion}/bin"
+            commandLine 'sh', '-c', "$distributionBinPath/bal pull ballerinax/redis"
+        } catch (all) {
+            return 1
+        }
+    } else {
+        try {
+            String distributionBinPath = project.projectDir.absolutePath + "/build/jballerina-tools-${project.extensions.ballerina.langVersion}/bin"
+            commandLine 'cmd', '/c', "$distributionBinPath/bal.bat pull ballerinax/redis"
+        } catch (all) {
+            return 1
+        }
+    }
+}
+
 updateTomlFiles.dependsOn copyStdlibs
 startRedisTestDockerContainer.dependsOn createRedisTestDockerImage
 
