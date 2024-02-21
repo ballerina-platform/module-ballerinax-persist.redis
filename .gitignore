@@ -32,6 +32,9 @@ Ballerina.lock
 # Generated files
 target
 .ballerina
+ballerina/target
+ballerina/.devcontainer.json
+ballerina/build
 
 # gradle
 .gradle
