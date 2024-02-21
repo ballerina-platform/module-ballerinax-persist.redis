@@ -251,10 +251,12 @@ task pullRedisDependency(type: Exec) {
 }
 
 updateTomlFiles.dependsOn copyStdlibs
+pullRedisDependency.dependsOn unpackJballerinaTools
 startRedisTestDockerContainer.dependsOn createRedisTestDockerImage
 
 build.dependsOn "generatePomFileForMavenPublication"
 build.dependsOn ":${packageName}-native:build"
+build.dependsOn pullRedisDependency
 build.finalizedBy stopRedisTestDockerContainer
 
 test.dependsOn ":${packageName}-native:build"
