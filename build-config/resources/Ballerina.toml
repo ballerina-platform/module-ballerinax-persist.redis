@@ -1,0 +1,24 @@
+[package]
+org = "ballerinax"
+name = "persist.redis"
+version = "@toml.version@"
+authors = ["Ballerina"]
+keywords = ["persist", "redis", "experimental"]
+repository = "https://github.com/ballerina-platform/module-ballerinax-persist.redis"
+license = ["Apache-2.0"]
+distribution = "2201.8.0"
+
+[platform.java17]
+graalvmCompatible = true
+
+[[platform.java17.dependency]]
+groupId = "io.ballerina.persist"
+artifactId = "persist-redis-native"
+version = "@toml.version@"
+path = "../native/build/libs/persist.redis-native-@project.version@.jar"
+
+[[platform.java17.dependency]]
+groupId = "io.ballerina.stdlib"
+artifactId = "persist-native"
+version = "@persist.version@"
+path = "./lib/persist-native-@persist.native.version@.jar"
