@@ -32,6 +32,8 @@ jobs:
           updatedVersion=$VERSION-$startTime-$latestCommit
           echo $updatedVersion
           sed -i "s/version=\(.*\)/version=$updatedVersion/g" gradle.properties
+      - name: Give execute permission to gradlew
+        run: chmod +x ./gradlew
       - name: Build with Gradle
         env:
           packageUser: ${{ secrets.BALLERINA_BOT_USERNAME }}
