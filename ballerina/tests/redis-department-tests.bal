@@ -26,7 +26,7 @@ function redisDepartmentCreateTest() returns error? {
     string[] deptNos = check rainierClient->/departments.post([department1]);
     test:assertEquals(deptNos, [department1.deptNo]);
 
-    Department departmentRetrieved = check rainierClient->/departments/[department1.deptNo].get();
+    Department departmentRetrieved = check rainierClient->/departments/[department1.deptNo];
     test:assertEquals(departmentRetrieved, department1);
     check rainierClient.close();
 }
@@ -41,10 +41,10 @@ function redisDepartmentCreateTest2() returns error? {
 
     test:assertEquals(deptNos, [department2.deptNo, department3.deptNo]);
 
-    Department departmentRetrieved = check rainierClient->/departments/[department2.deptNo].get();
+    Department departmentRetrieved = check rainierClient->/departments/[department2.deptNo];
     test:assertEquals(departmentRetrieved, department2);
 
-    departmentRetrieved = check rainierClient->/departments/[department3.deptNo].get();
+    departmentRetrieved = check rainierClient->/departments/[department3.deptNo];
     test:assertEquals(departmentRetrieved, department3);
     check rainierClient.close();
 }
@@ -56,7 +56,7 @@ function redisDepartmentCreateTest2() returns error? {
 function redisDepartmentReadOneTest() returns error? {
     RedisRainierClient rainierClient = check new ();
 
-    Department departmentRetrieved = check rainierClient->/departments/[department1.deptNo].get();
+    Department departmentRetrieved = check rainierClient->/departments/[department1.deptNo];
     test:assertEquals(departmentRetrieved, department1);
     check rainierClient.close();
 }
@@ -68,7 +68,7 @@ function redisDepartmentReadOneTest() returns error? {
 function redisDepartmentReadOneTestNegative() returns error? {
     RedisRainierClient rainierClient = check new ();
 
-    Department|error departmentRetrieved = rainierClient->/departments/["invalid-department-id"].get();
+    Department|error departmentRetrieved = rainierClient->/departments/["invalid-department-id"];
     if departmentRetrieved is persist:NotFoundError {
         test:assertEquals(departmentRetrieved.message(), "A record with the key 'Department:invalid-department-id' does not exist for the entity 'Department'.");
     } else {
@@ -83,9 +83,9 @@ function redisDepartmentReadOneTestNegative() returns error? {
 }
 function redisDepartmentReadManyTest() returns error? {
     RedisRainierClient rainierClient = check new ();
-    stream<Department, error?> departmentStream = rainierClient->/departments.get();
+    stream<Department, error?> departmentStream = rainierClient->/departments;
     Department[] departments = check from Department department in departmentStream
-        select department;
+        order by department.deptNo ascending select department;
 
     test:assertEquals(departments, [department1, department2, department3]);
     check rainierClient.close();
@@ -98,14 +98,14 @@ function redisDepartmentReadManyTest() returns error? {
 function redisDepartmentReadManyTestDependent() returns error? {
     RedisRainierClient rainierClient = check new ();
 
-    stream<DepartmentInfo2, persist:Error?> departmentStream = rainierClient->/departments.get();
+    stream<DepartmentInfo2, persist:Error?> departmentStream = rainierClient->/departments;
     DepartmentInfo2[] departments = check from DepartmentInfo2 department in departmentStream
-        select department;
+        order by department.deptName ascending select department;
 
     test:assertEquals(departments, [
+        {deptName: department3.deptName},
         {deptName: department1.deptName},
-        {deptName: department2.deptName},
-        {deptName: department3.deptName}
+        {deptName: department2.deptName}
     ]);
     check rainierClient.close();
 }
@@ -123,7 +123,7 @@ function redisDepartmentUpdateTest() returns error? {
 
     test:assertEquals(department, updatedDepartment1);
 
-    Department departmentRetrieved = check rainierClient->/departments/[department1.deptNo].get();
+    Department departmentRetrieved = check rainierClient->/departments/[department1.deptNo];
     test:assertEquals(departmentRetrieved, updatedDepartment1);
     check rainierClient.close();
 }
@@ -157,9 +157,9 @@ function redisDepartmentDeleteTest() returns error? {
     Department department = check rainierClient->/departments/[department1.deptNo].delete();
     test:assertEquals(department, updatedDepartment1);
 
-    stream<Department, error?> departmentStream = rainierClient->/departments.get();
+    stream<Department, error?> departmentStream = rainierClient->/departments;
     Department[] departments = check from Department department2 in departmentStream
-        select department2;
+        order by department2.deptNo ascending select department2;
 
     test:assertEquals(departments, [department2, department3]);
     check rainierClient.close();

@@ -29,3 +29,12 @@ returns persist:ConstraintViolationError {
     string message = string `An association constraint failed between entities '${entity}' and '${refEntity}'`;
     return error persist:ConstraintViolationError(message);
 }
+
+
+# Generates a new `persist:AlreadyExistsError` with the given parameters.
+#
+# + entity - The name of the entity  
+# + return - The generated `persist:AlreadyExistsError`
+public isolated function getAlreadyExistsError(string entity) returns persist:AlreadyExistsError {
+    return error persist:AlreadyExistsError(string `A record already exist with the same key for the entity '${entity}'`);
+}

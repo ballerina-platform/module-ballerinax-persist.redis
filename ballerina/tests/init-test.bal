@@ -41,6 +41,9 @@ AllTypes allTypes1 = {
     stringType: "test-2",
     dateType: {year: 1993, month: 11, day: 3},
     timeOfDayType: {hour: 12, minute: 32, second: 34},
+    utcType: [1684493685, 0.998012000],
+    civilType: {utcOffset: {hours: 5, minutes: 30, seconds: 0}, timeAbbrev: "Asia/Colombo", year: 2024, month: 2, 
+    day: 27, hour: 10, minute: 30, second: 21},
     booleanTypeOptional: false,
     intTypeOptional: 5,
     floatTypeOptional: 6.0,
@@ -48,6 +51,9 @@ AllTypes allTypes1 = {
     stringTypeOptional: "test",
     dateTypeOptional: {year: 1993, month: 11, day: 3},
     timeOfDayTypeOptional: {hour: 12, minute: 32, second: 34},
+    utcTypeOptional: [1684493685, 0.998012000],
+    civilTypeOptional: {utcOffset: {hours: 5, minutes: 30, seconds: 0}, timeAbbrev: "Asia/Colombo", year: 2024, 
+    month: 2, day: 27, hour: 10, minute: 30, second: 21},
     enumType: "TYPE_3",
     enumTypeOptional: "TYPE_2"
 };
@@ -61,6 +67,8 @@ AllTypes allTypes1Expected = {
     stringType: allTypes1.stringType,
     dateType: allTypes1.dateType,
     timeOfDayType: allTypes1.timeOfDayType,
+    utcType: allTypes1.utcType,
+    civilType: allTypes1.civilType,
     booleanTypeOptional: allTypes1.booleanTypeOptional,
     intTypeOptional: allTypes1.intTypeOptional,
     floatTypeOptional: allTypes1.floatTypeOptional,
@@ -68,6 +76,8 @@ AllTypes allTypes1Expected = {
     stringTypeOptional: allTypes1.stringTypeOptional,
     dateTypeOptional: allTypes1.dateTypeOptional,
     timeOfDayTypeOptional: allTypes1.timeOfDayTypeOptional,
+    utcTypeOptional: allTypes1.utcTypeOptional,
+    civilTypeOptional: allTypes1.civilTypeOptional,
     enumType: allTypes1.enumType,
     enumTypeOptional: allTypes1.enumTypeOptional
 };
@@ -75,12 +85,15 @@ AllTypes allTypes1Expected = {
 AllTypes allTypes2 = {
     id: 2,
     booleanType: true,
-    intType: 35,
+    intType: 34,
     floatType: 63.0,
     decimalType: 233.44,
     stringType: "test2",
     dateType: {year: 1996, month: 11, day: 3},
     timeOfDayType: {hour: 17, minute: 32, second: 34},
+    utcType: [1684493685, 0.998012000],
+    civilType: {utcOffset: {hours: 5, minutes: 30, seconds: 0}, timeAbbrev: "Asia/Colombo", year: 2024, month: 2, 
+    day: 27, hour: 10, minute: 30, second: 21},
     booleanTypeOptional: true,
     intTypeOptional: 6,
     floatTypeOptional: 66.0,
@@ -88,6 +101,9 @@ AllTypes allTypes2 = {
     stringTypeOptional: "test2",
     dateTypeOptional: {year: 1293, month: 11, day: 3},
     timeOfDayTypeOptional: {hour: 19, minute: 32, second: 34},
+    utcTypeOptional: [1684493685, 0.998012000],
+    civilTypeOptional: {utcOffset: {hours: 5, minutes: 30, seconds: 0}, timeAbbrev: "Asia/Colombo", year: 2024, 
+    month: 2, day: 27, hour: 10, minute: 30, second: 21},
     enumType: "TYPE_1",
     enumTypeOptional: "TYPE_3"
 };
@@ -101,6 +117,8 @@ AllTypes allTypes2Expected = {
     stringType: allTypes2.stringType,
     dateType: allTypes2.dateType,
     timeOfDayType: allTypes2.timeOfDayType,
+    utcType: allTypes2.utcType,
+    civilType: allTypes2.civilType,
     booleanTypeOptional: allTypes2.booleanTypeOptional,
     intTypeOptional: allTypes2.intTypeOptional,
     floatTypeOptional: allTypes2.floatTypeOptional,
@@ -108,6 +126,8 @@ AllTypes allTypes2Expected = {
     stringTypeOptional: allTypes2.stringTypeOptional,
     dateTypeOptional: allTypes2.dateTypeOptional,
     timeOfDayTypeOptional: allTypes2.timeOfDayTypeOptional,
+    utcTypeOptional: allTypes2.utcTypeOptional,
+    civilTypeOptional: allTypes2.civilTypeOptional,
     enumType: allTypes2.enumType,
     enumTypeOptional: allTypes2.enumTypeOptional
 };
@@ -121,6 +141,9 @@ AllTypes allTypes3 = {
     stringType: "test2",
     dateType: {year: 1996, month: 11, day: 3},
     timeOfDayType: {hour: 17, minute: 32, second: 34},
+    utcType: [1684493685, 0.998012000],
+    civilType: {utcOffset: {hours: 5, minutes: 30, seconds: 0}, timeAbbrev: "Asia/Colombo", year: 2024, month: 2, 
+    day: 27, hour: 10, minute: 30, second: 21},
     enumType: "TYPE_1"
 };
 
@@ -133,6 +156,8 @@ AllTypes allTypes3Expected = {
     stringType: allTypes3.stringType,
     dateType: allTypes3.dateType,
     timeOfDayType: allTypes3.timeOfDayType,
+    utcType: allTypes3.utcType,
+    civilType: allTypes3.civilType,
     enumType: allTypes3.enumType
 };
 
@@ -145,6 +170,9 @@ AllTypes allTypes1Updated = {
     stringType: "testUpdate",
     dateType: {year: 1996, month: 12, day: 13},
     timeOfDayType: {hour: 16, minute: 12, second: 14},
+    utcType: [1686493685, 0.996012000],
+    civilType: {utcOffset: {hours: 6, minutes: 0, seconds: 0}, timeAbbrev: "Asia/Colombo", year: 2022, month: 12, 
+    day: 7, hour: 14, minute: 5, second: 43},
     booleanTypeOptional: true,
     intTypeOptional: 53,
     floatTypeOptional: 26.0,
@@ -152,6 +180,9 @@ AllTypes allTypes1Updated = {
     stringTypeOptional: "testUpdate",
     dateTypeOptional: {year: 1923, month: 11, day: 3},
     timeOfDayTypeOptional: {hour: 18, minute: 32, second: 34},
+    utcTypeOptional: [1686493685, 0.996012000],
+    civilTypeOptional: {utcOffset: {hours: 6, minutes: 0, seconds: 0}, timeAbbrev: "Asia/Colombo", year: 2022, 
+    month: 12, day: 7, hour: 14, minute: 5, second: 43},
     enumType: "TYPE_4",
     enumTypeOptional: "TYPE_4"
 };
@@ -165,6 +196,8 @@ AllTypes allTypes1UpdatedExpected = {
     stringType: allTypes1Updated.stringType,
     dateType: allTypes1Updated.dateType,
     timeOfDayType: allTypes1Updated.timeOfDayType,
+    utcType: allTypes1Updated.utcType,
+    civilType: allTypes1Updated.civilType,
     booleanTypeOptional: allTypes1Updated.booleanTypeOptional,
     intTypeOptional: allTypes1Updated.intTypeOptional,
     floatTypeOptional: allTypes1Updated.floatTypeOptional,
@@ -172,6 +205,8 @@ AllTypes allTypes1UpdatedExpected = {
     stringTypeOptional: allTypes1Updated.stringTypeOptional,
     dateTypeOptional: allTypes1Updated.dateTypeOptional,
     timeOfDayTypeOptional: allTypes1Updated.timeOfDayTypeOptional,
+    utcTypeOptional: allTypes1Updated.utcTypeOptional,
+    civilTypeOptional: allTypes1Updated.civilTypeOptional,
     enumType: allTypes1Updated.enumType,
     enumTypeOptional: allTypes1Updated.enumTypeOptional
 };
@@ -184,6 +219,8 @@ public type AllTypesDependent record {|
     string stringType;
     time:Date dateType;
     time:TimeOfDay timeOfDayType;
+    time:Utc utcType;
+    time:Civil civilType;
     boolean booleanTypeOptional?;
     int intTypeOptional?;
     float floatTypeOptional?;
@@ -191,6 +228,8 @@ public type AllTypesDependent record {|
     string stringTypeOptional?;
     time:Date dateTypeOptional?;
     time:TimeOfDay timeOfDayTypeOptional?;
+    time:Utc utcTypeOptional?;
+    time:Civil civilTypeOptional?;
 |};
 
 OrderItemExtended orderItemExtended1 = {
@@ -480,7 +519,7 @@ Workspace workspace2 = {
 
 Workspace workspace3 = {
     workspaceId: "workspace-3",
-    workspaceType: "small",
+    workspaceType: "large",
     locationBuildingCode: "building-2"
 };
 

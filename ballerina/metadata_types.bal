@@ -102,11 +102,6 @@ public enum CardinalityType {
 # Represents the type of the field data.
 # Only used by the generated persist clients and `persist:RedisClient`.
 #
-# + INT - `int` type
-# + STRING - `string` type
-# + FLOAT - `float` type
-# + BOOLEAN - `boolean` type
-# + TIME - `time/date` type
 public enum DataType {
     INT,
     STRING,
@@ -135,11 +130,25 @@ public enum RedisDataType {
 # Represents the types of Metadata in a `persist:RedisClient`.
 # Only used by the generated persist clients and `persist:RedisClient`.
 #
-# + FIELD_DATA_TYPE - `int` type
-# + RELATION - `string` type
-# + REF_FIELD_DATA_TYPE - `float` type
 public enum MetaData {
     FIELD_DATA_TYPE = "fieldDataType",
     RELATION = "relation",
     REF_FIELD_DATA_TYPE = "refFieldDataType"
+}
+
+# Represents the required DB operations in a `persist:RedisClient`.
+# Only used by `persist:RedisClient`.
+#
+public enum RedisDBOperation {
+    KEYS,
+    REDISTYPE,
+    EXISTS,
+    HMSET,
+    HMGET,
+    HSET,
+    SREM,
+    DEL,
+    SCARD,
+    SADD,
+    SMEMBERS
 }

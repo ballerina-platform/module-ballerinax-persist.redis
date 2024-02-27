@@ -60,11 +60,11 @@ function redisEmployeeRelationsTest() returns error? {
     _ = check rainierClient->/workspaces.post([workspace22]);
     _ = check rainierClient->/employees.post([employee21]);
 
-    stream<EmployeeInfo, persist:Error?> employeeStream = rainierClient->/employees.get();
+    stream<EmployeeInfo, persist:Error?> employeeStream = rainierClient->/employees;
     EmployeeInfo[] employees = check from EmployeeInfo employee in employeeStream
         select employee;
 
-    EmployeeInfo retrieved = check rainierClient->/employees/["employee-21"].get();
+    EmployeeInfo retrieved = check rainierClient->/employees/["employee-21"];
 
     EmployeeInfo expected = {
         firstName: "Tom",
@@ -138,11 +138,11 @@ function redisDepartmentRelationsTest() returns error? {
     _ = check rainierClient->/workspaces.post([workspace12]);
     _ = check rainierClient->/employees.post([employee11, employee12]);
 
-    stream<DepartmentInfo, error?> departmentStream = rainierClient->/departments.get();
+    stream<DepartmentInfo, error?> departmentStream = rainierClient->/departments;
     DepartmentInfo[] departments = check from DepartmentInfo department in departmentStream
         select department;
 
-    DepartmentInfo retrieved = check rainierClient->/departments/["department-12"].get();
+    DepartmentInfo retrieved = check rainierClient->/departments/["department-12"];
 
     DepartmentInfo expected = {
         deptNo: "department-12",
@@ -183,11 +183,11 @@ function redisWorkspaceRelationsTest() returns error? {
     };
     _ = check rainierClient->/employees.post([employee22]);
 
-    stream<WorkspaceInfo, error?> workspaceStream = rainierClient->/workspaces.get();
+    stream<WorkspaceInfo, error?> workspaceStream = rainierClient->/workspaces;
     WorkspaceInfo[] workspaces = check from WorkspaceInfo workspace in workspaceStream
         select workspace;
 
-    WorkspaceInfo retrieved = check rainierClient->/workspaces/["workspace-22"].get();
+    WorkspaceInfo retrieved = check rainierClient->/workspaces/["workspace-22"];
 
     WorkspaceInfo expected = {
         workspaceType: "medium",
@@ -247,11 +247,11 @@ function redisWorkspaceRelationsTest() returns error? {
 function redisBuildingRelationsTest() returns error? {
     RedisRainierClient rainierClient = check new ();
 
-    stream<BuildingInfo, error?> buildingStream = rainierClient->/buildings.get();
+    stream<BuildingInfo, error?> buildingStream = rainierClient->/buildings;
     BuildingInfo[] buildings = check from BuildingInfo building in buildingStream
         select building;
 
-    BuildingInfo retrieved = check rainierClient->/buildings/["building-22"].get();
+    BuildingInfo retrieved = check rainierClient->/buildings/["building-22"];
 
     BuildingInfo expected = {
         buildingCode: "building-22",

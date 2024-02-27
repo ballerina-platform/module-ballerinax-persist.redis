@@ -43,34 +43,34 @@ function redisIntIdFieldTest() returns error? {
     test:assertEquals(ids, [intIdRecord1.id, intIdRecord2.id, intIdRecord3.id]);
 
     // read one
-    IntIdRecord retrievedRecord1 = check testEntitiesClient->/intidrecords/[intIdRecord1.id].get();
+    IntIdRecord retrievedRecord1 = check testEntitiesClient->/intidrecords/[intIdRecord1.id];
     test:assertEquals(intIdRecord1, retrievedRecord1);
 
     // read one dependent
-    IntIdRecordDependent retrievedRecord1Dependent = check testEntitiesClient->/intidrecords/[intIdRecord1.id].get();
+    IntIdRecordDependent retrievedRecord1Dependent = check testEntitiesClient->/intidrecords/[intIdRecord1.id];
     test:assertEquals({randomField: intIdRecord1.randomField}, retrievedRecord1Dependent);
 
     // read
     IntIdRecord[] intIdRecords = check from IntIdRecord intIdRecord in testEntitiesClient->/intidrecords.get(IntIdRecord)
-        select intIdRecord;
+        order by intIdRecord.id ascending select intIdRecord;
     test:assertEquals(intIdRecords, [intIdRecord1, intIdRecord2, intIdRecord3]);
 
     // read dependent
     IntIdRecordDependent[] intIdRecordsDependent = check from IntIdRecordDependent intIdRecord in testEntitiesClient->/intidrecords.get(IntIdRecordDependent)
-        select intIdRecord;
+        order by intIdRecord.randomField ascending select intIdRecord;
     test:assertEquals(intIdRecordsDependent, [{randomField: intIdRecord1.randomField}, {randomField: intIdRecord2.randomField}, {randomField: intIdRecord3.randomField}]);
 
     // update
     retrievedRecord1 = check testEntitiesClient->/intidrecords/[intIdRecord1.id].put({randomField: intIdRecord1Updated.randomField});
     test:assertEquals(intIdRecord1Updated, retrievedRecord1);
-    retrievedRecord1 = check testEntitiesClient->/intidrecords/[intIdRecord1.id].get();
+    retrievedRecord1 = check testEntitiesClient->/intidrecords/[intIdRecord1.id];
     test:assertEquals(intIdRecord1Updated, retrievedRecord1);
 
     // delete
     IntIdRecord retrievedRecord2 = check testEntitiesClient->/intidrecords/[intIdRecord2.id].delete();
     test:assertEquals(intIdRecord2, retrievedRecord2);
     intIdRecords = check from IntIdRecord intIdRecord in testEntitiesClient->/intidrecords.get(IntIdRecord)
-        select intIdRecord;
+        order by intIdRecord.id ascending select intIdRecord;
     test:assertEquals(intIdRecords, [intIdRecord1Updated, intIdRecord3]);
 
     check testEntitiesClient.close();
@@ -103,34 +103,34 @@ function redisStringIdFieldTest() returns error? {
     test:assertEquals(ids, [stringIdRecord1.id, stringIdRecord2.id, stringIdRecord3.id]);
 
     // read one
-    StringIdRecord retrievedRecord1 = check testEntitiesClient->/stringidrecords/[stringIdRecord1.id].get();
+    StringIdRecord retrievedRecord1 = check testEntitiesClient->/stringidrecords/[stringIdRecord1.id];
     test:assertEquals(stringIdRecord1, retrievedRecord1);
 
     // read one dependent
-    StringIdRecordDependent retrievedRecord1Dependent = check testEntitiesClient->/stringidrecords/[stringIdRecord1.id].get();
+    StringIdRecordDependent retrievedRecord1Dependent = check testEntitiesClient->/stringidrecords/[stringIdRecord1.id];
     test:assertEquals({randomField: stringIdRecord1.randomField}, retrievedRecord1Dependent);
 
     // read
     StringIdRecord[] stringIdRecords = check from StringIdRecord stringIdRecord in testEntitiesClient->/stringidrecords.get(StringIdRecord)
-        select stringIdRecord;
+        order by stringIdRecord.id ascending select stringIdRecord;
     test:assertEquals(stringIdRecords, [stringIdRecord1, stringIdRecord2, stringIdRecord3]);
 
     // read dependent
     StringIdRecordDependent[] stringIdRecordsDependent = check from StringIdRecordDependent stringIdRecord in testEntitiesClient->/stringidrecords.get(StringIdRecordDependent)
-        select stringIdRecord;
+        order by stringIdRecord.randomField ascending select stringIdRecord;
     test:assertEquals(stringIdRecordsDependent, [{randomField: stringIdRecord1.randomField}, {randomField: stringIdRecord2.randomField}, {randomField: stringIdRecord3.randomField}]);
 
     // update
     retrievedRecord1 = check testEntitiesClient->/stringidrecords/[stringIdRecord1.id].put({randomField: stringIdRecord1Updated.randomField});
     test:assertEquals(stringIdRecord1Updated, retrievedRecord1);
-    retrievedRecord1 = check testEntitiesClient->/stringidrecords/[stringIdRecord1.id].get();
+    retrievedRecord1 = check testEntitiesClient->/stringidrecords/[stringIdRecord1.id];
     test:assertEquals(stringIdRecord1Updated, retrievedRecord1);
 
     // delete
     StringIdRecord retrievedRecord2 = check testEntitiesClient->/stringidrecords/[stringIdRecord2.id].delete();
     test:assertEquals(stringIdRecord2, retrievedRecord2);
     stringIdRecords = check from StringIdRecord stringIdRecord in testEntitiesClient->/stringidrecords.get(StringIdRecord)
-        select stringIdRecord;
+        order by stringIdRecord.id ascending select stringIdRecord;
     test:assertEquals(stringIdRecords, [stringIdRecord1Updated, stringIdRecord3]);
 
     check testEntitiesClient.close();
@@ -163,34 +163,34 @@ function redisFloatIdFieldTest() returns error? {
     test:assertEquals(ids, [floatIdRecord1.id, floatIdRecord2.id, floatIdRecord3.id]);
 
     // read one
-    FloatIdRecord retrievedRecord1 = check testEntitiesClient->/floatidrecords/[floatIdRecord1.id].get();
+    FloatIdRecord retrievedRecord1 = check testEntitiesClient->/floatidrecords/[floatIdRecord1.id];
     test:assertEquals(floatIdRecord1, retrievedRecord1);
 
     // read one dependent
-    FloatIdRecordDependent retrievedRecord1Dependent = check testEntitiesClient->/floatidrecords/[floatIdRecord1.id].get();
+    FloatIdRecordDependent retrievedRecord1Dependent = check testEntitiesClient->/floatidrecords/[floatIdRecord1.id];
     test:assertEquals({randomField: floatIdRecord1.randomField}, retrievedRecord1Dependent);
 
     // read
     FloatIdRecord[] floatIdRecords = check from FloatIdRecord floatIdRecord in testEntitiesClient->/floatidrecords.get(FloatIdRecord)
-        select floatIdRecord;
+        order by floatIdRecord.id ascending select floatIdRecord;
     test:assertEquals(floatIdRecords, [floatIdRecord1, floatIdRecord2, floatIdRecord3]);
 
     // read dependent
     FloatIdRecordDependent[] floatIdRecordsDependent = check from FloatIdRecordDependent floatIdRecord in testEntitiesClient->/floatidrecords.get(FloatIdRecordDependent)
-        select floatIdRecord;
+        order by floatIdRecord.randomField ascending select floatIdRecord;
     test:assertEquals(floatIdRecordsDependent, [{randomField: floatIdRecord1.randomField}, {randomField: floatIdRecord2.randomField}, {randomField: floatIdRecord3.randomField}]);
 
     // update
     retrievedRecord1 = check testEntitiesClient->/floatidrecords/[floatIdRecord1.id].put({randomField: floatIdRecord1Updated.randomField});
     test:assertEquals(floatIdRecord1Updated, retrievedRecord1);
-    retrievedRecord1 = check testEntitiesClient->/floatidrecords/[floatIdRecord1.id].get();
+    retrievedRecord1 = check testEntitiesClient->/floatidrecords/[floatIdRecord1.id];
     test:assertEquals(floatIdRecord1Updated, retrievedRecord1);
 
     // delete
     FloatIdRecord retrievedRecord2 = check testEntitiesClient->/floatidrecords/[floatIdRecord2.id].delete();
     test:assertEquals(floatIdRecord2, retrievedRecord2);
     floatIdRecords = check from FloatIdRecord floatIdRecord in testEntitiesClient->/floatidrecords.get(FloatIdRecord)
-        select floatIdRecord;
+        order by floatIdRecord.id ascending select floatIdRecord;
     test:assertEquals(floatIdRecords, [floatIdRecord1Updated, floatIdRecord3]);
 }
 
@@ -221,34 +221,34 @@ function redisDecimalIdFieldTest() returns error? {
     test:assertEquals(ids, [decimalIdRecord1.id, decimalIdRecord2.id, decimalIdRecord3.id]);
 
     // read one
-    DecimalIdRecord retrievedRecord1 = check testEntitiesClient->/decimalidrecords/[decimalIdRecord1.id].get();
+    DecimalIdRecord retrievedRecord1 = check testEntitiesClient->/decimalidrecords/[decimalIdRecord1.id];
     test:assertEquals(decimalIdRecord1, retrievedRecord1);
 
     // read one dependent
-    DecimalIdRecordDependent retrievedRecord1Dependent = check testEntitiesClient->/decimalidrecords/[decimalIdRecord1.id].get();
+    DecimalIdRecordDependent retrievedRecord1Dependent = check testEntitiesClient->/decimalidrecords/[decimalIdRecord1.id];
     test:assertEquals({randomField: decimalIdRecord1.randomField}, retrievedRecord1Dependent);
 
     // read
     DecimalIdRecord[] decimalIdRecords = check from DecimalIdRecord decimalIdRecord in testEntitiesClient->/decimalidrecords.get(DecimalIdRecord)
-        select decimalIdRecord;
+        order by decimalIdRecord.id ascending select decimalIdRecord;
     test:assertEquals(decimalIdRecords, [decimalIdRecord1, decimalIdRecord2, decimalIdRecord3]);
 
     // read dependent
     DecimalIdRecordDependent[] decimalIdRecordsDependent = check from DecimalIdRecordDependent decimalIdRecord in testEntitiesClient->/decimalidrecords.get(DecimalIdRecordDependent)
-        select decimalIdRecord;
+        order by decimalIdRecord.randomField ascending select decimalIdRecord;
     test:assertEquals(decimalIdRecordsDependent, [{randomField: decimalIdRecord1.randomField}, {randomField: decimalIdRecord2.randomField}, {randomField: decimalIdRecord3.randomField}]);
 
     // update
     retrievedRecord1 = check testEntitiesClient->/decimalidrecords/[decimalIdRecord1.id].put({randomField: decimalIdRecord1Updated.randomField});
     test:assertEquals(decimalIdRecord1Updated, retrievedRecord1);
-    retrievedRecord1 = check testEntitiesClient->/decimalidrecords/[decimalIdRecord1.id].get();
+    retrievedRecord1 = check testEntitiesClient->/decimalidrecords/[decimalIdRecord1.id];
     test:assertEquals(decimalIdRecord1Updated, retrievedRecord1);
 
     // delete
     DecimalIdRecord retrievedRecord2 = check testEntitiesClient->/decimalidrecords/[decimalIdRecord2.id].delete();
     test:assertEquals(decimalIdRecord2, retrievedRecord2);
     decimalIdRecords = check from DecimalIdRecord decimalIdRecord in testEntitiesClient->/decimalidrecords.get(DecimalIdRecord)
-        select decimalIdRecord;
+        order by decimalIdRecord.id ascending select decimalIdRecord;
     test:assertEquals(decimalIdRecords, [decimalIdRecord1Updated, decimalIdRecord3]);
 
     check testEntitiesClient.close();
@@ -278,17 +278,17 @@ function redisBooleanIdFieldTest() returns error? {
     test:assertEquals(ids, [booleanIdRecord1.id, booleanIdRecord2.id]);
 
     // read one
-    BooleanIdRecord retrievedRecord1 = check testEntitiesClient->/booleanidrecords/[booleanIdRecord1.id].get();
+    BooleanIdRecord retrievedRecord1 = check testEntitiesClient->/booleanidrecords/[booleanIdRecord1.id];
     test:assertEquals(booleanIdRecord1, retrievedRecord1);
 
     // read one dependent
-    BooleanIdRecordDependent retrievedRecord1Dependent = check testEntitiesClient->/booleanidrecords/[booleanIdRecord1.id].get();
+    BooleanIdRecordDependent retrievedRecord1Dependent = check testEntitiesClient->/booleanidrecords/[booleanIdRecord1.id];
     test:assertEquals({randomField: booleanIdRecord1.randomField}, retrievedRecord1Dependent);
 
     // read
     BooleanIdRecord[] booleanIdRecords = check from BooleanIdRecord booleanIdRecord in testEntitiesClient->/booleanidrecords.get(BooleanIdRecord)
-        select booleanIdRecord;
-    test:assertEquals(booleanIdRecords, [booleanIdRecord2, booleanIdRecord1]);
+        order by booleanIdRecord.randomField ascending select booleanIdRecord;
+    test:assertEquals(booleanIdRecords, [booleanIdRecord1, booleanIdRecord2]);
 
     // read dependent
     BooleanIdRecordDependent[] booleanIdRecordsDependent = check from BooleanIdRecordDependent booleanIdRecord in testEntitiesClient->/booleanidrecords.get(BooleanIdRecordDependent)
@@ -298,7 +298,7 @@ function redisBooleanIdFieldTest() returns error? {
     // update
     retrievedRecord1 = check testEntitiesClient->/booleanidrecords/[booleanIdRecord1.id].put({randomField: booleanIdRecord1Updated.randomField});
     test:assertEquals(booleanIdRecord1Updated, retrievedRecord1);
-    retrievedRecord1 = check testEntitiesClient->/booleanidrecords/[booleanIdRecord1.id].get();
+    retrievedRecord1 = check testEntitiesClient->/booleanidrecords/[booleanIdRecord1.id];
     test:assertEquals(booleanIdRecord1Updated, retrievedRecord1);
 
     // delete
@@ -350,11 +350,11 @@ function redisAllTypesIdFieldTest() returns error? {
     ]);
 
     // read one
-    AllTypesIdRecord retrievedRecord1 = check testEntitiesClient->/alltypesidrecords/[allTypesIdRecord1.booleanType]/[allTypesIdRecord1.intType]/[allTypesIdRecord1.floatType]/[allTypesIdRecord1.decimalType]/[allTypesIdRecord1.stringType].get();
+    AllTypesIdRecord retrievedRecord1 = check testEntitiesClient->/alltypesidrecords/[allTypesIdRecord1.booleanType]/[allTypesIdRecord1.intType]/[allTypesIdRecord1.floatType]/[allTypesIdRecord1.decimalType]/[allTypesIdRecord1.stringType];
     test:assertEquals(allTypesIdRecord1, retrievedRecord1);
 
     // read one dependent
-    AllTypesIdRecordDependent retrievedRecord1Dependent = check testEntitiesClient->/alltypesidrecords/[allTypesIdRecord1.booleanType]/[allTypesIdRecord1.intType]/[allTypesIdRecord1.floatType]/[allTypesIdRecord1.decimalType]/[allTypesIdRecord1.stringType].get();
+    AllTypesIdRecordDependent retrievedRecord1Dependent = check testEntitiesClient->/alltypesidrecords/[allTypesIdRecord1.booleanType]/[allTypesIdRecord1.intType]/[allTypesIdRecord1.floatType]/[allTypesIdRecord1.decimalType]/[allTypesIdRecord1.stringType];
     test:assertEquals({randomField: allTypesIdRecord1.randomField}, retrievedRecord1Dependent);
 
     // read
@@ -370,7 +370,7 @@ function redisAllTypesIdFieldTest() returns error? {
     // update
     retrievedRecord1 = check testEntitiesClient->/alltypesidrecords/[allTypesIdRecord1.booleanType]/[allTypesIdRecord1.intType]/[allTypesIdRecord1.floatType]/[allTypesIdRecord1.decimalType]/[allTypesIdRecord1.stringType].put({randomField: allTypesIdRecord1Updated.randomField});
     test:assertEquals(allTypesIdRecord1Updated, retrievedRecord1);
-    retrievedRecord1 = check testEntitiesClient->/alltypesidrecords/[allTypesIdRecord1.booleanType]/[allTypesIdRecord1.intType]/[allTypesIdRecord1.floatType]/[allTypesIdRecord1.decimalType]/[allTypesIdRecord1.stringType].get();
+    retrievedRecord1 = check testEntitiesClient->/alltypesidrecords/[allTypesIdRecord1.booleanType]/[allTypesIdRecord1.intType]/[allTypesIdRecord1.floatType]/[allTypesIdRecord1.decimalType]/[allTypesIdRecord1.stringType];
     test:assertEquals(allTypesIdRecord1Updated, retrievedRecord1);
 
     // delete
@@ -435,11 +435,11 @@ function redisCompositeAssociationsTest() returns error? {
     test:assertEquals(ids, [compositeAssociationRecord1.id, compositeAssociationRecord2.id]);
 
     // read one
-    CompositeAssociationRecord retrievedRecord1 = check testEntitiesClient->/compositeassociationrecords/[compositeAssociationRecord1.id].get();
+    CompositeAssociationRecord retrievedRecord1 = check testEntitiesClient->/compositeassociationrecords/[compositeAssociationRecord1.id];
     test:assertEquals(compositeAssociationRecord1, retrievedRecord1);
 
     // read one dependent
-    CompositeAssociationRecordDependent retrievedRecord1Dependent = check testEntitiesClient->/compositeassociationrecords/[compositeAssociationRecord1.id].get();
+    CompositeAssociationRecordDependent retrievedRecord1Dependent = check testEntitiesClient->/compositeassociationrecords/[compositeAssociationRecord1.id];
     test:assertEquals({
         randomField: compositeAssociationRecord1.randomField,
         alltypesidrecordIntType: compositeAssociationRecord1.alltypesidrecordIntType,
@@ -449,12 +449,12 @@ function redisCompositeAssociationsTest() returns error? {
 
     // read
     CompositeAssociationRecord[] compositeAssociationRecords = check from CompositeAssociationRecord compositeAssociationRecord in testEntitiesClient->/compositeassociationrecords.get(CompositeAssociationRecord)
-        select compositeAssociationRecord;
+        order by compositeAssociationRecord.id ascending select compositeAssociationRecord;
     test:assertEquals(compositeAssociationRecords, [compositeAssociationRecord1, compositeAssociationRecord2]);
 
     // read dependent
     CompositeAssociationRecordDependent[] compositeAssociationRecordsDependent = check from CompositeAssociationRecordDependent compositeAssociationRecord in testEntitiesClient->/compositeassociationrecords.get(CompositeAssociationRecordDependent)
-        select compositeAssociationRecord;
+        order by compositeAssociationRecord.randomField ascending select compositeAssociationRecord;
     test:assertEquals(compositeAssociationRecordsDependent, [
         {randomField: compositeAssociationRecord1.randomField, alltypesidrecordIntType: compositeAssociationRecord1.alltypesidrecordIntType, alltypesidrecordDecimalType: compositeAssociationRecord1.alltypesidrecordDecimalType, allTypesIdRecord: {intType: allTypesIdRecord1.intType, stringType: allTypesIdRecord1.stringType, booleanType: allTypesIdRecord1.booleanType, randomField: allTypesIdRecord1.randomField}},
         {randomField: compositeAssociationRecord2.randomField, alltypesidrecordIntType: compositeAssociationRecord2.alltypesidrecordIntType, alltypesidrecordDecimalType: compositeAssociationRecord2.alltypesidrecordDecimalType, allTypesIdRecord: {intType: allTypesIdRecord1.intType, stringType: allTypesIdRecord1.stringType, booleanType: allTypesIdRecord1.booleanType, randomField: allTypesIdRecord1.randomField}}
@@ -463,7 +463,7 @@ function redisCompositeAssociationsTest() returns error? {
     // update
     retrievedRecord1 = check testEntitiesClient->/compositeassociationrecords/[compositeAssociationRecord1.id].put({randomField: "test1Updated"});
     test:assertEquals(compositeAssociationRecordUpdated1, retrievedRecord1);
-    retrievedRecord1 = check testEntitiesClient->/compositeassociationrecords/[compositeAssociationRecord1.id].get();
+    retrievedRecord1 = check testEntitiesClient->/compositeassociationrecords/[compositeAssociationRecord1.id];
     test:assertEquals(compositeAssociationRecordUpdated1, retrievedRecord1);
 
     // delete

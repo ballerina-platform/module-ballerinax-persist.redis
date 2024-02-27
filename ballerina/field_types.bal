@@ -21,7 +21,7 @@ public type RedisFieldType string|int|decimal|boolean|float|time:Date|time:TimeO
 
 # Generic type that can used to store any of time types supported by Redis
 #
-public type RedisTimeType time:Date|time:TimeOfDay;
+public type RedisTimeType time:Date|time:TimeOfDay|time:Civil|time:Utc;
 
 # Generic type that can used to store any of basic numeric types supported by Redis
 #

@@ -37,6 +37,8 @@ public type AllTypes record {|
     string stringType;
     time:Date dateType;
     time:TimeOfDay timeOfDayType;
+    time:Utc utcType;
+    time:Civil civilType;
     EnumType enumType;
     boolean booleanTypeOptional?;
     int intTypeOptional?;
@@ -45,6 +47,8 @@ public type AllTypes record {|
     string stringTypeOptional?;
     time:Date dateTypeOptional?;
     time:TimeOfDay timeOfDayTypeOptional?;
+    time:Utc utcTypeOptional?;
+    time:Civil civilTypeOptional?;
     EnumType enumTypeOptional?;
 |};
 
@@ -57,6 +61,8 @@ public type AllTypesOptionalized record {|
     string stringType?;
     time:Date dateType?;
     time:TimeOfDay timeOfDayType?;
+    time:Utc utcType?;
+    time:Civil civilType?;
     EnumType enumType?;
     boolean booleanTypeOptional?;
     int intTypeOptional?;
@@ -65,6 +71,8 @@ public type AllTypesOptionalized record {|
     string stringTypeOptional?;
     time:Date dateTypeOptional?;
     time:TimeOfDay timeOfDayTypeOptional?;
+    time:Utc utcTypeOptional?;
+    time:Civil civilTypeOptional?;
     EnumType enumTypeOptional?;
 |};
 
@@ -80,6 +88,8 @@ public type AllTypesUpdate record {|
     string stringType?;
     time:Date dateType?;
     time:TimeOfDay timeOfDayType?;
+    time:Utc utcType?;
+    time:Civil civilType?;
     EnumType enumType?;
     boolean booleanTypeOptional?;
     int intTypeOptional?;
@@ -88,6 +98,8 @@ public type AllTypesUpdate record {|
     string stringTypeOptional?;
     time:Date dateTypeOptional?;
     time:TimeOfDay timeOfDayTypeOptional?;
+    time:Utc utcTypeOptional?;
+    time:Civil civilTypeOptional?;
     EnumType enumTypeOptional?;
 |};
 

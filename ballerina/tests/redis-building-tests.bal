@@ -26,7 +26,7 @@ function redisBuildingCreateTest() returns error? {
     string[] buildingCodes = check rainierClient->/buildings.post([building1]);
     test:assertEquals(buildingCodes, [building1.buildingCode]);
 
-    Building buildingRetrieved = check rainierClient->/buildings/[building1.buildingCode].get();
+    Building buildingRetrieved = check rainierClient->/buildings/[building1.buildingCode];
     test:assertEquals(buildingRetrieved, building1);
     check rainierClient.close();
 }
@@ -41,10 +41,10 @@ function redisBuildingCreateTest2() returns error? {
 
     test:assertEquals(buildingCodes, [building2.buildingCode, building3.buildingCode]);
 
-    Building buildingRetrieved = check rainierClient->/buildings/[building2.buildingCode].get();
+    Building buildingRetrieved = check rainierClient->/buildings/[building2.buildingCode];
     test:assertEquals(buildingRetrieved, building2);
 
-    buildingRetrieved = check rainierClient->/buildings/[building3.buildingCode].get();
+    buildingRetrieved = check rainierClient->/buildings/[building3.buildingCode];
     test:assertEquals(buildingRetrieved, building3);
 
     check rainierClient.close();
@@ -57,7 +57,7 @@ function redisBuildingCreateTest2() returns error? {
 function redisBuildingReadOneTest() returns error? {
     RedisRainierClient rainierClient = check new ();
 
-    Building buildingRetrieved = check rainierClient->/buildings/[building1.buildingCode].get();
+    Building buildingRetrieved = check rainierClient->/buildings/[building1.buildingCode];
     test:assertEquals(buildingRetrieved, building1);
     check rainierClient.close();
 }
@@ -69,7 +69,7 @@ function redisBuildingReadOneTest() returns error? {
 function redisBuildingReadOneTestNegative() returns error? {
     RedisRainierClient rainierClient = check new ();
 
-    Building|error buildingRetrieved = rainierClient->/buildings/["invalid-building-code"].get();
+    Building|error buildingRetrieved = rainierClient->/buildings/["invalid-building-code"];
     if buildingRetrieved is persist:NotFoundError {
         test:assertEquals(buildingRetrieved.message(), "A record with the key 'Building:invalid-building-code' does not exist for the entity 'Building'.");
     } else {
@@ -85,9 +85,9 @@ function redisBuildingReadOneTestNegative() returns error? {
 function redisBuildingReadManyTest() returns error? {
     RedisRainierClient rainierClient = check new ();
 
-    stream<Building, error?> buildingStream = rainierClient->/buildings.get();
+    stream<Building, error?> buildingStream = rainierClient->/buildings;
     Building[] buildings = check from Building building in buildingStream
-        select building;
+        order by building.buildingCode ascending select building;
 
     test:assertEquals(buildings, [building1, building2, building3]);
     check rainierClient.close();
@@ -100,9 +100,9 @@ function redisBuildingReadManyTest() returns error? {
 function redisBuildingReadManyDependentTest() returns error? {
     RedisRainierClient rainierClient = check new ();
 
-    stream<BuildingInfo2, error?> buildingStream = rainierClient->/buildings.get();
+    stream<BuildingInfo2, error?> buildingStream = rainierClient->/buildings;
     BuildingInfo2[] buildings = check from BuildingInfo2 building in buildingStream
-        select building;
+        order by building.postalCode ascending select building;
 
     test:assertEquals(buildings, [
         {city: building1.city, state: building1.state, country: building1.country, postalCode: building1.postalCode, 'type: building1.'type},
@@ -128,7 +128,7 @@ function redisBuildingUpdateTest() returns error? {
 
     test:assertEquals(building, updatedBuilding1);
 
-    Building buildingRetrieved = check rainierClient->/buildings/[building1.buildingCode].get();
+    Building buildingRetrieved = check rainierClient->/buildings/[building1.buildingCode];
     test:assertEquals(buildingRetrieved, updatedBuilding1);
     check rainierClient.close();
 }
@@ -164,9 +164,9 @@ function redisBuildingDeleteTest() returns error? {
     Building building = check rainierClient->/buildings/[building1.buildingCode].delete();
     test:assertEquals(building, updatedBuilding1);
 
-    stream<Building, error?> buildingStream = rainierClient->/buildings.get();
+    stream<Building, error?> buildingStream = rainierClient->/buildings;
     Building[] buildings = check from Building building2 in buildingStream
-        select building2;
+        order by building2.buildingCode ascending select building2;
 
     test:assertEquals(buildings, [building2, building3]);
     check rainierClient.close();

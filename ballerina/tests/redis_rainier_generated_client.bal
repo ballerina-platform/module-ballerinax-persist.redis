@@ -173,11 +173,11 @@ public isolated client class RedisRainierClient {
             redisClient = self.persistClients.get(EMPLOYEE);
         }
         _ = check redisClient.runUpdateQuery(empNo, value);
-        return self->/employees/[empNo].get();
+        return self->/employees/[empNo];
     }
 
     isolated resource function delete employees/[string empNo]() returns Employee|persist:Error {
-        Employee result = check self->/employees/[empNo].get();
+        Employee result = check self->/employees/[empNo];
         RedisClient redisClient;
         lock {
             redisClient = self.persistClients.get(EMPLOYEE);
@@ -212,11 +212,11 @@ public isolated client class RedisRainierClient {
             redisClient = self.persistClients.get(WORKSPACE);
         }
         _ = check redisClient.runUpdateQuery(workspaceId, value);
-        return self->/workspaces/[workspaceId].get();
+        return self->/workspaces/[workspaceId];
     }
 
     isolated resource function delete workspaces/[string workspaceId]() returns Workspace|persist:Error {
-        Workspace result = check self->/workspaces/[workspaceId].get();
+        Workspace result = check self->/workspaces/[workspaceId];
         RedisClient redisClient;
         lock {
             redisClient = self.persistClients.get(WORKSPACE);
@@ -251,11 +251,11 @@ public isolated client class RedisRainierClient {
             redisClient = self.persistClients.get(BUILDING);
         }
         _ = check redisClient.runUpdateQuery(buildingCode, value);
-        return self->/buildings/[buildingCode].get();
+        return self->/buildings/[buildingCode];
     }
 
     isolated resource function delete buildings/[string buildingCode]() returns Building|persist:Error {
-        Building result = check self->/buildings/[buildingCode].get();
+        Building result = check self->/buildings/[buildingCode];
         RedisClient redisClient;
         lock {
             redisClient = self.persistClients.get(BUILDING);
@@ -290,11 +290,11 @@ public isolated client class RedisRainierClient {
             redisClient = self.persistClients.get(DEPARTMENT);
         }
         _ = check redisClient.runUpdateQuery(deptNo, value);
-        return self->/departments/[deptNo].get();
+        return self->/departments/[deptNo];
     }
 
     isolated resource function delete departments/[string deptNo]() returns Department|persist:Error {
-        Department result = check self->/departments/[deptNo].get();
+        Department result = check self->/departments/[deptNo];
         RedisClient redisClient;
         lock {
             redisClient = self.persistClients.get(DEPARTMENT);
@@ -329,11 +329,11 @@ public isolated client class RedisRainierClient {
             redisClient = self.persistClients.get(ORDER_ITEM);
         }
         _ = check redisClient.runUpdateQuery({"orderId": orderId, "itemId": itemId}, value);
-        return self->/orderitems/[orderId]/[itemId].get();
+        return self->/orderitems/[orderId]/[itemId];
     }
 
     isolated resource function delete orderitems/[string orderId]/[string itemId]() returns OrderItem|persist:Error {
-        OrderItem result = check self->/orderitems/[orderId]/[itemId].get();
+        OrderItem result = check self->/orderitems/[orderId]/[itemId];
         RedisClient redisClient;
         lock {
             redisClient = self.persistClients.get(ORDER_ITEM);

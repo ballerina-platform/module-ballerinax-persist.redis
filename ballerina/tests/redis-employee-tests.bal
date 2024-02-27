@@ -27,7 +27,7 @@ function redisEmployeeCreateTest() returns error? {
     string[] empNos = check rainierClient->/employees.post([employee1]);
     test:assertEquals(empNos, [employee1.empNo]);
 
-    Employee employeeRetrieved = check rainierClient->/employees/[employee1.empNo].get();
+    Employee employeeRetrieved = check rainierClient->/employees/[employee1.empNo];
     test:assertEquals(employeeRetrieved, employee1);
     check rainierClient.close();
 }
@@ -43,10 +43,10 @@ function redisEmployeeCreateTest2() returns error? {
 
     test:assertEquals(empNos, [employee2.empNo, employee3.empNo]);
 
-    Employee employeeRetrieved = check rainierClient->/employees/[employee2.empNo].get();
+    Employee employeeRetrieved = check rainierClient->/employees/[employee2.empNo];
     test:assertEquals(employeeRetrieved, employee2);
 
-    employeeRetrieved = check rainierClient->/employees/[employee3.empNo].get();
+    employeeRetrieved = check rainierClient->/employees/[employee3.empNo];
     test:assertEquals(employeeRetrieved, employee3);
     check rainierClient.close();
 }
@@ -58,7 +58,7 @@ function redisEmployeeCreateTest2() returns error? {
 function redisEmployeeReadOneTest() returns error? {
     RedisRainierClient rainierClient = check new ();
 
-    Employee employeeRetrieved = check rainierClient->/employees/[employee1.empNo].get();
+    Employee employeeRetrieved = check rainierClient->/employees/[employee1.empNo];
     test:assertEquals(employeeRetrieved, employee1);
     check rainierClient.close();
 }
@@ -70,7 +70,7 @@ function redisEmployeeReadOneTest() returns error? {
 function redisEmployeeReadOneTestNegative() returns error? {
     RedisRainierClient rainierClient = check new ();
 
-    Employee|error employeeRetrieved = rainierClient->/employees/["invalid-employee-id"].get();
+    Employee|error employeeRetrieved = rainierClient->/employees/["invalid-employee-id"];
     if employeeRetrieved is persist:NotFoundError {
         test:assertEquals(employeeRetrieved.message(), "A record with the key 'Employee:invalid-employee-id' does not exist for the entity 'Employee'.");
     } else {
@@ -86,9 +86,9 @@ function redisEmployeeReadOneTestNegative() returns error? {
 function redisEmployeeReadManyTest() returns error? {
     RedisRainierClient rainierClient = check new ();
 
-    stream<Employee, persist:Error?> employeeStream = rainierClient->/employees.get();
+    stream<Employee, persist:Error?> employeeStream = rainierClient->/employees;
     Employee[] employees = check from Employee employee in employeeStream
-        select employee;
+        order by employee.empNo ascending select employee;
 
     test:assertEquals(employees, [employee1, employee2, employee3]);
     check rainierClient.close();
@@ -101,14 +101,14 @@ function redisEmployeeReadManyTest() returns error? {
 function redisEmployeeReadManyDependentTest1() returns error? {
     RedisRainierClient rainierClient = check new ();
 
-    stream<EmployeeName, persist:Error?> employeeStream = rainierClient->/employees.get();
+    stream<EmployeeName, persist:Error?> employeeStream = rainierClient->/employees;
     EmployeeName[] employees = check from EmployeeName employee in employeeStream
-        select employee;
+        order by employee.firstName ascending select employee;
 
     test:assertEquals(employees, [
-        {firstName: employee1.firstName, lastName: employee1.lastName},
+        {firstName: employee3.firstName, lastName: employee3.lastName},
         {firstName: employee2.firstName, lastName: employee2.lastName},
-        {firstName: employee3.firstName, lastName: employee3.lastName}
+        {firstName: employee1.firstName, lastName: employee1.lastName}
     ]);
     check rainierClient.close();
 }
@@ -120,9 +120,9 @@ function redisEmployeeReadManyDependentTest1() returns error? {
 function redisEmployeeReadManyDependentTest2() returns error? {
     RedisRainierClient rainierClient = check new ();
 
-    stream<EmployeeInfo2, persist:Error?> employeeStream = rainierClient->/employees.get();
+    stream<EmployeeInfo2, persist:Error?> employeeStream = rainierClient->/employees;
     EmployeeInfo2[] employees = check from EmployeeInfo2 employee in employeeStream
-        select employee;
+        order by employee.empNo ascending select employee;
 
     test:assertEquals(employees, [
         {empNo: employee1.empNo, birthDate: employee1.birthDate, departmentDeptNo: employee1.departmentDeptNo, workspaceWorkspaceId: employee1.workspaceWorkspaceId},
@@ -147,7 +147,7 @@ function redisEmployeeUpdateTest() returns error? {
 
     test:assertEquals(employee, updatedEmployee1);
 
-    Employee employeeRetrieved = check rainierClient->/employees/[employee1.empNo].get();
+    Employee employeeRetrieved = check rainierClient->/employees/[employee1.empNo];
     test:assertEquals(employeeRetrieved, updatedEmployee1);
     check rainierClient.close();
 }
@@ -200,9 +200,9 @@ function redisEmployeeDeleteTest() returns error? {
     Employee employee = check rainierClient->/employees/[employee1.empNo].delete();
     test:assertEquals(employee, updatedEmployee1);
 
-    stream<Employee, error?> employeeStream = rainierClient->/employees.get();
+    stream<Employee, error?> employeeStream = rainierClient->/employees;
     Employee[] employees = check from Employee employee2 in employeeStream
-        select employee2;
+        order by employee2.empNo ascending select employee2;
 
     test:assertEquals(employees, [employee2, employee3]);
     check rainierClient.close();

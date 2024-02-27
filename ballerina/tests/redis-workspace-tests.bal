@@ -27,7 +27,7 @@ function redisWorkspaceCreateTest() returns error? {
     string[] workspaceIds = check rainierClient->/workspaces.post([workspace1]);
     test:assertEquals(workspaceIds, [workspace1.workspaceId]);
 
-    Workspace workspaceRetrieved = check rainierClient->/workspaces/[workspace1.workspaceId].get();
+    Workspace workspaceRetrieved = check rainierClient->/workspaces/[workspace1.workspaceId];
     test:assertEquals(workspaceRetrieved, workspace1);
 }
 
@@ -41,10 +41,10 @@ function redisWorkspaceCreateTest2() returns error? {
 
     test:assertEquals(workspaceIds, [workspace2.workspaceId, workspace3.workspaceId]);
 
-    Workspace workspaceRetrieved = check rainierClient->/workspaces/[workspace2.workspaceId].get();
+    Workspace workspaceRetrieved = check rainierClient->/workspaces/[workspace2.workspaceId];
     test:assertEquals(workspaceRetrieved, workspace2);
 
-    workspaceRetrieved = check rainierClient->/workspaces/[workspace3.workspaceId].get();
+    workspaceRetrieved = check rainierClient->/workspaces/[workspace3.workspaceId];
     test:assertEquals(workspaceRetrieved, workspace3);
     check rainierClient.close();
 }
@@ -56,7 +56,7 @@ function redisWorkspaceCreateTest2() returns error? {
 function redisWorkspaceReadOneTest() returns error? {
     RedisRainierClient rainierClient = check new ();
 
-    Workspace workspaceRetrieved = check rainierClient->/workspaces/[workspace1.workspaceId].get();
+    Workspace workspaceRetrieved = check rainierClient->/workspaces/[workspace1.workspaceId];
     test:assertEquals(workspaceRetrieved, workspace1);
     check rainierClient.close();
 }
@@ -68,7 +68,7 @@ function redisWorkspaceReadOneTest() returns error? {
 function redisWorkspaceReadOneDependentTest() returns error? {
     RedisRainierClient rainierClient = check new ();
 
-    WorkspaceInfo2 workspaceRetrieved = check rainierClient->/workspaces/[workspace1.workspaceId].get();
+    WorkspaceInfo2 workspaceRetrieved = check rainierClient->/workspaces/[workspace1.workspaceId];
     test:assertEquals(workspaceRetrieved,
         {
         workspaceType: workspace1.workspaceType,
@@ -85,7 +85,7 @@ function redisWorkspaceReadOneDependentTest() returns error? {
 function redisWorkspaceReadOneTestNegative() returns error? {
     RedisRainierClient rainierClient = check new ();
 
-    Workspace|error workspaceRetrieved = rainierClient->/workspaces/["invalid-workspace-id"].get();
+    Workspace|error workspaceRetrieved = rainierClient->/workspaces/["invalid-workspace-id"];
     if workspaceRetrieved is persist:NotFoundError {
         test:assertEquals(workspaceRetrieved.message(), "A record with the key 'Workspace:invalid-workspace-id' does not exist for the entity 'Workspace'.");
     } else {
@@ -101,9 +101,9 @@ function redisWorkspaceReadOneTestNegative() returns error? {
 function redisWorkspaceReadManyTest() returns error? {
     RedisRainierClient rainierClient = check new ();
 
-    stream<Workspace, error?> workspaceStream = rainierClient->/workspaces.get();
+    stream<Workspace, error?> workspaceStream = rainierClient->/workspaces;
     Workspace[] workspaces = check from Workspace workspace in workspaceStream
-        select workspace;
+        order by workspace.workspaceId ascending select workspace;
 
     test:assertEquals(workspaces, [workspace1, workspace2, workspace3]);
     check rainierClient.close();
@@ -116,14 +116,14 @@ function redisWorkspaceReadManyTest() returns error? {
 function redisWorkspaceReadManyDependentTest() returns error? {
     RedisRainierClient rainierClient = check new ();
 
-    stream<WorkspaceInfo2, error?> workspaceStream = rainierClient->/workspaces.get();
+    stream<WorkspaceInfo2, error?> workspaceStream = rainierClient->/workspaces;
     WorkspaceInfo2[] workspaces = check from WorkspaceInfo2 workspace in workspaceStream
-        select workspace;
+        order by workspace.workspaceType select workspace;
 
     test:assertEquals(workspaces, [
-        {workspaceType: workspace1.workspaceType, locationBuildingCode: workspace1.locationBuildingCode},
+        {workspaceType: workspace3.workspaceType, locationBuildingCode: workspace3.locationBuildingCode},
         {workspaceType: workspace2.workspaceType, locationBuildingCode: workspace2.locationBuildingCode},
-        {workspaceType: workspace3.workspaceType, locationBuildingCode: workspace3.locationBuildingCode}
+        {workspaceType: workspace1.workspaceType, locationBuildingCode: workspace1.locationBuildingCode}
     ]);
     check rainierClient.close();
 }
@@ -141,7 +141,7 @@ function redisWorkspaceUpdateTest() returns error? {
 
     test:assertEquals(workspace, updatedWorkspace1);
 
-    Workspace workspaceRetrieved = check rainierClient->/workspaces/[workspace1.workspaceId].get();
+    Workspace workspaceRetrieved = check rainierClient->/workspaces/[workspace1.workspaceId];
     test:assertEquals(workspaceRetrieved, updatedWorkspace1);
     check rainierClient.close();
 }
@@ -175,9 +175,9 @@ function redisWorkspaceDeleteTest() returns error? {
     Workspace workspace = check rainierClient->/workspaces/[workspace1.workspaceId].delete();
     test:assertEquals(workspace, updatedWorkspace1);
 
-    stream<Workspace, error?> workspaceStream = rainierClient->/workspaces.get();
+    stream<Workspace, error?> workspaceStream = rainierClient->/workspaces;
     Workspace[] workspaces = check from Workspace workspace2 in workspaceStream
-        select workspace2;
+        order by workspace2.workspaceId ascending select workspace2;
 
     test:assertEquals(workspaces, [workspace2, workspace3]);
     check rainierClient.close();

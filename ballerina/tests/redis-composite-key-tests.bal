@@ -26,10 +26,10 @@ function redisCompositeKeyCreateTest() returns error? {
     [string, string][] ids = check rainierClient->/orderitems.post([orderItem1, orderItem2]);
     test:assertEquals(ids, [[orderItem1.orderId, orderItem1.itemId], [orderItem2.orderId, orderItem2.itemId]]);
 
-    OrderItem orderItemRetrieved = check rainierClient->/orderitems/[orderItem1.orderId]/[orderItem1.itemId].get();
+    OrderItem orderItemRetrieved = check rainierClient->/orderitems/[orderItem1.orderId]/[orderItem1.itemId];
     test:assertEquals(orderItemRetrieved, orderItem1);
 
-    orderItemRetrieved = check rainierClient->/orderitems/[orderItem2.orderId]/[orderItem2.itemId].get();
+    orderItemRetrieved = check rainierClient->/orderitems/[orderItem2.orderId]/[orderItem2.itemId];
     test:assertEquals(orderItemRetrieved, orderItem2);
 
     check rainierClient.close();
@@ -44,7 +44,8 @@ function redisCompositeKeyCreateTestNegative() returns error? {
 
     [string, string][]|error ids = rainierClient->/orderitems.post([orderItem1]);
     if ids is persist:AlreadyExistsError {
-        test:assertEquals(ids.message(), "A record with the key 'OrderItem:order-1:item-1' already exists for the entity 'OrderItem'.");
+        test:assertEquals(ids.message(), "A record already exist with the same key for the entity 'OrderItem'");
+        // test:assertEquals(ids.message(), "A record with the key 'OrderItem:order-1:item-1' already exists for the entity 'OrderItem'.");
     } else {
         test:assertFail("persist:AlreadyExistsError expected");
     }
@@ -59,9 +60,9 @@ function redisCompositeKeyCreateTestNegative() returns error? {
 function redisCompositeKeyReadManyTest() returns error? {
     RedisRainierClient rainierClient = check new ();
 
-    stream<OrderItem, error?> orderItemStream = rainierClient->/orderitems.get();
+    stream<OrderItem, error?> orderItemStream = rainierClient->/orderitems;
     OrderItem[] orderitem = check from OrderItem orderItem in orderItemStream
-        select orderItem;
+        order by orderItem.orderId ascending select orderItem;
 
     test:assertEquals(orderitem, [orderItem1, orderItem2]);
     check rainierClient.close();
@@ -73,7 +74,7 @@ function redisCompositeKeyReadManyTest() returns error? {
 }
 function redisCompositeKeyReadOneTest() returns error? {
     RedisRainierClient rainierClient = check new ();
-    OrderItem orderItem = check rainierClient->/orderitems/[orderItem1.orderId]/[orderItem1.itemId].get();
+    OrderItem orderItem = check rainierClient->/orderitems/[orderItem1.orderId]/[orderItem1.itemId];
     test:assertEquals(orderItem, orderItem1);
     check rainierClient.close();
 }
@@ -84,7 +85,7 @@ function redisCompositeKeyReadOneTest() returns error? {
 }
 function redisCompositeKeyReadOneTest2() returns error? {
     RedisRainierClient rainierClient = check new ();
-    OrderItem orderItem = check rainierClient->/orderitems/[orderItem1.orderId]/[orderItem1.itemId].get();
+    OrderItem orderItem = check rainierClient->/orderitems/[orderItem1.orderId]/[orderItem1.itemId];
     test:assertEquals(orderItem, orderItem1);
     check rainierClient.close();
 }
@@ -95,7 +96,7 @@ function redisCompositeKeyReadOneTest2() returns error? {
 }
 function redisCompositeKeyReadOneTestNegative1() returns error? {
     RedisRainierClient rainierClient = check new ();
-    OrderItem|error orderItem = rainierClient->/orderitems/["invalid-order-id"]/[orderItem1.itemId].get();
+    OrderItem|error orderItem = rainierClient->/orderitems/["invalid-order-id"]/[orderItem1.itemId];
 
     if orderItem is persist:NotFoundError {
         test:assertEquals(orderItem.message(), "A record with the key 'OrderItem:invalid-order-id:item-1' does not exist for the entity 'OrderItem'.");
@@ -112,7 +113,7 @@ function redisCompositeKeyReadOneTestNegative1() returns error? {
 }
 function redisCompositeKeyReadOneTestNegative2() returns error? {
     RedisRainierClient rainierClient = check new ();
-    OrderItem|error orderItem = rainierClient->/orderitems/[orderItem1.orderId]/["invalid-item-id"].get();
+    OrderItem|error orderItem = rainierClient->/orderitems/[orderItem1.orderId]/["invalid-item-id"];
 
     if orderItem is persist:NotFoundError {
         test:assertEquals(orderItem.message(), "A record with the key 'OrderItem:order-1:invalid-item-id' does not exist for the entity 'OrderItem'.");
@@ -136,7 +137,7 @@ function redisCompositeKeyUpdateTest() returns error? {
     });
     test:assertEquals(orderItem, orderItem2Updated);
 
-    orderItem = check rainierClient->/orderitems/[orderItem2.orderId]/[orderItem2.itemId].get();
+    orderItem = check rainierClient->/orderitems/[orderItem2.orderId]/[orderItem2.itemId];
     test:assertEquals(orderItem, orderItem2Updated);
 
     check rainierClient.close();
@@ -172,7 +173,7 @@ function redisCompositeKeyDeleteTest() returns error? {
     OrderItem orderItem = check rainierClient->/orderitems/[orderItem2.orderId]/[orderItem2.itemId].delete();
     test:assertEquals(orderItem, orderItem2Updated);
 
-    OrderItem|error orderItemRetrieved = rainierClient->/orderitems/[orderItem2.orderId]/[orderItem2.itemId].get();
+    OrderItem|error orderItemRetrieved = rainierClient->/orderitems/[orderItem2.orderId]/[orderItem2.itemId];
     test:assertTrue(orderItemRetrieved is persist:NotFoundError);
 
     check rainierClient.close();

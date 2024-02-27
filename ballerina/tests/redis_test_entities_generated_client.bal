@@ -47,6 +47,8 @@ public isolated client class RedisTestEntitiesClient {
                 stringType: {fieldName: "stringType", fieldDataType: STRING},
                 dateType: {fieldName: "dateType", fieldDataType: DATE},
                 timeOfDayType: {fieldName: "timeOfDayType", fieldDataType: TIME_OF_DAY},
+                utcType: {fieldName: "utcType", fieldDataType: UTC},
+                civilType: {fieldName: "civilType", fieldDataType: CIVIL},
                 booleanTypeOptional: {fieldName: "booleanTypeOptional", fieldDataType: BOOLEAN},
                 intTypeOptional: {fieldName: "intTypeOptional", fieldDataType: INT},
                 floatTypeOptional: {fieldName: "floatTypeOptional", fieldDataType: FLOAT},
@@ -54,6 +56,8 @@ public isolated client class RedisTestEntitiesClient {
                 stringTypeOptional: {fieldName: "stringTypeOptional", fieldDataType: STRING},
                 dateTypeOptional: {fieldName: "dateTypeOptional", fieldDataType: DATE},
                 timeOfDayTypeOptional: {fieldName: "timeOfDayTypeOptional", fieldDataType: TIME_OF_DAY},
+                utcTypeOptional: {fieldName: "utcTypeOptional", fieldDataType: UTC},
+                civilTypeOptional: {fieldName: "civilTypeOptional", fieldDataType: CIVIL},
                 enumType: {fieldName: "enumType", fieldDataType: ENUM},
                 enumTypeOptional: {fieldName: "enumTypeOptional", fieldDataType: ENUM}
             },
@@ -192,11 +196,11 @@ public isolated client class RedisTestEntitiesClient {
             redisClient = self.persistClients.get(ALL_TYPES);
         }
         _ = check redisClient.runUpdateQuery(id, value);
-        return self->/alltypes/[id].get();
+        return self->/alltypes/[id];
     }
 
     isolated resource function delete alltypes/[int id]() returns AllTypes|persist:Error {
-        AllTypes result = check self->/alltypes/[id].get();
+        AllTypes result = check self->/alltypes/[id];
         RedisClient redisClient;
         lock {
             redisClient = self.persistClients.get(ALL_TYPES);
@@ -231,11 +235,11 @@ public isolated client class RedisTestEntitiesClient {
             redisClient = self.persistClients.get(STRING_ID_RECORD);
         }
         _ = check redisClient.runUpdateQuery(id, value);
-        return self->/stringidrecords/[id].get();
+        return self->/stringidrecords/[id];
     }
 
     isolated resource function delete stringidrecords/[string id]() returns StringIdRecord|persist:Error {
-        StringIdRecord result = check self->/stringidrecords/[id].get();
+        StringIdRecord result = check self->/stringidrecords/[id];
         RedisClient redisClient;
         lock {
             redisClient = self.persistClients.get(STRING_ID_RECORD);
@@ -270,11 +274,11 @@ public isolated client class RedisTestEntitiesClient {
             redisClient = self.persistClients.get(INT_ID_RECORD);
         }
         _ = check redisClient.runUpdateQuery(id, value);
-        return self->/intidrecords/[id].get();
+        return self->/intidrecords/[id];
     }
 
     isolated resource function delete intidrecords/[int id]() returns IntIdRecord|persist:Error {
-        IntIdRecord result = check self->/intidrecords/[id].get();
+        IntIdRecord result = check self->/intidrecords/[id];
         RedisClient redisClient;
         lock {
             redisClient = self.persistClients.get(INT_ID_RECORD);
@@ -309,11 +313,11 @@ public isolated client class RedisTestEntitiesClient {
             redisClient = self.persistClients.get(FLOAT_ID_RECORD);
         }
         _ = check redisClient.runUpdateQuery(id, value);
-        return self->/floatidrecords/[id].get();
+        return self->/floatidrecords/[id];
     }
 
     isolated resource function delete floatidrecords/[float id]() returns FloatIdRecord|persist:Error {
-        FloatIdRecord result = check self->/floatidrecords/[id].get();
+        FloatIdRecord result = check self->/floatidrecords/[id];
         RedisClient redisClient;
         lock {
             redisClient = self.persistClients.get(FLOAT_ID_RECORD);
@@ -348,11 +352,11 @@ public isolated client class RedisTestEntitiesClient {
             redisClient = self.persistClients.get(DECIMAL_ID_RECORD);
         }
         _ = check redisClient.runUpdateQuery(id, value);
-        return self->/decimalidrecords/[id].get();
+        return self->/decimalidrecords/[id];
     }
 
     isolated resource function delete decimalidrecords/[decimal id]() returns DecimalIdRecord|persist:Error {
-        DecimalIdRecord result = check self->/decimalidrecords/[id].get();
+        DecimalIdRecord result = check self->/decimalidrecords/[id];
         RedisClient redisClient;
         lock {
             redisClient = self.persistClients.get(DECIMAL_ID_RECORD);
@@ -387,11 +391,11 @@ public isolated client class RedisTestEntitiesClient {
             redisClient = self.persistClients.get(BOOLEAN_ID_RECORD);
         }
         _ = check redisClient.runUpdateQuery(id, value);
-        return self->/booleanidrecords/[id].get();
+        return self->/booleanidrecords/[id];
     }
 
     isolated resource function delete booleanidrecords/[boolean id]() returns BooleanIdRecord|persist:Error {
-        BooleanIdRecord result = check self->/booleanidrecords/[id].get();
+        BooleanIdRecord result = check self->/booleanidrecords/[id];
         RedisClient redisClient;
         lock {
             redisClient = self.persistClients.get(BOOLEAN_ID_RECORD);
@@ -426,11 +430,11 @@ public isolated client class RedisTestEntitiesClient {
             redisClient = self.persistClients.get(COMPOSITE_ASSOCIATION_RECORD);
         }
         _ = check redisClient.runUpdateQuery(id, value);
-        return self->/compositeassociationrecords/[id].get();
+        return self->/compositeassociationrecords/[id];
     }
 
     isolated resource function delete compositeassociationrecords/[string id]() returns CompositeAssociationRecord|persist:Error {
-        CompositeAssociationRecord result = check self->/compositeassociationrecords/[id].get();
+        CompositeAssociationRecord result = check self->/compositeassociationrecords/[id];
         RedisClient redisClient;
         lock {
             redisClient = self.persistClients.get(COMPOSITE_ASSOCIATION_RECORD);
@@ -465,11 +469,11 @@ public isolated client class RedisTestEntitiesClient {
             redisClient = self.persistClients.get(ALL_TYPES_ID_RECORD);
         }
         _ = check redisClient.runUpdateQuery({"booleanType": booleanType, "intType": intType, "floatType": floatType, "decimalType": decimalType, "stringType": stringType}, value);
-        return self->/alltypesidrecords/[booleanType]/[intType]/[floatType]/[decimalType]/[stringType].get();
+        return self->/alltypesidrecords/[booleanType]/[intType]/[floatType]/[decimalType]/[stringType];
     }
 
     isolated resource function delete alltypesidrecords/[boolean booleanType]/[int intType]/[float floatType]/[decimal decimalType]/[string stringType]() returns AllTypesIdRecord|persist:Error {
-        AllTypesIdRecord result = check self->/alltypesidrecords/[booleanType]/[intType]/[floatType]/[decimalType]/[stringType].get();
+        AllTypesIdRecord result = check self->/alltypesidrecords/[booleanType]/[intType]/[floatType]/[decimalType]/[stringType];
         RedisClient redisClient;
         lock {
             redisClient = self.persistClients.get(ALL_TYPES_ID_RECORD);
