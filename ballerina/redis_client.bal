@@ -224,7 +224,7 @@ public isolated client class RedisClient {
                         refKey += string `${KEY_SEPERATOR}${currentObject[refField].toString()}`;
                     }
                     string setKey = string `${refKey}${KEY_SEPERATOR}${self.collectionName}`;
-                    _ = check self.dbClient->sRem(setKey, [keySuffix]);
+                    _ = check self.dbClient->sRem(setKey, [keySuffix.substring(1)]);
                     self.logQuery(SREM, {key: setKey, suffixes: [keySuffix].toJsonString()});
                 }
             }
@@ -387,7 +387,7 @@ public isolated client class RedisClient {
             }
             // Attach to new association
             string newSetKey = string `${newRelatedRecordKey}${KEY_SEPERATOR}${self.collectionName}`;
-            int|error sAdd = self.dbClient->sAdd(newSetKey, [recordKeySuffix]);
+            int|error sAdd = self.dbClient->sAdd(newSetKey, [recordKeySuffix.substring(1)]);
             if sAdd is error {
                 return error persist:Error(sAdd.message());
             }
@@ -395,7 +395,7 @@ public isolated client class RedisClient {
             
             // Detach from previous association
             string prevSetKey = string `${prevRelatedRecordKey}${KEY_SEPERATOR}${self.collectionName}`;
-            int|error sRem = self.dbClient->sRem(prevSetKey, [recordKeySuffix]);
+            int|error sRem = self.dbClient->sRem(prevSetKey, [recordKeySuffix.substring(1)]);
             if sRem is error {
                 return error persist:Error(sRem.message());
             }
@@ -517,7 +517,7 @@ public isolated client class RedisClient {
                 string setKey = string `${self.getKeyFromObject('object)}${KEY_SEPERATOR}${refMetaData.refCollection}`;
                 string[] keys = check self.dbClient->sMembers(setKey);
                 self.logQuery(SMEMBERS, setKey);
-                return keys;
+                return from string key in keys select KEY_SEPERATOR+key;
             }else{
                 map<any> recordWithRefFields = check self.dbClient->hMGet(self.getKeyFromObject('object), 
                 refMetaData.joinFields);
@@ -576,7 +576,7 @@ public isolated client class RedisClient {
             map<any> value = check self.dbClient->hMGet(key, relationFields);
             self.logQuery(HMGET, {key: key, fieldNames: relationFields.toJsonString()});
             if self.isNoRecordFound(value) {
-                return error persist:Error(string `No '${self.entityName}' found for the given key '${key}'`);
+                return error persist:Error(string `No '${entity}' found for the given key '${key}'`);
             }
 
             record {} valueToRecord = {};
@@ -660,7 +660,7 @@ public isolated client class RedisClient {
                 }
 
                 // Associate current record with the refered record
-                int|error sAdd = self.dbClient->sAdd(setKey, [key]);
+                int|error sAdd = self.dbClient->sAdd(setKey, [key.substring(1)]);
                 self.logQuery(SADD, {key: setKey, suffixes: [key].toJsonString()});
                 if sAdd is error {
                     return error persist:Error(sAdd.message());

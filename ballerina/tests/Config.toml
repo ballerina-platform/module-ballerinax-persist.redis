@@ -9,4 +9,4 @@ isClusterConnection = false
 ssl = false
 startTls = false
 verifyPeer = false
-connectionTimeout = 500
+connectionTimeout = 5000

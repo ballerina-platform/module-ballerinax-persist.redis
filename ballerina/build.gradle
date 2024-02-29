@@ -238,14 +238,14 @@ task pullRedisDependency(type: Exec) {
     if (!Os.isFamily(Os.FAMILY_WINDOWS)) {
         try {
             String distributionBinPath = project.projectDir.absolutePath + "/build/jballerina-tools-${project.extensions.ballerina.langVersion}/bin"
-            commandLine 'sh', '-c', "$distributionBinPath/bal pull ballerinax/redis:2.5.1"
+            commandLine 'sh', '-c', "$distributionBinPath/bal pull ballerinax/redis:$stdlibRedisVersion"
         } catch (all) {
             return 1
         }
     } else {
         try {
             String distributionBinPath = project.projectDir.absolutePath + "/build/jballerina-tools-${project.extensions.ballerina.langVersion}/bin"
-            commandLine 'cmd', '/c', "$distributionBinPath/bal.bat pull ballerinax/redis:2.5.1"
+            commandLine 'cmd', '/c', "$distributionBinPath/bal.bat pull ballerinax/redis:$stdlibRedisVersion"
         } catch (all) {
             return 1
         }
