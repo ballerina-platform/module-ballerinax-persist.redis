@@ -1,4 +1,4 @@
-// Copyright (c) 2023 WSO2 LLC. (http://www.wso2.org) All Rights Reserved.
+// Copyright (c) 2024 WSO2 LLC. (http://www.wso2.com) All Rights Reserved.
 //
 // WSO2 LLC. licenses this file to you under the Apache License,
 // Version 2.0 (the "License"); you may not use this file except
@@ -223,8 +223,9 @@ public isolated client class RedisClient {
                     foreach string refField in refMedaData.joinFields {
                         refKey += string `${KEY_SEPERATOR}${currentObject[refField].toString()}`;
                     }
-                    _ = check self.dbClient->sRem(string `${refKey}${KEY_SEPERATOR}${self.collectionName}`, [keySuffix]);
-                    self.logQuery(SREM, {key: string `${refKey}${KEY_SEPERATOR}${self.collectionName}`, suffixes: [keySuffix].toJsonString()});
+                    string setKey = string `${refKey}${KEY_SEPERATOR}${self.collectionName}`;
+                    _ = check self.dbClient->sRem(setKey, [keySuffix]);
+                    self.logQuery(SREM, {key: setKey, suffixes: [keySuffix].toJsonString()});
                 }
             }
 

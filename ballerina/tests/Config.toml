@@ -2,3 +2,11 @@
 host="localhost"
 port=6379
 password=""
+
+[redis.connectionOptions]
+connectionPooling = false
+isClusterConnection = false
+ssl = false
+startTls = false
+verifyPeer = false
+connectionTimeout = 500

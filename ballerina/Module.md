@@ -9,16 +9,20 @@ $ bal persist init --datastore redis
 ```
 
 ## Supported Ballerina Types
-The following table lists the Ballerina types supported by the Redis data store. Following data types will be converted to string when inserting data and converted back to relevent data types in ballerina when retrieving.
+The following table lists the Ballerina types supported by the Redis data store in `bal persist`. The specified data types will be converted to strings during data insertion and then reverted to their original data types within Ballerina upon retrieval.
 
 |  Ballerina Type  |
 |:----------------:|
 |       int        |
 |      float       |
+|     decimal      |
 |      string      |
 |     boolean      |
+|    time:Date     |
+|  time:TimeOfDay  |
+|    time:Civil    |
+|     time:Utc     |
 |       enum       |
-|        ()        |
 
 ## Configuration
 
@@ -43,4 +47,4 @@ password = ""
 Use docker as follows to create a DB server deployment.
 
 * Run `docker pull redis` to pull the official Redis Docker image from the Docker Hub
-* Run `docker run --name <your-redis-container-name> -p 6379:6379 -d redis
+* Run `docker run --name <your-redis-container-name> -p 6379:6379 -d redis`
