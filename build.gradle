@@ -17,17 +17,18 @@
  */
 
 plugins {
-    id "com.github.spotbugs" version "${githubSpotbugsVersion}"
-    id "com.github.johnrengelman.shadow" version "${githubJohnrengelmanShadowVersion}"
-    id "de.undercouch.download" version "${underCouchDownloadVersion}"
-    id "net.researchgate.release" version "${researchgateReleaseVersion}"
+    id 'com.github.spotbugs'
+    id 'com.github.johnrengelman.shadow'
+    id 'de.undercouch.download'
+    id 'net.researchgate.release'
+    id 'jacoco'
 }
 
 description = 'Ballerina - Persist'
 
 def packageName = "persist.redis"
 
-ext.ballerinaLangVersion = project.ballerinaLangVersion
+ballerinaLangVersion = project.ballerinaLangVersion
 
 allprojects {
     group = project.group
