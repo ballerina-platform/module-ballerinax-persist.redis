@@ -14,8 +14,8 @@
 // specific language governing permissions and limitations
 // under the License.
 
-import ballerina/test;
 import ballerina/persist;
+import ballerina/test;
 
 @test:Config {
     groups: ["all-types", "redis"]
@@ -159,7 +159,8 @@ function redisAllTypesReadOneTestNegative() returns error? {
 
     AllTypes|persist:Error allTypesRetrieved = testEntitiesClient->/alltypes/[4];
     if allTypesRetrieved is persist:NotFoundError {
-        test:assertEquals(allTypesRetrieved.message(), "A record with the key 'AllTypes:4' does not exist for the entity 'AllTypes'.");
+        test:assertEquals(allTypesRetrieved.message(), 
+        "A record with the key 'AllTypes:4' does not exist for the entity 'AllTypes'.");
     }
     else {
         test:assertFail("persist:NotFoundError expected.");

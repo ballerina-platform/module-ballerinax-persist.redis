@@ -14,8 +14,8 @@
 // specific language governing permissions and limitations
 // under the License.
 
-import ballerina/test;
 import ballerina/persist;
+import ballerina/test;
 
 @test:Config {
     groups: ["composite-key", "redis"]
@@ -44,8 +44,8 @@ function redisCompositeKeyCreateTestNegative() returns error? {
 
     [string, string][]|error ids = rainierClient->/orderitems.post([orderItem1]);
     if ids is persist:AlreadyExistsError {
-        test:assertEquals(ids.message(), "A record already exist with the same key for the entity 'OrderItem'");
-        // test:assertEquals(ids.message(), "A record with the key 'OrderItem:order-1:item-1' already exists for the entity 'OrderItem'.");
+        test:assertEquals(ids.message(), 
+        "Record(s) already exist with the same key for the entity 'OrderItem'. Number of keys exists : 1");
     } else {
         test:assertFail("persist:AlreadyExistsError expected");
     }
@@ -99,7 +99,8 @@ function redisCompositeKeyReadOneTestNegative1() returns error? {
     OrderItem|error orderItem = rainierClient->/orderitems/["invalid-order-id"]/[orderItem1.itemId];
 
     if orderItem is persist:NotFoundError {
-        test:assertEquals(orderItem.message(), "A record with the key 'OrderItem:invalid-order-id:item-1' does not exist for the entity 'OrderItem'.");
+        test:assertEquals(orderItem.message(), 
+        "A record with the key 'OrderItem:invalid-order-id:item-1' does not exist for the entity 'OrderItem'.");
     } else {
         test:assertFail("Error expected.");
     }
@@ -116,7 +117,8 @@ function redisCompositeKeyReadOneTestNegative2() returns error? {
     OrderItem|error orderItem = rainierClient->/orderitems/[orderItem1.orderId]/["invalid-item-id"];
 
     if orderItem is persist:NotFoundError {
-        test:assertEquals(orderItem.message(), "A record with the key 'OrderItem:order-1:invalid-item-id' does not exist for the entity 'OrderItem'.");
+        test:assertEquals(orderItem.message(), 
+        "A record with the key 'OrderItem:order-1:invalid-item-id' does not exist for the entity 'OrderItem'.");
     } else {
         test:assertFail("Error expected.");
     }
@@ -126,7 +128,8 @@ function redisCompositeKeyReadOneTestNegative2() returns error? {
 
 @test:Config {
     groups: ["composite-key", "redis"],
-    dependsOn: [redisCompositeKeyCreateTest, redisCompositeKeyReadOneTest, redisCompositeKeyReadManyTest, redisCompositeKeyReadOneTest2]
+    dependsOn: [redisCompositeKeyCreateTest, redisCompositeKeyReadOneTest, redisCompositeKeyReadManyTest, 
+    redisCompositeKeyReadOneTest2]
 }
 function redisCompositeKeyUpdateTest() returns error? {
     RedisRainierClient rainierClient = check new ();
@@ -145,7 +148,8 @@ function redisCompositeKeyUpdateTest() returns error? {
 
 @test:Config {
     groups: ["composite-key", "redis"],
-    dependsOn: [redisCompositeKeyCreateTest, redisCompositeKeyReadOneTest, redisCompositeKeyReadManyTest, redisCompositeKeyReadOneTest2]
+    dependsOn: [redisCompositeKeyCreateTest, redisCompositeKeyReadOneTest, redisCompositeKeyReadManyTest, 
+    redisCompositeKeyReadOneTest2]
 }
 function redisCompositeKeyUpdateTestNegative() returns error? {
     RedisRainierClient rainierClient = check new ();
@@ -155,7 +159,8 @@ function redisCompositeKeyUpdateTestNegative() returns error? {
         notes: "updated notes"
     });
     if orderItem is persist:NotFoundError {
-        test:assertEquals(orderItem.message(), "A record with the key 'OrderItem:order-1:item-2' does not exist for the entity 'OrderItem'.");
+        test:assertEquals(orderItem.message(), 
+        "A record with the key 'OrderItem:order-1:item-2' does not exist for the entity 'OrderItem'.");
     } else {
         test:assertFail("Error expected.");
     }
@@ -188,7 +193,8 @@ function redisCompositeKeyDeleteTestNegative() returns error? {
 
     OrderItem|error orderItem = rainierClient->/orderitems/["invalid-order-id"]/[orderItem2.itemId].delete();
     if orderItem is persist:NotFoundError {
-        test:assertEquals(orderItem.message(), "A record with the key 'OrderItem:invalid-order-id:item-2' does not exist for the entity 'OrderItem'.");
+        test:assertEquals(orderItem.message(), 
+        "A record with the key 'OrderItem:invalid-order-id:item-2' does not exist for the entity 'OrderItem'.");
     } else {
         test:assertFail("Error expected.");
     }

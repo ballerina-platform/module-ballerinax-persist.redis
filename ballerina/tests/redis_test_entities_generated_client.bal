@@ -14,8 +14,8 @@
 // specific language governing permissions and limitations
 // under the License.
 
-import ballerina/persist;
 import ballerina/jballerina.java;
+import ballerina/persist;
 import ballerinax/redis;
 
 const ALL_TYPES = "alltypes";
@@ -119,15 +119,25 @@ public isolated client class RedisTestEntitiesClient {
                 alltypesidrecordFloatType: {fieldName: "alltypesidrecordFloatType", fieldDataType: FLOAT},
                 alltypesidrecordDecimalType: {fieldName: "alltypesidrecordDecimalType", fieldDataType: DECIMAL},
                 alltypesidrecordStringType: {fieldName: "alltypesidrecordStringType", fieldDataType: STRING},
-                "allTypesIdRecord.booleanType": {relation: {entityName: "allTypesIdRecord", refField: "booleanType", refFieldDataType: BOOLEAN}},
-                "allTypesIdRecord.intType": {relation: {entityName: "allTypesIdRecord", refField: "intType", refFieldDataType: INT}},
-                "allTypesIdRecord.floatType": {relation: {entityName: "allTypesIdRecord", refField: "floatType", refFieldDataType: FLOAT}},
-                "allTypesIdRecord.decimalType": {relation: {entityName: "allTypesIdRecord", refField: "decimalType", refFieldDataType: DECIMAL}},
-                "allTypesIdRecord.stringType": {relation: {entityName: "allTypesIdRecord", refField: "stringType", refFieldDataType: STRING}},
-                "allTypesIdRecord.randomField": {relation: {entityName: "allTypesIdRecord", refField: "randomField", refFieldDataType: STRING}}
+                "allTypesIdRecord.booleanType": {relation: {entityName: "allTypesIdRecord", refField: "booleanType", 
+                refFieldDataType: BOOLEAN}},
+                "allTypesIdRecord.intType": {relation: {entityName: "allTypesIdRecord", refField: "intType", 
+                refFieldDataType: INT}},
+                "allTypesIdRecord.floatType": {relation: {entityName: "allTypesIdRecord", refField: "floatType", 
+                refFieldDataType: FLOAT}},
+                "allTypesIdRecord.decimalType": {relation: {entityName: "allTypesIdRecord", refField: "decimalType", 
+                refFieldDataType: DECIMAL}},
+                "allTypesIdRecord.stringType": {relation: {entityName: "allTypesIdRecord", refField: "stringType", 
+                refFieldDataType: STRING}},
+                "allTypesIdRecord.randomField": {relation: {entityName: "allTypesIdRecord", refField: "randomField", 
+                refFieldDataType: STRING}}
             },
             keyFields: ["id"],
-            refMetadata: {allTypesIdRecord: {entity: AllTypesIdRecord, fieldName: "allTypesIdRecord", refCollection: "AllTypesIdRecord", refFields: ["booleanType", "intType", "floatType", "decimalType", "stringType"], joinFields: ["alltypesidrecordBooleanType", "alltypesidrecordIntType", "alltypesidrecordFloatType", "alltypesidrecordDecimalType", "alltypesidrecordStringType"], 'type: ONE_TO_ONE}}
+            refMetadata: {allTypesIdRecord: {entity: AllTypesIdRecord, fieldName: "allTypesIdRecord", 
+            refCollection: "AllTypesIdRecord", refFields: ["booleanType", "intType", "floatType", "decimalType", 
+            "stringType"], joinFields: ["alltypesidrecordBooleanType", "alltypesidrecordIntType", 
+            "alltypesidrecordFloatType", "alltypesidrecordDecimalType", "alltypesidrecordStringType"], 
+            'type: ONE_TO_ONE}}
         },
         [ALL_TYPES_ID_RECORD] : {
             entityName: "AllTypesIdRecord",
@@ -139,21 +149,38 @@ public isolated client class RedisTestEntitiesClient {
                 decimalType: {fieldName: "decimalType", fieldDataType: DECIMAL},
                 stringType: {fieldName: "stringType", fieldDataType: STRING},
                 randomField: {fieldName: "randomField", fieldDataType: STRING},
-                "compositeAssociationRecord.id": {relation: {entityName: "compositeAssociationRecord", refField: "id", refFieldDataType: STRING}},
-                "compositeAssociationRecord.randomField": {relation: {entityName: "compositeAssociationRecord", refField: "randomField", refFieldDataType: STRING}},
-                "compositeAssociationRecord.alltypesidrecordBooleanType": {relation: {entityName: "compositeAssociationRecord", refField: "alltypesidrecordBooleanType", refFieldDataType: BOOLEAN}},
-                "compositeAssociationRecord.alltypesidrecordIntType": {relation: {entityName: "compositeAssociationRecord", refField: "alltypesidrecordIntType", refFieldDataType: INT}},
-                "compositeAssociationRecord.alltypesidrecordFloatType": {relation: {entityName: "compositeAssociationRecord", refField: "alltypesidrecordFloatType", refFieldDataType: FLOAT}},
-                "compositeAssociationRecord.alltypesidrecordDecimalType": {relation: {entityName: "compositeAssociationRecord", refField: "alltypesidrecordDecimalType", refFieldDataType: DECIMAL}},
-                "compositeAssociationRecord.alltypesidrecordStringType": {relation: {entityName: "compositeAssociationRecord", refField: "alltypesidrecordStringType", refFieldDataType: STRING}}
+                "compositeAssociationRecord.id": {relation: {entityName: "compositeAssociationRecord", refField: "id", 
+                refFieldDataType: STRING}},
+                "compositeAssociationRecord.randomField": {relation: {entityName: "compositeAssociationRecord",
+                refField: "randomField", refFieldDataType: STRING}},
+                "compositeAssociationRecord.alltypesidrecordBooleanType": {relation: {
+                    entityName: "compositeAssociationRecord", refField: "alltypesidrecordBooleanType", 
+                    refFieldDataType: BOOLEAN}},
+                "compositeAssociationRecord.alltypesidrecordIntType": {relation: {
+                    entityName: "compositeAssociationRecord", refField: "alltypesidrecordIntType", 
+                    refFieldDataType: INT}},
+                "compositeAssociationRecord.alltypesidrecordFloatType": {relation: {
+                    entityName: "compositeAssociationRecord", refField: "alltypesidrecordFloatType", 
+                    refFieldDataType: FLOAT}},
+                "compositeAssociationRecord.alltypesidrecordDecimalType": {relation: {
+                    entityName: "compositeAssociationRecord", refField: "alltypesidrecordDecimalType", 
+                    refFieldDataType: DECIMAL}},
+                "compositeAssociationRecord.alltypesidrecordStringType": {relation: {
+                    entityName: "compositeAssociationRecord", refField: "alltypesidrecordStringType", 
+                    refFieldDataType: STRING}}
             },
             keyFields: ["booleanType", "intType", "floatType", "decimalType", "stringType"],
-            refMetadata: {compositeAssociationRecord: {entity: CompositeAssociationRecord, fieldName: "compositeAssociationRecord", refCollection: "CompositeAssociationRecord", refFields: ["alltypesidrecordBooleanType", "alltypesidrecordIntType", "alltypesidrecordFloatType", "alltypesidrecordDecimalType", "alltypesidrecordStringType"], joinFields: ["booleanType", "intType", "floatType", "decimalType", "stringType"], 'type: ONE_TO_ONE}}
+            refMetadata: {compositeAssociationRecord: {entity: CompositeAssociationRecord, 
+            fieldName: "compositeAssociationRecord", refCollection: "CompositeAssociationRecord", 
+            refFields: ["alltypesidrecordBooleanType", "alltypesidrecordIntType", "alltypesidrecordFloatType", 
+            "alltypesidrecordDecimalType", "alltypesidrecordStringType"], joinFields: ["booleanType", "intType", 
+            "floatType", "decimalType", "stringType"], 'type: ONE_TO_ONE}}
         }
     };
 
     public isolated function init() returns persist:Error? {
-        redis:Client|error dbClient = new (config = { host: redis.host+":"+redis.port.toString(), password: redis.password, options: redis.connectionOptions });
+        redis:Client|error dbClient = new (config = { host: redis.host+":"+redis.port.toString(), 
+        password: redis.password, options: redis.connectionOptions });
         if dbClient is error {
             return <persist:Error>error(dbClient.message());
         }
@@ -170,12 +197,14 @@ public isolated client class RedisTestEntitiesClient {
         };
     }
 
-    isolated resource function get alltypes(AllTypesTargetType targetType = <>) returns stream<targetType, persist:Error?> = @java:Method {
+    isolated resource function get alltypes(AllTypesTargetType targetType = <>) 
+    returns stream<targetType, persist:Error?> = @java:Method {
         'class: "io.ballerina.stdlib.persist.redis.datastore.RedisProcessor",
         name: "query"
     } external;
 
-    isolated resource function get alltypes/[int id](AllTypesTargetType targetType = <>) returns targetType|persist:Error = @java:Method {
+    isolated resource function get alltypes/[int id](AllTypesTargetType targetType = <>) 
+    returns targetType|persist:Error = @java:Method {
         'class: "io.ballerina.stdlib.persist.redis.datastore.RedisProcessor",
         name: "queryOne"
     } external;
@@ -209,12 +238,14 @@ public isolated client class RedisTestEntitiesClient {
         return result;
     }
 
-    isolated resource function get stringidrecords(StringIdRecordTargetType targetType = <>) returns stream<targetType, persist:Error?> = @java:Method {
+    isolated resource function get stringidrecords(StringIdRecordTargetType targetType = <>) 
+    returns stream<targetType, persist:Error?> = @java:Method {
         'class: "io.ballerina.stdlib.persist.redis.datastore.RedisProcessor",
         name: "query"
     } external;
 
-    isolated resource function get stringidrecords/[string id](StringIdRecordTargetType targetType = <>) returns targetType|persist:Error = @java:Method {
+    isolated resource function get stringidrecords/[string id](StringIdRecordTargetType targetType = <>) 
+    returns targetType|persist:Error = @java:Method {
         'class: "io.ballerina.stdlib.persist.redis.datastore.RedisProcessor",
         name: "queryOne"
     } external;
@@ -229,7 +260,8 @@ public isolated client class RedisTestEntitiesClient {
             select inserted.id;
     }
 
-    isolated resource function put stringidrecords/[string id](StringIdRecordUpdate value) returns StringIdRecord|persist:Error {
+    isolated resource function put stringidrecords/[string id](StringIdRecordUpdate value) 
+    returns StringIdRecord|persist:Error {
         RedisClient redisClient;
         lock {
             redisClient = self.persistClients.get(STRING_ID_RECORD);
@@ -248,12 +280,14 @@ public isolated client class RedisTestEntitiesClient {
         return result;
     }
 
-    isolated resource function get intidrecords(IntIdRecordTargetType targetType = <>) returns stream<targetType, persist:Error?> = @java:Method {
+    isolated resource function get intidrecords(IntIdRecordTargetType targetType = <>) 
+    returns stream<targetType, persist:Error?> = @java:Method {
         'class: "io.ballerina.stdlib.persist.redis.datastore.RedisProcessor",
         name: "query"
     } external;
 
-    isolated resource function get intidrecords/[int id](IntIdRecordTargetType targetType = <>) returns targetType|persist:Error = @java:Method {
+    isolated resource function get intidrecords/[int id](IntIdRecordTargetType targetType = <>) 
+    returns targetType|persist:Error = @java:Method {
         'class: "io.ballerina.stdlib.persist.redis.datastore.RedisProcessor",
         name: "queryOne"
     } external;
@@ -287,12 +321,14 @@ public isolated client class RedisTestEntitiesClient {
         return result;
     }
 
-    isolated resource function get floatidrecords(FloatIdRecordTargetType targetType = <>) returns stream<targetType, persist:Error?> = @java:Method {
+    isolated resource function get floatidrecords(FloatIdRecordTargetType targetType = <>) 
+    returns stream<targetType, persist:Error?> = @java:Method {
         'class: "io.ballerina.stdlib.persist.redis.datastore.RedisProcessor",
         name: "query"
     } external;
 
-    isolated resource function get floatidrecords/[float id](FloatIdRecordTargetType targetType = <>) returns targetType|persist:Error = @java:Method {
+    isolated resource function get floatidrecords/[float id](FloatIdRecordTargetType targetType = <>) 
+    returns targetType|persist:Error = @java:Method {
         'class: "io.ballerina.stdlib.persist.redis.datastore.RedisProcessor",
         name: "queryOne"
     } external;
@@ -307,7 +343,8 @@ public isolated client class RedisTestEntitiesClient {
             select inserted.id;
     }
 
-    isolated resource function put floatidrecords/[float id](FloatIdRecordUpdate value) returns FloatIdRecord|persist:Error {
+    isolated resource function put floatidrecords/[float id](FloatIdRecordUpdate value) 
+    returns FloatIdRecord|persist:Error {
         RedisClient redisClient;
         lock {
             redisClient = self.persistClients.get(FLOAT_ID_RECORD);
@@ -326,12 +363,14 @@ public isolated client class RedisTestEntitiesClient {
         return result;
     }
 
-    isolated resource function get decimalidrecords(DecimalIdRecordTargetType targetType = <>) returns stream<targetType, persist:Error?> = @java:Method {
+    isolated resource function get decimalidrecords(DecimalIdRecordTargetType targetType = <>) 
+    returns stream<targetType, persist:Error?> = @java:Method {
         'class: "io.ballerina.stdlib.persist.redis.datastore.RedisProcessor",
         name: "query"
     } external;
 
-    isolated resource function get decimalidrecords/[decimal id](DecimalIdRecordTargetType targetType = <>) returns targetType|persist:Error = @java:Method {
+    isolated resource function get decimalidrecords/[decimal id](DecimalIdRecordTargetType targetType = <>) 
+    returns targetType|persist:Error = @java:Method {
         'class: "io.ballerina.stdlib.persist.redis.datastore.RedisProcessor",
         name: "queryOne"
     } external;
@@ -346,7 +385,8 @@ public isolated client class RedisTestEntitiesClient {
             select inserted.id;
     }
 
-    isolated resource function put decimalidrecords/[decimal id](DecimalIdRecordUpdate value) returns DecimalIdRecord|persist:Error {
+    isolated resource function put decimalidrecords/[decimal id](DecimalIdRecordUpdate value) 
+    returns DecimalIdRecord|persist:Error {
         RedisClient redisClient;
         lock {
             redisClient = self.persistClients.get(DECIMAL_ID_RECORD);
@@ -365,12 +405,14 @@ public isolated client class RedisTestEntitiesClient {
         return result;
     }
 
-    isolated resource function get booleanidrecords(BooleanIdRecordTargetType targetType = <>) returns stream<targetType, persist:Error?> = @java:Method {
+    isolated resource function get booleanidrecords(BooleanIdRecordTargetType targetType = <>) 
+    returns stream<targetType, persist:Error?> = @java:Method {
         'class: "io.ballerina.stdlib.persist.redis.datastore.RedisProcessor",
         name: "query"
     } external;
 
-    isolated resource function get booleanidrecords/[boolean id](BooleanIdRecordTargetType targetType = <>) returns targetType|persist:Error = @java:Method {
+    isolated resource function get booleanidrecords/[boolean id](BooleanIdRecordTargetType targetType = <>) 
+    returns targetType|persist:Error = @java:Method {
         'class: "io.ballerina.stdlib.persist.redis.datastore.RedisProcessor",
         name: "queryOne"
     } external;
@@ -385,7 +427,8 @@ public isolated client class RedisTestEntitiesClient {
             select inserted.id;
     }
 
-    isolated resource function put booleanidrecords/[boolean id](BooleanIdRecordUpdate value) returns BooleanIdRecord|persist:Error {
+    isolated resource function put booleanidrecords/[boolean id](BooleanIdRecordUpdate value) 
+    returns BooleanIdRecord|persist:Error {
         RedisClient redisClient;
         lock {
             redisClient = self.persistClients.get(BOOLEAN_ID_RECORD);
@@ -404,17 +447,21 @@ public isolated client class RedisTestEntitiesClient {
         return result;
     }
 
-    isolated resource function get compositeassociationrecords(CompositeAssociationRecordTargetType targetType = <>) returns stream<targetType, persist:Error?> = @java:Method {
+    isolated resource function get compositeassociationrecords(CompositeAssociationRecordTargetType targetType = <>) 
+    returns stream<targetType, persist:Error?> = @java:Method {
         'class: "io.ballerina.stdlib.persist.redis.datastore.RedisProcessor",
         name: "query"
     } external;
 
-    isolated resource function get compositeassociationrecords/[string id](CompositeAssociationRecordTargetType targetType = <>) returns targetType|persist:Error = @java:Method {
+    isolated resource function get 
+    compositeassociationrecords/[string id](CompositeAssociationRecordTargetType targetType = <>) 
+    returns targetType|persist:Error = @java:Method {
         'class: "io.ballerina.stdlib.persist.redis.datastore.RedisProcessor",
         name: "queryOne"
     } external;
 
-    isolated resource function post compositeassociationrecords(CompositeAssociationRecordInsert[] data) returns string[]|persist:Error {
+    isolated resource function post compositeassociationrecords(CompositeAssociationRecordInsert[] data) 
+    returns string[]|persist:Error {
         RedisClient redisClient;
         lock {
             redisClient = self.persistClients.get(COMPOSITE_ASSOCIATION_RECORD);
@@ -424,7 +471,8 @@ public isolated client class RedisTestEntitiesClient {
             select inserted.id;
     }
 
-    isolated resource function put compositeassociationrecords/[string id](CompositeAssociationRecordUpdate value) returns CompositeAssociationRecord|persist:Error {
+    isolated resource function put compositeassociationrecords/[string id](CompositeAssociationRecordUpdate value) 
+    returns CompositeAssociationRecord|persist:Error {
         RedisClient redisClient;
         lock {
             redisClient = self.persistClients.get(COMPOSITE_ASSOCIATION_RECORD);
@@ -433,7 +481,8 @@ public isolated client class RedisTestEntitiesClient {
         return self->/compositeassociationrecords/[id];
     }
 
-    isolated resource function delete compositeassociationrecords/[string id]() returns CompositeAssociationRecord|persist:Error {
+    isolated resource function delete compositeassociationrecords/[string id]() 
+    returns CompositeAssociationRecord|persist:Error {
         CompositeAssociationRecord result = check self->/compositeassociationrecords/[id];
         RedisClient redisClient;
         lock {
@@ -443,47 +492,58 @@ public isolated client class RedisTestEntitiesClient {
         return result;
     }
 
-    isolated resource function get alltypesidrecords(AllTypesIdRecordTargetType targetType = <>) returns stream<targetType, persist:Error?> = @java:Method {
+    isolated resource function get alltypesidrecords(AllTypesIdRecordTargetType targetType = <>) 
+    returns stream<targetType, persist:Error?> = @java:Method {
         'class: "io.ballerina.stdlib.persist.redis.datastore.RedisProcessor",
         name: "query"
     } external;
 
-    isolated resource function get alltypesidrecords/[boolean booleanType]/[int intType]/[float floatType]/[decimal decimalType]/[string stringType](AllTypesIdRecordTargetType targetType = <>) returns targetType|persist:Error = @java:Method {
+    isolated resource function get alltypesidrecords/[boolean booleanType]/[int intType]/[float floatType]
+    /[decimal decimalType]/[string stringType](AllTypesIdRecordTargetType targetType = <>) 
+    returns targetType|persist:Error = @java:Method {
         'class: "io.ballerina.stdlib.persist.redis.datastore.RedisProcessor",
         name: "queryOne"
     } external;
 
-    isolated resource function post alltypesidrecords(AllTypesIdRecordInsert[] data) returns [boolean, int, float, decimal, string][]|persist:Error {
+    isolated resource function post alltypesidrecords(AllTypesIdRecordInsert[] data) returns [boolean, int, float, 
+    decimal, string][]|persist:Error {
         RedisClient redisClient;
         lock {
             redisClient = self.persistClients.get(ALL_TYPES_ID_RECORD);
         }
         _ = check redisClient.runBatchInsertQuery(data);
         return from AllTypesIdRecordInsert inserted in data
-            select [inserted.booleanType, inserted.intType, inserted.floatType, inserted.decimalType, inserted.stringType];
+            select [inserted.booleanType, inserted.intType, inserted.floatType, inserted.decimalType, 
+            inserted.stringType];
     }
 
-    isolated resource function put alltypesidrecords/[boolean booleanType]/[int intType]/[float floatType]/[decimal decimalType]/[string stringType](AllTypesIdRecordUpdate value) returns AllTypesIdRecord|persist:Error {
+    isolated resource function put alltypesidrecords/[boolean booleanType]/[int intType]/[float floatType]
+    /[decimal decimalType]/[string stringType](AllTypesIdRecordUpdate value) returns AllTypesIdRecord|persist:Error {
         RedisClient redisClient;
         lock {
             redisClient = self.persistClients.get(ALL_TYPES_ID_RECORD);
         }
-        _ = check redisClient.runUpdateQuery({"booleanType": booleanType, "intType": intType, "floatType": floatType, "decimalType": decimalType, "stringType": stringType}, value);
+        _ = check redisClient.runUpdateQuery({"booleanType": booleanType, "intType": intType, "floatType": 
+        floatType, "decimalType": decimalType, "stringType": stringType}, value);
         return self->/alltypesidrecords/[booleanType]/[intType]/[floatType]/[decimalType]/[stringType];
     }
 
-    isolated resource function delete alltypesidrecords/[boolean booleanType]/[int intType]/[float floatType]/[decimal decimalType]/[string stringType]() returns AllTypesIdRecord|persist:Error {
-        AllTypesIdRecord result = check self->/alltypesidrecords/[booleanType]/[intType]/[floatType]/[decimalType]/[stringType];
+    isolated resource function delete 
+    alltypesidrecords/[boolean booleanType]/[int intType]/[float floatType]/[decimal decimalType]/[string stringType]() 
+    returns AllTypesIdRecord|persist:Error {
+        AllTypesIdRecord result = 
+        check self->/alltypesidrecords/[booleanType]/[intType]/[floatType]/[decimalType]/[stringType];
         RedisClient redisClient;
         lock {
             redisClient = self.persistClients.get(ALL_TYPES_ID_RECORD);
         }
-        _ = check redisClient.runDeleteQuery({"booleanType": booleanType, "intType": intType, "floatType": floatType, "decimalType": decimalType, "stringType": stringType});
+        _ = check redisClient.runDeleteQuery({"booleanType": booleanType, "intType": intType, "floatType": 
+        floatType, "decimalType": decimalType, "stringType": stringType});
         return result;
     }
 
     public isolated function close() returns persist:Error? {
-        error? result = self.dbClient.stop();
+        error? result = self.dbClient.close();
         if result is error {
             return <persist:Error>error(result.message());
         }

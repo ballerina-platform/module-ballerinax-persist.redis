@@ -51,12 +51,12 @@ public class PersistRedisStream {
             var streamValue = anydataStream.next();
             if streamValue is () {
                 return streamValue;
-            } else if (streamValue is error) {
-                return error persist:Error(streamValue.message());
+            } else if streamValue is error {
+                return error persist:Error(streamValue.message(), streamValue);
             } else {
                 record {}|error value = streamValue.value;
                 if value is error {
-                    return error persist:Error(value.message());
+                    return error persist:Error(value.message(), value);
                 }
                 check (<RedisClient>self.persistClient).getManyRelations(self.typeMap, value, self.fields, 
                 self.include);
@@ -80,7 +80,7 @@ public class PersistRedisStream {
         if str is stream<anydata, error?> {
             error? e = str.close();
             if e is error {
-                return error persist:Error(e.message());
+                return error persist:Error(e.message(), e);
             }
         }
     }

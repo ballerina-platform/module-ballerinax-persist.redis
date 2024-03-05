@@ -14,8 +14,8 @@
 // specific language governing permissions and limitations
 // under the License.
 
-import ballerina/persist;
 import ballerina/jballerina.java;
+import ballerina/persist;
 import ballerinax/redis;
 
 const EMPLOYEE = "employees";
@@ -44,16 +44,23 @@ public isolated client class RedisRainierClient {
                 hireDate: {fieldName: "hireDate", fieldDataType: DATE},
                 departmentDeptNo: {fieldName: "departmentDeptNo", fieldDataType: STRING},
                 workspaceWorkspaceId: {fieldName: "workspaceWorkspaceId", fieldDataType: STRING},
-                "department.deptNo": {relation: {entityName: "department", refField: "deptNo", refFieldDataType: STRING}},
-                "department.deptName": {relation: {entityName: "department", refField: "deptName", refFieldDataType: STRING}},
-                "workspace.workspaceId": {relation: {entityName: "workspace", refField: "workspaceId", refFieldDataType: STRING}},
-                "workspace.workspaceType": {relation: {entityName: "workspace", refField: "workspaceType", refFieldDataType: STRING}},
-                "workspace.locationBuildingCode": {relation: {entityName: "workspace", refField: "locationBuildingCode", refFieldDataType: STRING}}
+                "department.deptNo": {relation: {entityName: "department", refField: "deptNo", 
+                refFieldDataType: STRING}},
+                "department.deptName": {relation: {entityName: "department", refField: "deptName", 
+                refFieldDataType: STRING}},
+                "workspace.workspaceId": {relation: {entityName: "workspace", refField: "workspaceId", 
+                refFieldDataType: STRING}},
+                "workspace.workspaceType": {relation: {entityName: "workspace", refField: "workspaceType", 
+                refFieldDataType: STRING}},
+                "workspace.locationBuildingCode": {relation: {entityName: "workspace", 
+                refField: "locationBuildingCode", refFieldDataType: STRING}}
             },
             keyFields: ["empNo"],
             refMetadata: {
-                department: {entity: Department, fieldName: "department", refCollection: "Department", refFields: ["deptNo"], joinFields: ["departmentDeptNo"], 'type: ONE_TO_MANY},
-                workspace: {entity: Workspace, fieldName: "workspace", refCollection: "Workspace", refFields: ["workspaceId"], joinFields: ["workspaceWorkspaceId"], 'type: ONE_TO_MANY}
+                department: {entity: Department, fieldName: "department", refCollection: "Department", 
+                refFields: ["deptNo"], joinFields: ["departmentDeptNo"], 'type: ONE_TO_MANY},
+                workspace: {entity: Workspace, fieldName: "workspace", refCollection: "Workspace", 
+                refFields: ["workspaceId"], joinFields: ["workspaceWorkspaceId"], 'type: ONE_TO_MANY}
             }
         },
         [WORKSPACE] : {
@@ -63,25 +70,35 @@ public isolated client class RedisRainierClient {
                 workspaceId: {fieldName: "workspaceId", fieldDataType: STRING},
                 workspaceType: {fieldName: "workspaceType", fieldDataType: STRING},
                 locationBuildingCode: {fieldName: "locationBuildingCode", fieldDataType: STRING},
-                "location.buildingCode": {relation: {entityName: "location", refField: "buildingCode", refFieldDataType: STRING}},
+                "location.buildingCode": {relation: {entityName: "location", refField: "buildingCode", 
+                refFieldDataType: STRING}},
                 "location.city": {relation: {entityName: "location", refField: "city", refFieldDataType: STRING}},
                 "location.state": {relation: {entityName: "location", refField: "state", refFieldDataType: STRING}},
                 "location.country": {relation: {entityName: "location", refField: "country", refFieldDataType: STRING}},
-                "location.postalCode": {relation: {entityName: "location", refField: "postalCode", refFieldDataType: STRING}},
+                "location.postalCode": {relation: {entityName: "location", refField: "postalCode", 
+                refFieldDataType: STRING}},
                 "location.type": {relation: {entityName: "location", refField: "type", refFieldDataType: STRING}},
                 "employees[].empNo": {relation: {entityName: "employees", refField: "empNo", refFieldDataType: STRING}},
-                "employees[].firstName": {relation: {entityName: "employees", refField: "firstName", refFieldDataType: STRING}},
-                "employees[].lastName": {relation: {entityName: "employees", refField: "lastName", refFieldDataType: STRING}},
-                "employees[].birthDate": {relation: {entityName: "employees", refField: "birthDate", refFieldDataType: DATE}},
+                "employees[].firstName": {relation: {entityName: "employees", refField: "firstName", 
+                refFieldDataType: STRING}},
+                "employees[].lastName": {relation: {entityName: "employees", refField: "lastName", 
+                refFieldDataType: STRING}},
+                "employees[].birthDate": {relation: {entityName: "employees", refField: "birthDate", 
+                refFieldDataType: DATE}},
                 "employees[].gender": {relation: {entityName: "employees", refField: "gender", refFieldDataType: ENUM}},
-                "employees[].hireDate": {relation: {entityName: "employees", refField: "hireDate", refFieldDataType: DATE}},
-                "employees[].departmentDeptNo": {relation: {entityName: "employees", refField: "departmentDeptNo", refFieldDataType: STRING}},
-                "employees[].workspaceWorkspaceId": {relation: {entityName: "employees", refField: "workspaceWorkspaceId", refFieldDataType: STRING}}
+                "employees[].hireDate": {relation: {entityName: "employees", refField: "hireDate", 
+                refFieldDataType: DATE}},
+                "employees[].departmentDeptNo": {relation: {entityName: "employees", refField: "departmentDeptNo", 
+                refFieldDataType: STRING}},
+                "employees[].workspaceWorkspaceId": {relation: {entityName: "employees", 
+                refField: "workspaceWorkspaceId", refFieldDataType: STRING}}
             },
             keyFields: ["workspaceId"],
             refMetadata: {
-                location: {entity: Building, fieldName: "location", refCollection: "Building", refFields: ["buildingCode"], joinFields: ["locationBuildingCode"], 'type: ONE_TO_MANY},
-                employees: {entity: Employee, fieldName: "employees", refCollection: "Employee", refFields: ["workspaceWorkspaceId"], joinFields: ["workspaceId"], 'type: MANY_TO_ONE}
+                location: {entity: Building, fieldName: "location", refCollection: "Building", 
+                refFields: ["buildingCode"], joinFields: ["locationBuildingCode"], 'type: ONE_TO_MANY},
+                employees: {entity: Employee, fieldName: "employees", refCollection: "Employee", 
+                refFields: ["workspaceWorkspaceId"], joinFields: ["workspaceId"], 'type: MANY_TO_ONE}
             }
         },
         [BUILDING] : {
@@ -94,12 +111,16 @@ public isolated client class RedisRainierClient {
                 country: {fieldName: "country", fieldDataType: STRING},
                 postalCode: {fieldName: "postalCode", fieldDataType: STRING},
                 'type: {fieldName: "type", fieldDataType: STRING},
-                "workspaces[].workspaceId": {relation: {entityName: "workspaces", refField: "workspaceId", refFieldDataType: STRING}},
-                "workspaces[].workspaceType": {relation: {entityName: "workspaces", refField: "workspaceType", refFieldDataType: STRING}},
-                "workspaces[].locationBuildingCode": {relation: {entityName: "workspaces", refField: "locationBuildingCode", refFieldDataType: STRING}}
+                "workspaces[].workspaceId": {relation: {entityName: "workspaces", refField: "workspaceId", 
+                refFieldDataType: STRING}},
+                "workspaces[].workspaceType": {relation: {entityName: "workspaces", refField: "workspaceType", 
+                refFieldDataType: STRING}},
+                "workspaces[].locationBuildingCode": {relation: {entityName: "workspaces", 
+                refField: "locationBuildingCode", refFieldDataType: STRING}}
             },
             keyFields: ["buildingCode"],
-            refMetadata: {workspaces: {entity: Workspace, fieldName: "workspaces", refCollection: "Workspace", refFields: ["locationBuildingCode"], joinFields: ["buildingCode"], 'type: MANY_TO_ONE}}
+            refMetadata: {workspaces: {entity: Workspace, fieldName: "workspaces", refCollection: "Workspace", 
+            refFields: ["locationBuildingCode"], joinFields: ["buildingCode"], 'type: MANY_TO_ONE}}
         },
         [DEPARTMENT] : {
             entityName: "Department",
@@ -108,16 +129,23 @@ public isolated client class RedisRainierClient {
                 deptNo: {fieldName: "deptNo", fieldDataType: STRING},
                 deptName: {fieldName: "deptName", fieldDataType: STRING},
                 "employees[].empNo": {relation: {entityName: "employees", refField: "empNo", refFieldDataType: STRING}},
-                "employees[].firstName": {relation: {entityName: "employees", refField: "firstName", refFieldDataType: STRING}},
-                "employees[].lastName": {relation: {entityName: "employees", refField: "lastName", refFieldDataType: STRING}},
-                "employees[].birthDate": {relation: {entityName: "employees", refField: "birthDate", refFieldDataType: DATE}},
+                "employees[].firstName": {relation: {entityName: "employees", refField: "firstName", 
+                refFieldDataType: STRING}},
+                "employees[].lastName": {relation: {entityName: "employees", refField: "lastName", 
+                refFieldDataType: STRING}},
+                "employees[].birthDate": {relation: {entityName: "employees", refField: "birthDate", 
+                refFieldDataType: DATE}},
                 "employees[].gender": {relation: {entityName: "employees", refField: "gender", refFieldDataType: ENUM}},
-                "employees[].hireDate": {relation: {entityName: "employees", refField: "hireDate", refFieldDataType: DATE}},
-                "employees[].departmentDeptNo": {relation: {entityName: "employees", refField: "departmentDeptNo", refFieldDataType: STRING}},
-                "employees[].workspaceWorkspaceId": {relation: {entityName: "employees", refField: "workspaceWorkspaceId", refFieldDataType: STRING}}
+                "employees[].hireDate": {relation: {entityName: "employees", refField: "hireDate", 
+                refFieldDataType: DATE}},
+                "employees[].departmentDeptNo": {relation: {entityName: "employees", refField: "departmentDeptNo", 
+                refFieldDataType: STRING}},
+                "employees[].workspaceWorkspaceId": {relation: {entityName: "employees", 
+                refField: "workspaceWorkspaceId", refFieldDataType: STRING}}
             },
             keyFields: ["deptNo"],
-            refMetadata: {employees: {entity: Employee, fieldName: "employees", refCollection: "Employee", refFields: ["departmentDeptNo"], joinFields: ["deptNo"], 'type: MANY_TO_ONE}}
+            refMetadata: {employees: {entity: Employee, fieldName: "employees", refCollection: "Employee", 
+            refFields: ["departmentDeptNo"], joinFields: ["deptNo"], 'type: MANY_TO_ONE}}
         },
         [ORDER_ITEM] : {
             entityName: "OrderItem",
@@ -133,7 +161,8 @@ public isolated client class RedisRainierClient {
     };
 
     public isolated function init() returns persist:Error? {
-        redis:Client|error dbClient = new (config = { host: redis.host+":"+redis.port.toString(), password: redis.password, options: redis.connectionOptions });
+        redis:Client|error dbClient = new (config = { host: redis.host+":"+redis.port.toString(), 
+        password: redis.password, options: redis.connectionOptions });
         if dbClient is error {
             return <persist:Error>error(dbClient.message());
         }
@@ -147,12 +176,14 @@ public isolated client class RedisRainierClient {
         };
     }
 
-    isolated resource function get employees(EmployeeTargetType targetType = <>) returns stream<targetType, persist:Error?> = @java:Method {
+    isolated resource function get employees(EmployeeTargetType targetType = <>) returns stream<targetType, 
+    persist:Error?> = @java:Method {
         'class: "io.ballerina.stdlib.persist.redis.datastore.RedisProcessor",
         name: "query"
     } external;
 
-    isolated resource function get employees/[string empNo](EmployeeTargetType targetType = <>) returns targetType|persist:Error = @java:Method {
+    isolated resource function get employees/[string empNo](EmployeeTargetType targetType = <>) 
+    returns targetType|persist:Error = @java:Method {
         'class: "io.ballerina.stdlib.persist.redis.datastore.RedisProcessor",
         name: "queryOne"
     } external;
@@ -186,12 +217,14 @@ public isolated client class RedisRainierClient {
         return result;
     }
 
-    isolated resource function get workspaces(WorkspaceTargetType targetType = <>) returns stream<targetType, persist:Error?> = @java:Method {
+    isolated resource function get workspaces(WorkspaceTargetType targetType = <>) returns stream<targetType, 
+    persist:Error?> = @java:Method {
         'class: "io.ballerina.stdlib.persist.redis.datastore.RedisProcessor",
         name: "query"
     } external;
 
-    isolated resource function get workspaces/[string workspaceId](WorkspaceTargetType targetType = <>) returns targetType|persist:Error = @java:Method {
+    isolated resource function get workspaces/[string workspaceId](WorkspaceTargetType targetType = <>) 
+    returns targetType|persist:Error = @java:Method {
         'class: "io.ballerina.stdlib.persist.redis.datastore.RedisProcessor",
         name: "queryOne"
     } external;
@@ -206,7 +239,8 @@ public isolated client class RedisRainierClient {
             select inserted.workspaceId;
     }
 
-    isolated resource function put workspaces/[string workspaceId](WorkspaceUpdate value) returns Workspace|persist:Error {
+    isolated resource function put workspaces/[string workspaceId](WorkspaceUpdate value) 
+    returns Workspace|persist:Error {
         RedisClient redisClient;
         lock {
             redisClient = self.persistClients.get(WORKSPACE);
@@ -225,12 +259,14 @@ public isolated client class RedisRainierClient {
         return result;
     }
 
-    isolated resource function get buildings(BuildingTargetType targetType = <>) returns stream<targetType, persist:Error?> = @java:Method {
+    isolated resource function get buildings(BuildingTargetType targetType = <>) returns stream<targetType, 
+    persist:Error?> = @java:Method {
         'class: "io.ballerina.stdlib.persist.redis.datastore.RedisProcessor",
         name: "query"
     } external;
 
-    isolated resource function get buildings/[string buildingCode](BuildingTargetType targetType = <>) returns targetType|persist:Error = @java:Method {
+    isolated resource function get buildings/[string buildingCode](BuildingTargetType targetType = <>) 
+    returns targetType|persist:Error = @java:Method {
         'class: "io.ballerina.stdlib.persist.redis.datastore.RedisProcessor",
         name: "queryOne"
     } external;
@@ -245,7 +281,8 @@ public isolated client class RedisRainierClient {
             select inserted.buildingCode;
     }
 
-    isolated resource function put buildings/[string buildingCode](BuildingUpdate value) returns Building|persist:Error {
+    isolated resource function put buildings/[string buildingCode](BuildingUpdate value) 
+    returns Building|persist:Error {
         RedisClient redisClient;
         lock {
             redisClient = self.persistClients.get(BUILDING);
@@ -264,12 +301,14 @@ public isolated client class RedisRainierClient {
         return result;
     }
 
-    isolated resource function get departments(DepartmentTargetType targetType = <>) returns stream<targetType, persist:Error?> = @java:Method {
+    isolated resource function get departments(DepartmentTargetType targetType = <>) returns stream<targetType, 
+    persist:Error?> = @java:Method {
         'class: "io.ballerina.stdlib.persist.redis.datastore.RedisProcessor",
         name: "query"
     } external;
 
-    isolated resource function get departments/[string deptNo](DepartmentTargetType targetType = <>) returns targetType|persist:Error = @java:Method {
+    isolated resource function get departments/[string deptNo](DepartmentTargetType targetType = <>) 
+    returns targetType|persist:Error = @java:Method {
         'class: "io.ballerina.stdlib.persist.redis.datastore.RedisProcessor",
         name: "queryOne"
     } external;
@@ -284,7 +323,8 @@ public isolated client class RedisRainierClient {
             select inserted.deptNo;
     }
 
-    isolated resource function put departments/[string deptNo](DepartmentUpdate value) returns Department|persist:Error {
+    isolated resource function put departments/[string deptNo](DepartmentUpdate value) 
+    returns Department|persist:Error {
         RedisClient redisClient;
         lock {
             redisClient = self.persistClients.get(DEPARTMENT);
@@ -303,12 +343,14 @@ public isolated client class RedisRainierClient {
         return result;
     }
 
-    isolated resource function get orderitems(OrderItemTargetType targetType = <>) returns stream<targetType, persist:Error?> = @java:Method {
+    isolated resource function get orderitems(OrderItemTargetType targetType = <>) returns stream<targetType, 
+    persist:Error?> = @java:Method {
         'class: "io.ballerina.stdlib.persist.redis.datastore.RedisProcessor",
         name: "query"
     } external;
 
-    isolated resource function get orderitems/[string orderId]/[string itemId](OrderItemTargetType targetType = <>) returns targetType|persist:Error = @java:Method {
+    isolated resource function get orderitems/[string orderId]/[string itemId](OrderItemTargetType targetType = <>) 
+    returns targetType|persist:Error = @java:Method {
         'class: "io.ballerina.stdlib.persist.redis.datastore.RedisProcessor",
         name: "queryOne"
     } external;
@@ -323,7 +365,8 @@ public isolated client class RedisRainierClient {
             select [inserted.orderId, inserted.itemId];
     }
 
-    isolated resource function put orderitems/[string orderId]/[string itemId](OrderItemUpdate value) returns OrderItem|persist:Error {
+    isolated resource function put orderitems/[string orderId]/[string itemId](OrderItemUpdate value) 
+    returns OrderItem|persist:Error {
         RedisClient redisClient;
         lock {
             redisClient = self.persistClients.get(ORDER_ITEM);
@@ -343,7 +386,7 @@ public isolated client class RedisRainierClient {
     }
 
     public isolated function close() returns persist:Error? {
-        error? result = self.dbClient.stop();
+        error? result = self.dbClient.close();
         if result is error {
             return <persist:Error>error(result.message());
         }

@@ -28,8 +28,9 @@ configurable record {|
 @test:BeforeSuite
 function initTests() returns error? {
     
-    redis:Client redisDbClient = check new (config = {host: string `${redis.host}:${redis.port}`, password: redis.password, options: redis.connectionOptions});
-    redisDbClient.stop();
+    redis:Client redisDbClient = check new (config = {host: string `${redis.host}:${redis.port}`, 
+    password: redis.password, options: redis.connectionOptions});
+    _ = check redisDbClient.close();
 }
 
 AllTypes allTypes1 = {
@@ -41,7 +42,7 @@ AllTypes allTypes1 = {
     stringType: "test-2",
     dateType: {year: 1993, month: 11, day: 3},
     timeOfDayType: {hour: 12, minute: 32, second: 34},
-    utcType: [1684493685, 0.998012000],
+    utcType: [1684493685, 0.998012],
     civilType: {utcOffset: {hours: 5, minutes: 30, seconds: 0}, timeAbbrev: "Asia/Colombo", year: 2024, month: 2, 
     day: 27, hour: 10, minute: 30, second: 21},
     booleanTypeOptional: false,
@@ -51,7 +52,7 @@ AllTypes allTypes1 = {
     stringTypeOptional: "test",
     dateTypeOptional: {year: 1993, month: 11, day: 3},
     timeOfDayTypeOptional: {hour: 12, minute: 32, second: 34},
-    utcTypeOptional: [1684493685, 0.998012000],
+    utcTypeOptional: [1684493685, 0.998012],
     civilTypeOptional: {utcOffset: {hours: 5, minutes: 30, seconds: 0}, timeAbbrev: "Asia/Colombo", year: 2024, 
     month: 2, day: 27, hour: 10, minute: 30, second: 21},
     enumType: "TYPE_3",
@@ -91,7 +92,7 @@ AllTypes allTypes2 = {
     stringType: "test2",
     dateType: {year: 1996, month: 11, day: 3},
     timeOfDayType: {hour: 17, minute: 32, second: 34},
-    utcType: [1684493685, 0.998012000],
+    utcType: [1684493685, 0.998012],
     civilType: {utcOffset: {hours: 5, minutes: 30, seconds: 0}, timeAbbrev: "Asia/Colombo", year: 2024, month: 2, 
     day: 27, hour: 10, minute: 30, second: 21},
     booleanTypeOptional: true,
@@ -101,7 +102,7 @@ AllTypes allTypes2 = {
     stringTypeOptional: "test2",
     dateTypeOptional: {year: 1293, month: 11, day: 3},
     timeOfDayTypeOptional: {hour: 19, minute: 32, second: 34},
-    utcTypeOptional: [1684493685, 0.998012000],
+    utcTypeOptional: [1684493685, 0.998012],
     civilTypeOptional: {utcOffset: {hours: 5, minutes: 30, seconds: 0}, timeAbbrev: "Asia/Colombo", year: 2024, 
     month: 2, day: 27, hour: 10, minute: 30, second: 21},
     enumType: "TYPE_1",
@@ -141,7 +142,7 @@ AllTypes allTypes3 = {
     stringType: "test2",
     dateType: {year: 1996, month: 11, day: 3},
     timeOfDayType: {hour: 17, minute: 32, second: 34},
-    utcType: [1684493685, 0.998012000],
+    utcType: [1684493685, 0.998012],
     civilType: {utcOffset: {hours: 5, minutes: 30, seconds: 0}, timeAbbrev: "Asia/Colombo", year: 2024, month: 2, 
     day: 27, hour: 10, minute: 30, second: 21},
     enumType: "TYPE_1"
@@ -170,7 +171,7 @@ AllTypes allTypes1Updated = {
     stringType: "testUpdate",
     dateType: {year: 1996, month: 12, day: 13},
     timeOfDayType: {hour: 16, minute: 12, second: 14},
-    utcType: [1686493685, 0.996012000],
+    utcType: [1686493685, 0.996012],
     civilType: {utcOffset: {hours: 6, minutes: 0, seconds: 0}, timeAbbrev: "Asia/Colombo", year: 2022, month: 12, 
     day: 7, hour: 14, minute: 5, second: 43},
     booleanTypeOptional: true,
@@ -180,7 +181,7 @@ AllTypes allTypes1Updated = {
     stringTypeOptional: "testUpdate",
     dateTypeOptional: {year: 1923, month: 11, day: 3},
     timeOfDayTypeOptional: {hour: 18, minute: 32, second: 34},
-    utcTypeOptional: [1686493685, 0.996012000],
+    utcTypeOptional: [1686493685, 0.996012],
     civilTypeOptional: {utcOffset: {hours: 6, minutes: 0, seconds: 0}, timeAbbrev: "Asia/Colombo", year: 2022, 
     month: 12, day: 7, hour: 14, minute: 5, second: 43},
     enumType: "TYPE_4",

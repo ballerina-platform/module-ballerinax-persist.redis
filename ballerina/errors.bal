@@ -16,10 +16,6 @@
 
 import ballerina/persist;
 
-// public type ConstraintViolationError {
-//     *persist:ConstraintViolationError;
-// };
-
 # Generates a new `persist:ConstraintViolationError` with the given parameters.
 #
 # + entity - The name of the entity  
@@ -34,8 +30,10 @@ returns persist:ConstraintViolationError {
 
 # Generates a new `persist:AlreadyExistsError` with the given parameters.
 #
-# + entity - The name of the entity  
+# + entity - The name of the entity
+# + keyCount - The number of keys already exists
 # + return - The generated `persist:AlreadyExistsError`
-public isolated function getAlreadyExistsError(string entity) returns persist:AlreadyExistsError {
-    return error persist:AlreadyExistsError(string `A record already exist with the same key for the entity '${entity}'`);
+public isolated function getAlreadyExistsError(string entity, int keyCount) returns persist:AlreadyExistsError {
+    return error persist:AlreadyExistsError(
+        string `Record(s) already exist with the same key for the entity '${entity}'. Number of keys exists : ${keyCount}`);
 }

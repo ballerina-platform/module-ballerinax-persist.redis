@@ -14,8 +14,8 @@
 // specific language governing permissions and limitations
 // under the License.
 
-import ballerina/test;
 import ballerina/persist;
+import ballerina/test;
 
 @test:Config {
     groups: ["associations", "redis"],

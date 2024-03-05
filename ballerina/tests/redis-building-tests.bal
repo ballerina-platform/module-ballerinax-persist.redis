@@ -14,8 +14,8 @@
 // specific language governing permissions and limitations
 // under the License.
 
-import ballerina/test;
 import ballerina/persist;
+import ballerina/test;
 
 @test:Config {
     groups: ["building", "redis"]
@@ -71,7 +71,8 @@ function redisBuildingReadOneTestNegative() returns error? {
 
     Building|error buildingRetrieved = rainierClient->/buildings/["invalid-building-code"];
     if buildingRetrieved is persist:NotFoundError {
-        test:assertEquals(buildingRetrieved.message(), "A record with the key 'Building:invalid-building-code' does not exist for the entity 'Building'.");
+        test:assertEquals(buildingRetrieved.message(), 
+        "A record with the key 'Building:invalid-building-code' does not exist for the entity 'Building'.");
     } else {
         test:assertFail("persist:NotFoundError expected.");
     }
@@ -105,9 +106,12 @@ function redisBuildingReadManyDependentTest() returns error? {
         order by building.postalCode ascending select building;
 
     test:assertEquals(buildings, [
-        {city: building1.city, state: building1.state, country: building1.country, postalCode: building1.postalCode, 'type: building1.'type},
-        {city: building2.city, state: building2.state, country: building2.country, postalCode: building2.postalCode, 'type: building2.'type},
-        {city: building3.city, state: building3.state, country: building3.country, postalCode: building3.postalCode, 'type: building3.'type}
+        {city: building1.city, state: building1.state, country: building1.country, postalCode: building1.postalCode, 
+        'type: building1.'type},
+        {city: building2.city, state: building2.state, country: building2.country, postalCode: building2.postalCode, 
+        'type: building2.'type},
+        {city: building3.city, state: building3.state, country: building3.country, postalCode: building3.postalCode, 
+        'type: building3.'type}
     ]);
     check rainierClient.close();
 }
@@ -147,7 +151,8 @@ function redisBuildingUpdateTestNegative1() returns error? {
     });
 
     if building is persist:NotFoundError {
-        test:assertEquals(building.message(), "A record with the key 'Building:invalid-building-code' does not exist for the entity 'Building'.");
+        test:assertEquals(building.message(), 
+        "A record with the key 'Building:invalid-building-code' does not exist for the entity 'Building'.");
     } else {
         test:assertFail("persist:NotFoundError expected.");
     }
@@ -182,7 +187,8 @@ function redisBuildingDeleteTestNegative() returns error? {
     Building|error building = rainierClient->/buildings/[building1.buildingCode].delete();
 
     if building is error {
-        test:assertEquals(building.message(), string `A record with the key 'Building:${building1.buildingCode}' does not exist for the entity 'Building'.`);
+        test:assertEquals(building.message(), 
+        string `A record with the key 'Building:${building1.buildingCode}' does not exist for the entity 'Building'.`);
     } else {
         test:assertFail("persist:NotFoundError expected.");
     }

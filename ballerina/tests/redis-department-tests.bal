@@ -14,8 +14,8 @@
 // specific language governing permissions and limitations
 // under the License.
 
-import ballerina/test;
 import ballerina/persist;
+import ballerina/test;
 
 @test:Config {
     groups: ["department", "redis"]
@@ -70,7 +70,8 @@ function redisDepartmentReadOneTestNegative() returns error? {
 
     Department|error departmentRetrieved = rainierClient->/departments/["invalid-department-id"];
     if departmentRetrieved is persist:NotFoundError {
-        test:assertEquals(departmentRetrieved.message(), "A record with the key 'Department:invalid-department-id' does not exist for the entity 'Department'.");
+        test:assertEquals(departmentRetrieved.message(), 
+        "A record with the key 'Department:invalid-department-id' does not exist for the entity 'Department'.");
     } else {
         test:assertFail("NotFoundError expected.");
     }
@@ -140,7 +141,8 @@ function redisDepartmentUpdateTestNegative1() returns error? {
     });
 
     if department is persist:NotFoundError {
-        test:assertEquals(department.message(), "A record with the key 'Department:invalid-department-id' does not exist for the entity 'Department'.");
+        test:assertEquals(department.message(), 
+        "A record with the key 'Department:invalid-department-id' does not exist for the entity 'Department'.");
     } else {
         test:assertFail("NotFoundError expected.");
     }
@@ -175,7 +177,8 @@ function redisDepartmentDeleteTestNegative() returns error? {
     Department|error department = rainierClient->/departments/[department1.deptNo].delete();
 
     if department is persist:NotFoundError {
-        test:assertEquals(department.message(), string `A record with the key 'Department:${department1.deptNo}' does not exist for the entity 'Department'.`);
+        test:assertEquals(department.message(), 
+        string `A record with the key 'Department:${department1.deptNo}' does not exist for the entity 'Department'.`);
     } else {
         test:assertFail("NotFoundError expected.");
     }

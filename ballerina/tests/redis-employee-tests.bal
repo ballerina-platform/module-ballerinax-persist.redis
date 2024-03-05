@@ -14,8 +14,8 @@
 // specific language governing permissions and limitations
 // under the License.
 
-import ballerina/test;
 import ballerina/persist;
+import ballerina/test;
 
 @test:Config {
     groups: ["employee", "redis"],
@@ -72,7 +72,8 @@ function redisEmployeeReadOneTestNegative() returns error? {
 
     Employee|error employeeRetrieved = rainierClient->/employees/["invalid-employee-id"];
     if employeeRetrieved is persist:NotFoundError {
-        test:assertEquals(employeeRetrieved.message(), "A record with the key 'Employee:invalid-employee-id' does not exist for the entity 'Employee'.");
+        test:assertEquals(employeeRetrieved.message(), 
+        "A record with the key 'Employee:invalid-employee-id' does not exist for the entity 'Employee'.");
     } else {
         test:assertFail("NotFoundError expected.");
     }
@@ -125,16 +126,20 @@ function redisEmployeeReadManyDependentTest2() returns error? {
         order by employee.empNo ascending select employee;
 
     test:assertEquals(employees, [
-        {empNo: employee1.empNo, birthDate: employee1.birthDate, departmentDeptNo: employee1.departmentDeptNo, workspaceWorkspaceId: employee1.workspaceWorkspaceId},
-        {empNo: employee2.empNo, birthDate: employee2.birthDate, departmentDeptNo: employee2.departmentDeptNo, workspaceWorkspaceId: employee2.workspaceWorkspaceId},
-        {empNo: employee3.empNo, birthDate: employee3.birthDate, departmentDeptNo: employee3.departmentDeptNo, workspaceWorkspaceId: employee3.workspaceWorkspaceId}
+        {empNo: employee1.empNo, birthDate: employee1.birthDate, departmentDeptNo: employee1.departmentDeptNo, 
+        workspaceWorkspaceId: employee1.workspaceWorkspaceId},
+        {empNo: employee2.empNo, birthDate: employee2.birthDate, departmentDeptNo: employee2.departmentDeptNo, 
+        workspaceWorkspaceId: employee2.workspaceWorkspaceId},
+        {empNo: employee3.empNo, birthDate: employee3.birthDate, departmentDeptNo: employee3.departmentDeptNo, 
+        workspaceWorkspaceId: employee3.workspaceWorkspaceId}
     ]);
     check rainierClient.close();
 }
 
 @test:Config {
     groups: ["employee", "redis"],
-    dependsOn: [redisEmployeeReadOneTest, redisEmployeeReadManyTest, redisEmployeeReadManyDependentTest1, redisEmployeeReadManyDependentTest2]
+    dependsOn: [redisEmployeeReadOneTest, redisEmployeeReadManyTest, redisEmployeeReadManyDependentTest1, 
+    redisEmployeeReadManyDependentTest2]
 }
 function redisEmployeeUpdateTest() returns error? {
     RedisRainierClient rainierClient = check new ();
@@ -154,7 +159,8 @@ function redisEmployeeUpdateTest() returns error? {
 
 @test:Config {
     groups: ["employee", "redis"],
-    dependsOn: [redisEmployeeReadOneTest, redisEmployeeReadManyTest, redisEmployeeReadManyDependentTest1, redisEmployeeReadManyDependentTest2]
+    dependsOn: [redisEmployeeReadOneTest, redisEmployeeReadManyTest, redisEmployeeReadManyDependentTest1, 
+    redisEmployeeReadManyDependentTest2]
 }
 function redisEmployeeUpdateTestNegative1() returns error? {
     RedisRainierClient rainierClient = check new ();
@@ -164,7 +170,8 @@ function redisEmployeeUpdateTestNegative1() returns error? {
     });
 
     if employee is persist:NotFoundError {
-        test:assertEquals(employee.message(), "A record with the key 'Employee:invalid-employee-id' does not exist for the entity 'Employee'.");
+        test:assertEquals(employee.message(), 
+        "A record with the key 'Employee:invalid-employee-id' does not exist for the entity 'Employee'.");
     } else {
         test:assertFail("NotFoundError expected.");
     }
@@ -173,7 +180,8 @@ function redisEmployeeUpdateTestNegative1() returns error? {
 
 @test:Config {
     groups: ["employee", "redis"],
-    dependsOn: [redisEmployeeReadOneTest, redisEmployeeReadManyTest, redisEmployeeReadManyDependentTest1, redisEmployeeReadManyDependentTest2]
+    dependsOn: [redisEmployeeReadOneTest, redisEmployeeReadManyTest, redisEmployeeReadManyDependentTest1, 
+    redisEmployeeReadManyDependentTest2]
 }
 function redisEmployeeUpdateTestNegative3() returns error? {
     RedisRainierClient rainierClient = check new ();
@@ -183,7 +191,8 @@ function redisEmployeeUpdateTestNegative3() returns error? {
     });
 
     if employee is persist:ConstraintViolationError {
-        test:assertTrue(employee.message().includes(string `An association constraint failed between entities 'Employee' and 'Workspace'`));
+        test:assertTrue(employee.message().includes(
+            string `An association constraint failed between entities 'Employee' and 'Workspace'`));
     } else {
         test:assertFail("persist:ConstraintViolationError expected.");
     }
@@ -218,7 +227,8 @@ function redisEmployeeDeleteTestNegative() returns error? {
     Employee|error employee = rainierClient->/employees/[employee1.empNo].delete();
 
     if employee is persist:NotFoundError {
-        test:assertEquals(employee.message(), string `A record with the key 'Employee:${employee1.empNo}' does not exist for the entity 'Employee'.`);
+        test:assertEquals(employee.message(), 
+        string `A record with the key 'Employee:${employee1.empNo}' does not exist for the entity 'Employee'.`);
     } else {
         test:assertFail("NotFoundError expected.");
     }

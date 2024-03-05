@@ -135,20 +135,3 @@ public enum MetaData {
     RELATION = "relation",
     REF_FIELD_DATA_TYPE = "refFieldDataType"
 }
-
-# Represents the required DB operations in a `persist:RedisClient`.
-# Only used by `persist:RedisClient`.
-#
-public enum RedisDBOperation {
-    KEYS,
-    REDISTYPE,
-    EXISTS,
-    HMSET,
-    HMGET,
-    HSET,
-    SREM,
-    DEL,
-    SCARD,
-    SADD,
-    SMEMBERS
-}

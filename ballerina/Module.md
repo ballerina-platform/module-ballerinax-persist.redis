@@ -1,15 +1,16 @@
-# Module Overview
+# Overview
 
-This module provide redis database support for the `bal persist` feature, which provides functionality to store and query data from a redis database through a data model instead of writing redis commands.
+This module provide Redis database support for the `bal persist` feature, which provides functionality to store and query data from a 
+Redis database through a data model instead of writing Redis commands.
 
-Since redis is not the default datastore for `bal persist` you need to explicitly specify the data store when initializing `bal persist` in your application. as follows,
+Since Redis is not the default datastore for `bal persist` you need to explicitly specify the data store when initializing `bal persist` in your application. as follows,
 
 ```
 $ bal persist init --datastore redis
 ```
 
-## Supported Ballerina Types
-The following table lists the Ballerina types supported by the Redis data store in `bal persist`. The specified data types will be converted to strings during data insertion and then reverted to their original data types within Ballerina upon retrieval.
+## Supported Ballerina Data Types
+The following table lists the Ballerina data types supported by the Redis data store in `bal persist`. The specified data types will be converted to `string` during data insertion and then reverted to their original data types within Ballerina upon retrieval.
 
 |  Ballerina Type  |
 |:----------------:|

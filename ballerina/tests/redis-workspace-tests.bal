@@ -14,8 +14,8 @@
 // specific language governing permissions and limitations
 // under the License.
 
-import ballerina/test;
 import ballerina/persist;
+import ballerina/test;
 
 @test:Config {
     groups: ["workspace", "redis"],
@@ -87,7 +87,8 @@ function redisWorkspaceReadOneTestNegative() returns error? {
 
     Workspace|error workspaceRetrieved = rainierClient->/workspaces/["invalid-workspace-id"];
     if workspaceRetrieved is persist:NotFoundError {
-        test:assertEquals(workspaceRetrieved.message(), "A record with the key 'Workspace:invalid-workspace-id' does not exist for the entity 'Workspace'.");
+        test:assertEquals(workspaceRetrieved.message(), 
+        "A record with the key 'Workspace:invalid-workspace-id' does not exist for the entity 'Workspace'.");
     } else {
         test:assertFail("NotFoundError expected.");
     }
@@ -158,7 +159,8 @@ function redisWorkspaceUpdateTestNegative1() returns error? {
     });
 
     if workspace is persist:NotFoundError {
-        test:assertEquals(workspace.message(), "A record with the key 'Workspace:invalid-workspace-id' does not exist for the entity 'Workspace'.");
+        test:assertEquals(workspace.message(), 
+        "A record with the key 'Workspace:invalid-workspace-id' does not exist for the entity 'Workspace'.");
     } else {
         test:assertFail("NotFoundError expected.");
     }
