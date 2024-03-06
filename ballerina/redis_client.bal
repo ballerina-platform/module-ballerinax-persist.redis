@@ -13,7 +13,6 @@
 // KIND, either express or implied.  See the License for the
 // specific language governing permissions and limitations
 // under the License.
-
 import ballerina/lang.regexp;
 import ballerina/log;
 import ballerina/persist;
@@ -61,8 +60,8 @@ public isolated client class RedisClient {
     # + typeDescriptions - The type descriptions of the relations to be retrieved
     # + return - An `record {|anydata...;|}` containing the requested record
     # or a `persist:Error` if the operation fails
-    public isolated function runReadByKeyQuery(typedesc<record {}> rowType, map<anydata> typeMap, anydata key, 
-    string[] fields = [], string[] include = [], typedesc<record {}>[] typeDescriptions = []) 
+    public isolated function runReadByKeyQuery(typedesc<record {}> rowType, map<anydata> typeMap, anydata key,
+            string[] fields = [], string[] include = [], typedesc<record {}>[] typeDescriptions = [])
     returns record {|anydata...;|}|persist:Error {
         // Generate the key
         string recordKey = string `${self.collectionName}${self.getKey(key)}`;
@@ -88,8 +87,8 @@ public isolated client class RedisClient {
     # + include - The associations to be retrieved
     # + return - A stream of `stream<record{}|error?>` containing the requested records
     # or a `persist:Error` if the operation fails
-    public isolated function runReadQuery(typedesc<record {}> rowType, map<anydata> typeMap, string[] fields = [], 
-    string[] include = []) returns stream<record {}|error?>|persist:Error {
+    public isolated function runReadQuery(typedesc<record {}> rowType, map<anydata> typeMap, string[] fields = [],
+            string[] include = []) returns stream<record {}|error?>|persist:Error {
         // Get all the keys
         string pattern = string `${self.collectionName}${KEY_SEPERATOR}*`;
         string[]|error keys = self.dbClient->keys(pattern);
@@ -127,7 +126,7 @@ public isolated client class RedisClient {
     # + return - A `string` containing the information of the database operation execution
     # or a `persist:Error` if the operation fails
     public isolated function runBatchInsertQuery(record {}[] insertRecords) returns string|persist:Error {
-        
+
         string|error result;
 
         // Verify key existance
@@ -214,7 +213,7 @@ public isolated client class RedisClient {
             // Remove any references if exists
             if allRefFields.length() > 0 {
                 map<any> currentObject = check self.dbClient->hMGet(keyWithPrefix, allRefFields);
-                    self.logQuery(HMGET, {key: keyWithPrefix, fieldNames: allRefFields.toJsonString()});
+                self.logQuery(HMGET, {key: keyWithPrefix, fieldNames: allRefFields.toJsonString()});
                 foreach RefMetadata refMedaData in self.refMetadata {
                     string refKey = refMedaData.refCollection;
                     foreach string refField in refMedaData.joinFields {
@@ -246,7 +245,7 @@ public isolated client class RedisClient {
 
         // Verify the existence of the key
         do {
-	        int isKeyExists = check self.dbClient->exists([recordKey]);
+            int isKeyExists = check self.dbClient->exists([recordKey]);
             self.logQuery(EXISTS, [recordKey]);
             if isKeyExists == 0 {
                 return persist:getNotFoundError(self.collectionName, recordKey);
@@ -255,7 +254,7 @@ public isolated client class RedisClient {
             if e is persist:NotFoundError {
                 return e;
             }
-        	return error persist:Error(e.message(), e);
+            return error persist:Error(e.message(), e);
         }
 
         // Check time related data types
@@ -320,7 +319,7 @@ public isolated client class RedisClient {
             if e is persist:ConstraintViolationError {
                 return e;
             }
-        	return error persist:Error(e.message(), e);
+            return error persist:Error(e.message(), e);
         }
 
         // Verify the availablity of new associations
@@ -355,22 +354,25 @@ public isolated client class RedisClient {
                         if cardinality > 0 {
                             return getConstraintViolationError(self.collectionName, refMetaData.refCollection);
                         }
-                    } 
+                    }
                 }
             }
         } on fail error e {
             if e is persist:ConstraintViolationError {
                 return e;
             }
-        	return error persist:Error(e.message(), e);
+            return error persist:Error(e.message(), e);
         }
 
         // Update
         foreach string updatedField in newUpdateRecord.keys() {
-            _ = check self.dbClient->hSet(recordKey, updatedField, 
+            _ = check self.dbClient->hSet(recordKey, updatedField,
                     newUpdateRecord[updatedField].toString());
-            self.logQuery(HSET, {key: recordKey, fieldName: updatedField, 
-            newValue: newUpdateRecord[updatedField].toJsonString()});
+            self.logQuery(HSET, {
+                key: recordKey,
+                fieldName: updatedField,
+                newValue: newUpdateRecord[updatedField].toJsonString()
+            });
         } on fail error e {
             return error persist:Error(e.message(), e);
         }
@@ -379,7 +381,7 @@ public isolated client class RedisClient {
         foreach RefMetadata refMetaData in self.refMetadata {
             if !updatedEntities.hasKey(refMetaData.refCollection) {
                 continue;
-            } 
+            }
             string[] joinFields = refMetaData.joinFields;
             string newRelatedRecordKey = refMetaData.refCollection;
             string prevRelatedRecordKey = refMetaData.refCollection;
@@ -398,7 +400,7 @@ public isolated client class RedisClient {
                 return error persist:Error(sAdd.message(), sAdd);
             }
             self.logQuery(SADD, {key: newSetKey, suffixes: [recordKeySuffix].toJsonString()});
-            
+
             // Detach from previous association
             string prevSetKey = string `${prevRelatedRecordKey}${KEY_SEPERATOR}${self.collectionName}`;
             int|error sRem = self.dbClient->sRem(prevSetKey, [recordKeySuffix.substring(1)]);
@@ -416,8 +418,8 @@ public isolated client class RedisClient {
     # + fields - The fields to be retrieved
     # + include - The associations to be retrieved
     # + return - A `persist:Error` if the operation fails
-    public isolated function getManyRelations(map<anydata> typeMap, record {} 'object, string[] fields, 
-    string[] include) returns persist:Error? {
+    public isolated function getManyRelations(map<anydata> typeMap, record {} 'object, string[] fields,
+            string[] include) returns persist:Error? {
         foreach int i in 0 ..< include.length() {
             string entity = include[i];
             (RefMetadata & readonly)? refMetaData = self.refMetadata[entity];
@@ -461,7 +463,7 @@ public isolated client class RedisClient {
             record {}[] associatedRecords = [];
             foreach string key in keySuffixes {
                 // Handling simple fields of the associated record
-                record {} valueToRecord = check self.queryRelationFieldsByKey(entity, cardinalityType, 
+                record {} valueToRecord = check self.queryRelationFieldsByKey(entity, cardinalityType,
                 string `${refMetaData.refCollection}${key}`, relationFields);
 
                 foreach string refField in valueToRecord.keys() {
@@ -495,9 +497,9 @@ public isolated client class RedisClient {
     private isolated function getKey(anydata key) returns string {
         string keyValue = "";
         if key is map<any> {
-                foreach string compositeKey in key.keys() {
-                    keyValue += string `${KEY_SEPERATOR}${key[compositeKey].toString()}`;
-                }
+            foreach string compositeKey in key.keys() {
+                keyValue += string `${KEY_SEPERATOR}${key[compositeKey].toString()}`;
+            }
             return keyValue;
         }
         return string `${KEY_SEPERATOR}${key.toString()}`;
@@ -511,36 +513,35 @@ public isolated client class RedisClient {
         return key;
     }
 
-    private isolated function getRelatedEntityKeySuffixes(string entity, record {} 'object) returns string []|error {
+    private isolated function getRelatedEntityKeySuffixes(string entity, record {} 'object) returns string[]|error {
         (RefMetadata & readonly)? refMetaData = self.refMetadata[entity];
         if refMetaData == () {
             return [];
         }
 
-        do {
-            if refMetaData.joinFields == self.keyFields {
-                // Non-owner have direct access to the association set
-                string setKey = string `${self.getKeyFromObject('object)}${KEY_SEPERATOR}${refMetaData.refCollection}`;
-                string[] keys = check self.dbClient->sMembers(setKey);
-                self.logQuery(SMEMBERS, setKey);
-                return from string key in keys select KEY_SEPERATOR+key;
-            } else {
-                map<any> recordWithRefFields = check self.dbClient->hMGet(self.getKeyFromObject('object), 
-                refMetaData.joinFields);
-                self.logQuery(HMGET, {key: self.getKeyFromObject('object), 
-                "record": refMetaData.joinFields.toJsonString()});
-                string key = "";
-                foreach string joinField in refMetaData.joinFields {
-                    key += string `${KEY_SEPERATOR}${recordWithRefFields[joinField].toString()}`;
-                }
-                return [key];
+        if refMetaData.joinFields == self.keyFields {
+            // Non-owner have direct access to the association set
+            string setKey = string `${self.getKeyFromObject('object)}${KEY_SEPERATOR}${refMetaData.refCollection}`;
+            string[] keys = check self.dbClient->sMembers(setKey);
+            self.logQuery(SMEMBERS, setKey);
+            return from string key in keys
+                select KEY_SEPERATOR + key;
+        } else {
+            map<any> recordWithRefFields = check self.dbClient->hMGet(self.getKeyFromObject('object),
+            refMetaData.joinFields);
+            self.logQuery(HMGET, {
+                key: self.getKeyFromObject('object),
+                "record": refMetaData.joinFields.toJsonString()
+            });
+            string key = "";
+            foreach string joinField in refMetaData.joinFields {
+                key += string `${KEY_SEPERATOR}${recordWithRefFields[joinField].toString()}`;
             }
-        } on fail error e {
-            return e;
+            return [key];
         }
     }
 
-    private isolated function querySimpleFieldsByKey(map<anydata> typeMap, string key, string[] fields) 
+    private isolated function querySimpleFieldsByKey(map<anydata> typeMap, string key, string[] fields)
     returns record {|anydata...;|}|persist:Error {
         string[] simpleFields = self.getTargetSimpleFields(fields, typeMap);
 
@@ -566,8 +567,8 @@ public isolated client class RedisClient {
         }
     }
 
-    private isolated function queryRelationFieldsByKey(string entity, CardinalityType cardinalityType, string key, 
-    string[] fields) returns record {|anydata...;|}|persist:Error {
+    private isolated function queryRelationFieldsByKey(string entity, CardinalityType cardinalityType, string key,
+            string[] fields) returns record {|anydata...;|}|persist:Error {
         string[] relationFields = fields.clone();
         (RefMetadata & readonly)? refMetaData = self.refMetadata[entity];
         if refMetaData == () {
@@ -600,7 +601,7 @@ public isolated client class RedisClient {
             foreach string fieldKey in value.keys() {
                 // convert the data type from 'any' to relevant type
                 valueToRecord[fieldKey] = check self.dataConverter(
-                    <FieldMetadata & readonly>self.fieldMetadata[string `${fieldMetadataKeyPrefix}${fieldKey}`], 
+                    <FieldMetadata & readonly>self.fieldMetadata[string `${fieldMetadataKeyPrefix}${fieldKey}`],
                     <anydata>value[fieldKey]);
             }
             return valueToRecord;
@@ -752,13 +753,20 @@ public isolated client class RedisClient {
     private isolated function stringToTime(string timeValue, DataType dataType) returns RedisTimeType|error {
         if dataType == TIME_OF_DAY {
             string[] timeValues = re `:`.split(timeValue);
-            time:TimeOfDay output = {hour: check int:fromString(timeValues[0]), minute: check int:fromString(
-                timeValues[1]), second: check decimal:fromString(timeValues[2])};
+            time:TimeOfDay output = {
+                hour: check int:fromString(timeValues[0]),
+                minute: check int:fromString(
+                timeValues[1]),
+                second: check decimal:fromString(timeValues[2])
+            };
             return output;
         } else if dataType == DATE {
             string[] timeValues = re `-`.split(timeValue);
-            time:Date output = {day: check int:fromString(timeValues[0]), month: check int:fromString(timeValues[1]), 
-            year: check int:fromString(timeValues[2])};
+            time:Date output = {
+                day: check int:fromString(timeValues[0]),
+                month: check int:fromString(timeValues[1]),
+                year: check int:fromString(timeValues[2])
+            };
             return output;
         } else if dataType == CIVIL {
             return self.civilFromString(timeValue);
@@ -770,22 +778,22 @@ public isolated client class RedisClient {
     }
 
     private isolated function civilToString(time:Civil civil) returns string|error {
-        string civilString = string `${civil.year}-${(civil.month.abs() > 9 ? civil.month 
-        : string `0${civil.month}`)}-${(civil.day.abs() > 9 ? civil.day : string `0${civil.day}`)}`;
-        civilString += string `T${(civil.hour.abs() > 9 ? civil.hour 
-        : string `0${civil.hour}`)}:${(civil.minute.abs() > 9 ? civil.minute : string `0${civil.minute}`)}`;
+        string civilString = string `${civil.year}-${(civil.month.abs() > 9 ? civil.month
+            : string `0${civil.month}`)}-${(civil.day.abs() > 9 ? civil.day : string `0${civil.day}`)}`;
+        civilString += string `T${(civil.hour.abs() > 9 ? civil.hour
+            : string `0${civil.hour}`)}:${(civil.minute.abs() > 9 ? civil.minute : string `0${civil.minute}`)}`;
         if civil.second !is () {
             time:Seconds seconds = <time:Seconds>civil.second;
-            civilString += string `:${(seconds.abs() > (check decimal:fromString("9")) ? seconds 
-            : string `0${seconds}`)}`;
+            civilString += string `:${(seconds.abs() > (check decimal:fromString("9")) ? seconds
+                : string `0${seconds}`)}`;
         }
         if civil.utcOffset !is () {
             time:ZoneOffset zoneOffset = <time:ZoneOffset>civil.utcOffset;
             civilString += (zoneOffset.hours >= 0 ? "+" : "-");
-            civilString += string `${zoneOffset.hours.abs() > 9 ? zoneOffset.hours.abs() 
-            : string `0${zoneOffset.hours.abs()}`}`;
-            civilString += string `:${(zoneOffset.minutes.abs() > 9 ? zoneOffset.minutes.abs() 
-            : string `0${zoneOffset.minutes.abs()}`)}`;
+            civilString += string `${zoneOffset.hours.abs() > 9 ? zoneOffset.hours.abs()
+                : string `0${zoneOffset.hours.abs()}`}`;
+            civilString += string `:${(zoneOffset.minutes.abs() > 9 ? zoneOffset.minutes.abs()
+                : string `0${zoneOffset.minutes.abs()}`)}`;
             time:Seconds? seconds = zoneOffset.seconds;
             if seconds !is () {
                 civilString += string `:${(seconds.abs() > 9d ? seconds : string `0${seconds.abs()}`)}`;
@@ -819,9 +827,11 @@ public isolated client class RedisClient {
             string[] civilTimeOffsetArray = re `\+|-`.split(civilArray[1]);
             civilTimeString = civilTimeOffsetArray[0];
             string[] zoneOffsetStringArray = re `:`.split(civilTimeOffsetArray[1]);
-            zoneOffset = {hours: sign * (check int:fromString(zoneOffsetStringArray[0])), 
-            minutes: sign * (check int:fromString(zoneOffsetStringArray[1])), 
-            seconds: sign * (check decimal:fromString(zoneOffsetStringArray[2]))};
+            zoneOffset = {
+                hours: sign * (check int:fromString(zoneOffsetStringArray[0])),
+                minutes: sign * (check int:fromString(zoneOffsetStringArray[1])),
+                seconds: sign * (check decimal:fromString(zoneOffsetStringArray[2]))
+            };
         } else {
             civilTimeString = civilArray[1];
         }
@@ -833,11 +843,19 @@ public isolated client class RedisClient {
         int hour = check int:fromString(civilTimeStringArray[0]);
         int minute = check int:fromString(civilTimeStringArray[1]);
         decimal second = check decimal:fromString(civilTimeStringArray[2]);
-        return <time:Civil>{year: year, month: month, day: day, hour: hour, minute: minute, second: second, 
-        timeAbbrev: timeAbbrev, utcOffset: zoneOffset};
+        return <time:Civil>{
+            year: year,
+            month: month,
+            day: day,
+            hour: hour,
+            minute: minute,
+            second: second,
+            timeAbbrev: timeAbbrev,
+            utcOffset: zoneOffset
+        };
     }
 
-    private isolated function dataConverter(FieldMetadata & readonly fieldMetaData, anydata value) 
+    private isolated function dataConverter(FieldMetadata & readonly fieldMetaData, anydata value)
     returns ()|boolean|string|float|decimal|int|RedisTimeType|error {
 
         // Return nil if value is nil
@@ -891,7 +909,7 @@ public isolated client class RedisClient {
     }
 
     isolated function logQuery(RedisDBOperation msgTag, string|string[]|map<string> metadata) {
-        
+
         string info = "";
         if metadata is string {
             match msgTag {
