@@ -13,7 +13,6 @@
 // KIND, either express or implied.  See the License for the
 // specific language governing permissions and limitations
 // under the License.
-
 import ballerina/persist;
 
 public class PersistRedisStream {
@@ -58,7 +57,7 @@ public class PersistRedisStream {
                 if value is error {
                     return error persist:Error(value.message(), value);
                 }
-                check (<RedisClient>self.persistClient).getManyRelations(self.typeMap, value, self.fields, 
+                check (<RedisClient>self.persistClient).getManyRelations(self.typeMap, value, self.fields,
                 self.include);
 
                 string[] keyFields = (<RedisClient>self.persistClient).getKeyFields();
@@ -70,9 +69,8 @@ public class PersistRedisStream {
                 record {|record {} value;|} nextRecord = {value: checkpanic value.cloneWithType(self.targetType)};
                 return nextRecord;
             }
-        } else {
-            return ();
         }
+        return ();
     }
 
     public isolated function close() returns persist:Error? {

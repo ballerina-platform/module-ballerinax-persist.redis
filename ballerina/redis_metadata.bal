@@ -17,7 +17,7 @@
 # Represents the required DB operations in a `persist:RedisClient`.
 # Only used by `persist:RedisClient`.
 #
-public enum RedisDBOperation {
+enum RedisDBOperation {
     KEYS,
     REDISTYPE,
     EXISTS,
