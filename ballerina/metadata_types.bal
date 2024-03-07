@@ -116,21 +116,21 @@ public enum DataType {
 }
 
 # Represents the type of the redis supported data structures.
-# Only used by the generated persist clients and `persist:RedisClient`.
+# Only used by the `persist:RedisClient`.
 #
 # + REDIS_STRING - `string` type
 # + REDIS_SET - `set` type
 # + REDIS_HASH - `hash` type
-public enum RedisDataType {
+enum RedisDataType {
     REDIS_STRING = "string",
     REDIS_SET = "set",
     REDIS_HASH = "hash"
 }
 
 # Represents the types of Metadata in a `persist:RedisClient`.
-# Only used by the generated persist clients and `persist:RedisClient`.
+# Only used by the `persist:RedisClient`.
 #
-public enum MetaData {
+enum MetaData {
     FIELD_DATA_TYPE = "fieldDataType",
     RELATION = "relation",
     REF_FIELD_DATA_TYPE = "refFieldDataType"
