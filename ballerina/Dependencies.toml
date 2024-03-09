@@ -9,6 +9,15 @@ distribution-version = "2201.8.2"
 
 [[package]]
 org = "ballerina"
+name = "crypto"
+version = "2.6.2"
+dependencies = [
+	{org = "ballerina", name = "jballerina.java"},
+	{org = "ballerina", name = "time"}
+]
+
+[[package]]
+org = "ballerina"
 name = "io"
 version = "1.6.0"
 dependencies = [
@@ -131,6 +140,7 @@ org = "ballerinax"
 name = "redis"
 version = "3.0.0"
 dependencies = [
+	{org = "ballerina", name = "crypto"},
 	{org = "ballerina", name = "jballerina.java"}
 ]
 modules = [
