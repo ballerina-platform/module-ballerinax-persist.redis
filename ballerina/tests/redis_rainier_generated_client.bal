@@ -161,8 +161,7 @@ public isolated client class RedisRainierClient {
     };
 
     public isolated function init() returns persist:Error? {
-        redis:Client|error dbClient = new (config = { host: redis.host+":"+redis.port.toString(), 
-        password: redis.password, options: redis.connectionOptions });
+        redis:Client|error dbClient = new (redis);
         if dbClient is error {
             return <persist:Error>error(dbClient.message());
         }
