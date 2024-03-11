@@ -22,3 +22,29 @@
 # virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
 hs_err_pid*
 replay_pid*
+
+# Ballerina
+Ballerina.lock
+
+# VS code files
+.vscode
+
+# IDEA code files
+.idea
+
+# Generated files
+target
+.ballerina
+ballerina/target
+ballerina/.devcontainer.json
+ballerina/build
+
+# gradle
+.gradle
+build/
+gradle-app.setting
+!gradle-wrapper.jar
+.gradletasknamecache
+
+# Ignore Gradle build output directory
+build
