@@ -29,6 +29,9 @@ Ballerina.lock
 # VS code files
 .vscode
 
+# IDEA code files
+.idea
+
 # Generated files
 target
 .ballerina
