@@ -1,5 +1,2 @@
 [redis]
-# connection = {host = "localhost", port = 6379, password = ""}
 connection = "redis://localhost:6379"
-connectionPooling = false
-isClusterConnection = false

@@ -23,7 +23,7 @@ configurable record {|
     boolean connectionPooling = false;
     boolean isClusterConnection = false;
     redis:SecureSocket secureSocket?;
-|} redis = ?;
+|} & readonly redis = ?;
 
 @test:BeforeSuite
 function initTests() returns error? {
