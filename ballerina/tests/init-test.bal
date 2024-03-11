@@ -19,17 +19,15 @@ import ballerina/time;
 import ballerinax/redis;
 
 configurable record {|
-    int port;
-    string host;
-    string password;
-    redis:Options connectionOptions = {};
-|} redis = ?;
+    redis:ConnectionUri|redis:ConnectionParams connection?;
+    boolean connectionPooling = false;
+    boolean isClusterConnection = false;
+    redis:SecureSocket secureSocket?;
+|} & readonly redis = ?;
 
 @test:BeforeSuite
 function initTests() returns error? {
-    
-    redis:Client redisDbClient = check new (config = {host: string `${redis.host}:${redis.port}`, 
-    password: redis.password, options: redis.connectionOptions});
+    redis:Client redisDbClient = check new (redis);
     _ = check redisDbClient.close();
 }
 
