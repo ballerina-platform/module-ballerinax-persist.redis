@@ -165,7 +165,7 @@ modules = [
 [[package]]
 org = "ballerinax"
 name = "redis"
-version = "3.0.0"
+version = "3.0.1"
 dependencies = [
 	{org = "ballerina", name = "crypto"},
 	{org = "ballerina", name = "jballerina.java"}
