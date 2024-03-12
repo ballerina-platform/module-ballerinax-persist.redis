@@ -18,12 +18,7 @@ import ballerina/test;
 import ballerina/time;
 import ballerinax/redis;
 
-configurable record {|
-    redis:ConnectionUri|redis:ConnectionParams connection?;
-    boolean connectionPooling = false;
-    boolean isClusterConnection = false;
-    redis:SecureSocket secureSocket?;
-|} & readonly redis = ?;
+configurable redis:ConnectionConfig & readonly redis = ?;
 
 @test:BeforeSuite
 function initTests() returns error? {
