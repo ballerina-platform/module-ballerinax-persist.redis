@@ -36,6 +36,3 @@ jobs:
       lang_version: ${{ inputs.lang_version }}
       native_image_options: '-J-Xmx7G ${{ inputs.native_image_options }}'
       additional_windows_build_flags: '-x test'
-    steps:
-      - name: Give execute permission to gradlew
-        run: chmod +x ./gradlew
