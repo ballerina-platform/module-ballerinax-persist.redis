@@ -14,7 +14,7 @@ The `persist` command will make it easy to enable `bal persist` feature in a Bal
 
 ## Issues and projects
 
-Issues and Projects tabs are disabled for this repository as this is part of the Ballerina standard library. To report bugs, request new features, start new discussions, view project boards, etc. please visit Ballerina standard library [parent repository](https://github.com/ballerina-platform/ballerina-standard-library).
+Issues and Projects tabs are disabled for this repository as this is part of the Ballerina library. To report bugs, request new features, start new discussions, view project boards, etc. please visit Ballerina library [parent repository](https://github.com/ballerina-platform/ballerina-library).
 
 This repository only contains the source code for the package.
 
