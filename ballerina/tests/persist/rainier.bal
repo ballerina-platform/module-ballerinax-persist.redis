@@ -13,7 +13,6 @@
 // KIND, either express or implied.  See the License for the
 // specific language governing permissions and limitations
 // under the License.
-
 import ballerina/time;
 
 enum Gender {
@@ -30,6 +29,7 @@ type Employee record {|
     time:Date hireDate;
 
     Department department;
+    Department? headOf;
     Workspace workspace;
 |};
 
@@ -57,6 +57,7 @@ type Department record {|
     string deptName;
 
     Employee[] employees;
+    Employee departmentHead;
 |};
 
 type OrderItem record {|

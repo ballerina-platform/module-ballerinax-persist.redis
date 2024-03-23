@@ -214,12 +214,12 @@ public isolated client class RedisClient {
             if allRefFields.length() > 0 {
                 map<any> currentObject = check self.dbClient->hMGet(keyWithPrefix, allRefFields);
                 self.logQuery(HMGET, {key: keyWithPrefix, fieldNames: allRefFields.toJsonString()});
-                foreach RefMetadata refMedaData in self.refMetadata {
-                    string refKey = refMedaData.refCollection;
-                    foreach string refField in refMedaData.joinFields {
+                foreach RefMetadata refMetaData in self.refMetadata {
+                    string refKey = refMetaData.refCollection;
+                    foreach string refField in refMetaData.joinFields {
                         refKey += string `${KEY_SEPERATOR}${currentObject[refField].toString()}`;
                     }
-                    string setKey = string `${refKey}${KEY_SEPERATOR}${self.collectionName}`;
+                    string setKey = string `${refKey}${KEY_SEPERATOR}${refMetaData.refMetaDataKey ?: ""}`;
                     _ = check self.dbClient->sRem(setKey, [keySuffix.substring(1)]);
                     self.logQuery(SREM, {key: setKey, suffixes: [keySuffix].toJsonString()});
                 }
@@ -339,7 +339,7 @@ public isolated client class RedisClient {
             }
 
             // Get keys of existing associations
-            string setKey = string `${newRelatedRecordKey}${KEY_SEPERATOR}${self.collectionName}`;
+            string setKey = string `${newRelatedRecordKey}${KEY_SEPERATOR}${refMetaData.refMetaDataKey ?: ""}`;
             int isKeyExists = check self.dbClient->exists([setKey]);
             self.logQuery(EXISTS, [setKey]);
             if isKeyExists != 0 {
@@ -394,7 +394,7 @@ public isolated client class RedisClient {
                 prevRelatedRecordKey += string `${KEY_SEPERATOR}${prevRecord[joinField].toString()}`;
             }
             // Attach to new association
-            string newSetKey = string `${newRelatedRecordKey}${KEY_SEPERATOR}${self.collectionName}`;
+            string newSetKey = string `${newRelatedRecordKey}${KEY_SEPERATOR}${refMetaData.refMetaDataKey ?: ""}`;
             int|error sAdd = self.dbClient->sAdd(newSetKey, [recordKeySuffix.substring(1)]);
             if sAdd is error {
                 return error persist:Error(sAdd.message(), sAdd);
@@ -402,7 +402,7 @@ public isolated client class RedisClient {
             self.logQuery(SADD, {key: newSetKey, suffixes: [recordKeySuffix].toJsonString()});
 
             // Detach from previous association
-            string prevSetKey = string `${prevRelatedRecordKey}${KEY_SEPERATOR}${self.collectionName}`;
+            string prevSetKey = string `${prevRelatedRecordKey}${KEY_SEPERATOR}${refMetaData.refMetaDataKey ?: ""}`;
             int|error sRem = self.dbClient->sRem(prevSetKey, [recordKeySuffix.substring(1)]);
             if sRem is error {
                 return error persist:Error(sRem.message(), sRem);
@@ -521,7 +521,7 @@ public isolated client class RedisClient {
 
         if refMetaData.joinFields == self.keyFields {
             // Non-owner have direct access to the association set
-            string setKey = string `${self.getKeyFromObject('object)}${KEY_SEPERATOR}${refMetaData.refCollection}`;
+            string setKey = string `${self.getKeyFromObject('object)}${KEY_SEPERATOR}${refMetaData.fieldName}`;
             string[] keys = check self.dbClient->sMembers(setKey);
             self.logQuery(SMEMBERS, setKey);
             return from string key in keys
@@ -666,7 +666,7 @@ public isolated client class RedisClient {
                 }
 
                 // Check the cardinality of refered entity record
-                string setKey = string `${refRecordKey}${KEY_SEPERATOR}${self.collectionName}`;
+                string setKey = string `${refRecordKey}${KEY_SEPERATOR}${refMetadataValue.refMetaDataKey ?: ""}`;
                 int|error sCard = self.dbClient->sCard(setKey);
                 self.logQuery(SCARD, setKey);
                 if sCard is int && sCard > 0 && refMetadataValue.'type == ONE_TO_ONE {
@@ -756,7 +756,7 @@ public isolated client class RedisClient {
             time:TimeOfDay output = {
                 hour: check int:fromString(timeValues[0]),
                 minute: check int:fromString(
-                timeValues[1]),
+                        timeValues[1]),
                 second: check decimal:fromString(timeValues[2])
             };
             return output;
