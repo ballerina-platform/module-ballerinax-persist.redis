@@ -69,6 +69,7 @@ public type RelationMetadata record {|
 # + entity - The name of the entity that is being joined  
 # + fieldName - The name of the field in the `entity` that is being joined  
 # + refCollection - The name of the Redis collection to be joined  
+# + refMetaDataKey - The name of the Redis collection to be joined  
 # + refFields - The names of the fields of the refered collection
 # + joinFields - The names of the join fields
 # + joinCollection - The name of the joining collection used for a many-to-many relation
@@ -79,6 +80,7 @@ public type RefMetadata record {|
     typedesc<record {}> entity;
     string fieldName;
     string refCollection;
+    string refMetaDataKey?;
     string[] refFields;
     string[] joinFields;
     string joinCollection?;

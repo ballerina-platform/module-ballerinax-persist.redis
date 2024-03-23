@@ -13,7 +13,6 @@
 // KIND, either express or implied.  See the License for the
 // specific language governing permissions and limitations
 // under the License.
-
 import ballerina/test;
 import ballerina/time;
 import ballerinax/redis;
@@ -36,8 +35,16 @@ AllTypes allTypes1 = {
     dateType: {year: 1993, month: 11, day: 3},
     timeOfDayType: {hour: 12, minute: 32, second: 34},
     utcType: [1684493685, 0.998012],
-    civilType: {utcOffset: {hours: 5, minutes: 30, seconds: 0}, timeAbbrev: "Asia/Colombo", year: 2024, month: 2, 
-    day: 27, hour: 10, minute: 30, second: 21},
+    civilType: {
+        utcOffset: {hours: 5, minutes: 30, seconds: 0},
+        timeAbbrev: "Asia/Colombo",
+        year: 2024,
+        month: 2,
+        day: 27,
+        hour: 10,
+        minute: 30,
+        second: 21
+    },
     booleanTypeOptional: false,
     intTypeOptional: 5,
     floatTypeOptional: 6.0,
@@ -46,8 +53,16 @@ AllTypes allTypes1 = {
     dateTypeOptional: {year: 1993, month: 11, day: 3},
     timeOfDayTypeOptional: {hour: 12, minute: 32, second: 34},
     utcTypeOptional: [1684493685, 0.998012],
-    civilTypeOptional: {utcOffset: {hours: 5, minutes: 30, seconds: 0}, timeAbbrev: "Asia/Colombo", year: 2024, 
-    month: 2, day: 27, hour: 10, minute: 30, second: 21},
+    civilTypeOptional: {
+        utcOffset: {hours: 5, minutes: 30, seconds: 0},
+        timeAbbrev: "Asia/Colombo",
+        year: 2024,
+        month: 2,
+        day: 27,
+        hour: 10,
+        minute: 30,
+        second: 21
+    },
     enumType: "TYPE_3",
     enumTypeOptional: "TYPE_2"
 };
@@ -86,8 +101,16 @@ AllTypes allTypes2 = {
     dateType: {year: 1996, month: 11, day: 3},
     timeOfDayType: {hour: 17, minute: 32, second: 34},
     utcType: [1684493685, 0.998012],
-    civilType: {utcOffset: {hours: 5, minutes: 30, seconds: 0}, timeAbbrev: "Asia/Colombo", year: 2024, month: 2, 
-    day: 27, hour: 10, minute: 30, second: 21},
+    civilType: {
+        utcOffset: {hours: 5, minutes: 30, seconds: 0},
+        timeAbbrev: "Asia/Colombo",
+        year: 2024,
+        month: 2,
+        day: 27,
+        hour: 10,
+        minute: 30,
+        second: 21
+    },
     booleanTypeOptional: true,
     intTypeOptional: 6,
     floatTypeOptional: 66.0,
@@ -96,8 +119,16 @@ AllTypes allTypes2 = {
     dateTypeOptional: {year: 1293, month: 11, day: 3},
     timeOfDayTypeOptional: {hour: 19, minute: 32, second: 34},
     utcTypeOptional: [1684493685, 0.998012],
-    civilTypeOptional: {utcOffset: {hours: 5, minutes: 30, seconds: 0}, timeAbbrev: "Asia/Colombo", year: 2024, 
-    month: 2, day: 27, hour: 10, minute: 30, second: 21},
+    civilTypeOptional: {
+        utcOffset: {hours: 5, minutes: 30, seconds: 0},
+        timeAbbrev: "Asia/Colombo",
+        year: 2024,
+        month: 2,
+        day: 27,
+        hour: 10,
+        minute: 30,
+        second: 21
+    },
     enumType: "TYPE_1",
     enumTypeOptional: "TYPE_3"
 };
@@ -136,8 +167,16 @@ AllTypes allTypes3 = {
     dateType: {year: 1996, month: 11, day: 3},
     timeOfDayType: {hour: 17, minute: 32, second: 34},
     utcType: [1684493685, 0.998012],
-    civilType: {utcOffset: {hours: 5, minutes: 30, seconds: 0}, timeAbbrev: "Asia/Colombo", year: 2024, month: 2, 
-    day: 27, hour: 10, minute: 30, second: 21},
+    civilType: {
+        utcOffset: {hours: 5, minutes: 30, seconds: 0},
+        timeAbbrev: "Asia/Colombo",
+        year: 2024,
+        month: 2,
+        day: 27,
+        hour: 10,
+        minute: 30,
+        second: 21
+    },
     enumType: "TYPE_1"
 };
 
@@ -165,8 +204,16 @@ AllTypes allTypes1Updated = {
     dateType: {year: 1996, month: 12, day: 13},
     timeOfDayType: {hour: 16, minute: 12, second: 14},
     utcType: [1686493685, 0.996012],
-    civilType: {utcOffset: {hours: 6, minutes: 0, seconds: 0}, timeAbbrev: "Asia/Colombo", year: 2022, month: 12, 
-    day: 7, hour: 14, minute: 5, second: 43},
+    civilType: {
+        utcOffset: {hours: 6, minutes: 0, seconds: 0},
+        timeAbbrev: "Asia/Colombo",
+        year: 2022,
+        month: 12,
+        day: 7,
+        hour: 14,
+        minute: 5,
+        second: 43
+    },
     booleanTypeOptional: true,
     intTypeOptional: 53,
     floatTypeOptional: 26.0,
@@ -175,8 +222,16 @@ AllTypes allTypes1Updated = {
     dateTypeOptional: {year: 1923, month: 11, day: 3},
     timeOfDayTypeOptional: {hour: 18, minute: 32, second: 34},
     utcTypeOptional: [1686493685, 0.996012],
-    civilTypeOptional: {utcOffset: {hours: 6, minutes: 0, seconds: 0}, timeAbbrev: "Asia/Colombo", year: 2022, 
-    month: 12, day: 7, hour: 14, minute: 5, second: 43},
+    civilTypeOptional: {
+        utcOffset: {hours: 6, minutes: 0, seconds: 0},
+        timeAbbrev: "Asia/Colombo",
+        year: 2022,
+        month: 12,
+        day: 7,
+        hour: 14,
+        minute: 5,
+        second: 43
+    },
     enumType: "TYPE_4",
     enumTypeOptional: "TYPE_4"
 };
@@ -739,4 +794,75 @@ EmployeeInfo employeeInfoNative3 = {
         workspaceType: "hot seat",
         locationBuildingCode: "building-native-3"
     }
+};
+
+public type PersonWithAssociations record {|
+    int id;
+    string name;
+    record {|
+        string code;
+    |}[] soldBuildings;
+    record {|
+        string code;
+    |}[] ownBuildings;
+|};
+
+Person person1 = {
+    id: 1,
+    name: "Jane"
+};
+
+Person person2 = {
+    id: 2,
+    name: "Mike"
+};
+
+PersonUpdate person1Update = {
+    name: "Mary"
+};
+
+Person person1Updated = {
+    id: 1,
+    name: "Mary"
+};
+
+Apartment apartment1 = {
+    code: "B001",
+    city: "New York",
+    state: "New York",
+    country: "USA",
+    postalCode: "10001",
+    'type: "Studio",
+    soldpersonId: 1,
+    ownpersonId: 2
+};
+
+ApartmentUpdate apartmentUpdate = {
+    postalCode: "00002"
+};
+
+Apartment apartment1Updated = {
+    code: "B001",
+    city: "New York",
+    state: "New York",
+    country: "USA",
+    postalCode: "00002",
+    'type: "Studio",
+    soldpersonId: 1,
+    ownpersonId: 2
+};
+
+PersonWithAssociations person1WithAssociations = {
+    id: 1,
+    name: "Jane",
+    soldBuildings: [
+        {
+            code: "B001"
+        }
+    ],
+    ownBuildings: [
+        {
+            code: "B002"
+        }
+    ]
 };
