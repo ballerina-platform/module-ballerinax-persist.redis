@@ -755,8 +755,7 @@ public isolated client class RedisClient {
             string[] timeValues = re `:`.split(timeValue);
             time:TimeOfDay output = {
                 hour: check int:fromString(timeValues[0]),
-                minute: check int:fromString(
-                        timeValues[1]),
+                minute: check int:fromString(timeValues[1]),
                 second: check decimal:fromString(timeValues[2])
             };
             return output;
