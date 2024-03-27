@@ -3,29 +3,39 @@
 This module provides Redis database support for the `bal persist` feature, which provides functionality to store and query data from a Redis database through a data model instead of writing Redis commands.
 
 ## How to use with `bal persist`
+
 Since Redis is not the default datastore for `bal persist` you need to explicitly specify the data store in your application in either of the following ways,
 
 ### Integrate to `bal build`
+
 1. Initialize `bal persist` and integrate to `bal build` using the following command,
+
     ```
     $ bal persist add --datastore redis --module <module_name>
     ```
+
 2. After defining the entities, build the application using the following command,
+
     ```
     $ bal build
     ```
 
 ### One time generation
+
 1. Initialize `bal persist` using the following command,
+
     ```
     $ bal persist init --datastore redis
     ```
+
 2. Generate the persist client using the following command,
+
     ```
     $ bal persist generate --datastore redis --module <module_name>
     ```
 
 ## Supported Ballerina data types
+
 The following table lists the Ballerina data types supported by the Redis data store. Following data types will be converted to `string` when inserting data and converted back to relevent data types in ballerina when retrieving.
 
 |  Ballerina Type  |
@@ -70,15 +80,18 @@ Additionally, you can set values for the advanced configuration parameters in th
 Select one of the methods below to set up a Redis server.
 
 ### Setup a Redis server locally
+
 Install a Redis server on your machine locally by downloading and installing it based on your development platform. See the [official Redis documentation](https://redis.io/download/).
   
 ### Setup using docker
+
 Use Docker to create a DB server deployment.
   1. Install Docker on your machine if you haven't already.
   2. Pull the Redis Docker image from Docker Hub using the command `docker pull redis`.
   3. Run the Redis container as follows `docker run -d -p 6379:6379 --name <container-name> redis`.
 
 ### Setup a cloud-based Redis service
+
 Use a cloud-based DB solution such as Google’s Cloud, Amazon’s Web Services, or Microsoft’s Azure database.
    1. Visit [Redis cloud console](https://app.redislabs.com).
    2. Login using email and password or using one of the Single Sign-On options.
@@ -86,6 +99,7 @@ Use a cloud-based DB solution such as Google’s Cloud, Amazon’s Web Services,
    4. Select a region and create the database.
    5. Find your `username`, `password` and the `public endpoint`
    6. Replace the `connection` parameter in `Config.toml` file as below
+   
       ```toml
       connection = "redis://<username>:<password>@<public_endpoint>"
 
