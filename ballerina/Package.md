@@ -99,6 +99,7 @@ Use a cloud-based DB solution such as Google’s Cloud, Amazon’s Web Services,
    4. Select a region and create the database.
    5. Find your `username`, `password` and the `public endpoint`
    6. Replace the `connection` parameter in `Config.toml` file as below
+   
       ```toml
       connection = "redis://<username>:<password>@<public_endpoint>"
 
