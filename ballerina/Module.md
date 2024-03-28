@@ -25,7 +25,7 @@ Since Redis is not the default datastore for `bal persist` you need to explicitl
 1. Initialize `bal persist` using the following command,
 
     ```
-    $ bal persist init --datastore redis
+    $ bal persist init
     ```
 
 2. Generate the persist client using the following command,
