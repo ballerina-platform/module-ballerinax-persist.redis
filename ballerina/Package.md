@@ -1,6 +1,6 @@
 # Overview
 
-This module provides Redis database support for the `bal persist` feature, which provides functionality to store and query data from a Redis database through a data model instead of writing Redis commands.
+This package provides Redis database support for the `bal persist` feature, which provides functionality to store and query data from a Redis database through a data model instead of writing Redis commands.
 
 ## How to use with `bal persist`
 
@@ -66,7 +66,7 @@ The following is a sample `Config.toml` file with the Redis data store configura
 connection = "redis://localhost:6379"
 ```
 
-Alternatively, you can provide connection parameters instead of `URI` as follows.
+Alternatively, you can provide connection parameters instead of the `URI` as follows.
 ```toml
 [<packageName>.<moduleName>.redis.connection]
 host = "localhost"
@@ -95,7 +95,7 @@ Use Docker to create a DB server deployment.
 Use a cloud-based DB solution such as Google’s Cloud, Amazon’s Web Services, or Microsoft’s Azure database.
    1. Visit [Redis cloud console](https://app.redislabs.com).
    2. Login using email and password or using one of the Single Sign-On options.
-   3. Select either one of Amazon Web Services, Google Cloud, or Microsoft Azure as the database vendor.
+   3. Select either Amazon Web Services, Google Cloud, or Microsoft Azure as the database vendor.
    4. Select a region and create the database.
    5. Find your `username`, `password` and the `public endpoint`
    6. Replace the `connection` parameter in `Config.toml` file as below
@@ -105,7 +105,7 @@ Use a cloud-based DB solution such as Google’s Cloud, Amazon’s Web Services,
 
 ## Report issues
 
-To report bugs, request new features, start new discussions, view project boards, etc., go to the [Ballerina standard library parent repository](https://github.com/ballerina-platform/ballerina-standard-library).
+To report bugs, request new features, start new discussions, view project boards, etc., go to the [Ballerina standard library parent repository](https://github.com/ballerina-platform/ballerina-library).
 
 ## Useful links
 - Chat live with us via our [Discord server](https://discord.gg/ballerinalang).
