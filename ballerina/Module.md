@@ -98,7 +98,7 @@ Use a cloud-based DB solution such as Google’s Cloud, Amazon’s Web Services,
    3. Select either Amazon Web Services, Google Cloud, or Microsoft Azure as the database vendor.
    4. Select a region and create the database.
    5. Find your `username`, `password` and the `public endpoint`
-   6. Replace the `connection` parameter in `Config.toml` file as below
+   6. Replace the `connection` parameter in the `Config.toml` file as below
    
       ```toml
       connection = "redis://<username>:<password>@<public_endpoint>"
