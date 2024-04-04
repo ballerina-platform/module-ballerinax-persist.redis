@@ -85,7 +85,7 @@ public isolated client class RedisManyAssociationsClient {
         }
     };
 
-    public isolated function init() returns persist:Error?|error {
+    public isolated function init() returns persist:Error? {
         redis:Client|error dbClient = new (connectionConfig);
         if dbClient is error {
             return <persist:Error>error(dbClient.message());
