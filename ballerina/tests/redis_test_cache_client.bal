@@ -20,10 +20,12 @@ import ballerina/jballerina.java;
 import ballerina/persist;
 import ballerinax/redis;
 
+final redis:ConnectionConfig & readonly redisCache = {connection: "redis://localhost:6378"};
+
 const PERSON = "people";
 const APARTMENT = "apartments";
 
-public isolated client class RedisManyAssociationsClient {
+public isolated client class RedisCacheClient {
     *persist:AbstractPersistClient;
 
     private final redis:Client dbClient;
@@ -85,15 +87,15 @@ public isolated client class RedisManyAssociationsClient {
         }
     };
 
-    public isolated function init() returns persist:Error?|error {
+    public isolated function init() returns persist:Error? {
         redis:Client|error dbClient = new (connectionConfig);
         if dbClient is error {
             return <persist:Error>error(dbClient.message());
         }
         self.dbClient = dbClient;
         self.persistClients = {
-            [PERSON]: check new (dbClient, self.metadata.get(PERSON), cacheConfig.maxAge),
-            [APARTMENT]: check new (dbClient, self.metadata.get(APARTMENT), cacheConfig.maxAge)
+            [PERSON]: check new (dbClient, self.metadata.get(PERSON), 4),
+            [APARTMENT]: check new (dbClient, self.metadata.get(APARTMENT), 4)
         };
     }
 
