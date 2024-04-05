@@ -30,18 +30,20 @@ public isolated client class RedisClient {
     private final map<FieldMetadata> & readonly fieldMetadata;
     private final string[] & readonly keyFields;
     private final map<RefMetadata> & readonly refMetadata;
+    private final int maxAge;
 
     # Initializes the `RedisClient`.
     #
     # + dbClient - The `redis:Client`, which is used to execute Redis database operations.
     # + metadata - Metadata of the entity
     # + return - A `persist:Error` if the client creation fails
-    public isolated function init(redis:Client dbClient, RedisMetadata & readonly metadata) returns persist:Error? {
+    public isolated function init(redis:Client dbClient, RedisMetadata & readonly metadata, int maxAge) returns persist:Error? {
         self.entityName = metadata.entityName;
         self.collectionName = metadata.collectionName;
         self.fieldMetadata = metadata.fieldMetadata;
         self.keyFields = metadata.keyFields;
         self.dbClient = dbClient;
+        self.maxAge = maxAge;
         (map<RefMetadata> & readonly)? refMetadata = metadata.refMetadata;
         if refMetadata is map<RefMetadata> & readonly {
             self.refMetadata = refMetadata;
@@ -171,9 +173,9 @@ public isolated client class RedisClient {
             }
 
             // Check for any relation field constraints
-            persist:Error? checkConstraints = self.checkRelationFieldConstraints(keySuffix, insertRecord);
-            if checkConstraints is persist:ConstraintViolationError {
-                return checkConstraints;
+            persist:Error? checkConstraintsResult = self.checkRelationFieldConstraints(keySuffix, insertRecord);
+            if checkConstraintsResult is persist:ConstraintViolationError {
+                return checkConstraintsResult;
             }
             string key = string `${self.collectionName}${keySuffix}`;
 
@@ -184,6 +186,7 @@ public isolated client class RedisClient {
                 result = self.dbClient->hMSet(key, insertRecord);
             }
             self.logQuery(HMSET, {key: key, "record": insertRecord.toJsonString()});
+            check self.setExpireIfCache(key, self.collectionName, key);
         } on fail persist:Error e {
             return e;
         }
@@ -206,8 +209,8 @@ public isolated client class RedisClient {
         do {
             // Check for references
             string[] allRefFields = [];
-            foreach RefMetadata refMedaData in self.refMetadata {
-                allRefFields.push(...refMedaData.joinFields);
+            foreach RefMetadata refMetaData in self.refMetadata {
+                allRefFields.push(...refMetaData.joinFields);
             }
 
             // Remove any references if exists
@@ -376,12 +379,10 @@ public isolated client class RedisClient {
         } on fail error e {
             return error persist:Error(e.message(), e);
         }
+        check self.setExpireIfCache(recordKey, self.collectionName, recordKey);
 
         // Add new association to the SET
         foreach RefMetadata refMetaData in self.refMetadata {
-            if !updatedEntities.hasKey(refMetaData.refCollection) {
-                continue;
-            }
             string[] joinFields = refMetaData.joinFields;
             string newRelatedRecordKey = refMetaData.refCollection;
             string prevRelatedRecordKey = refMetaData.refCollection;
@@ -393,6 +394,23 @@ public isolated client class RedisClient {
                 }
                 prevRelatedRecordKey += string `${KEY_SEPERATOR}${prevRecord[joinField].toString()}`;
             }
+
+            if !updatedEntities.hasKey(refMetaData.refCollection) {
+                string oldSetKey = string `${prevRelatedRecordKey}${KEY_SEPERATOR}${refMetaData.refMetaDataKey ?: ""}`;
+                // Update the ttl of unchanged associations
+                if self.hasCacheExpiry() {
+                    int|redis:Error ttlResult = self.dbClient->ttl(oldSetKey);
+                    if ttlResult is int && ttlResult <= 0 {
+                        int|error sAdd = self.dbClient->sAdd(oldSetKey, [recordKeySuffix.substring(1)]);
+                        if sAdd is error {
+                            return error persist:Error(sAdd.message(), sAdd);
+                        }
+                    }
+                }
+                check self.setExpireIfCache(oldSetKey, refMetaData.refCollection, prevRelatedRecordKey);
+                continue;
+            }
+
             // Attach to new association
             string newSetKey = string `${newRelatedRecordKey}${KEY_SEPERATOR}${refMetaData.refMetaDataKey ?: ""}`;
             int|error sAdd = self.dbClient->sAdd(newSetKey, [recordKeySuffix.substring(1)]);
@@ -400,6 +418,7 @@ public isolated client class RedisClient {
                 return error persist:Error(sAdd.message(), sAdd);
             }
             self.logQuery(SADD, {key: newSetKey, suffixes: [recordKeySuffix].toJsonString()});
+            check self.setExpireIfCache(newSetKey, refMetaData.refCollection, newRelatedRecordKey);
 
             // Detach from previous association
             string prevSetKey = string `${prevRelatedRecordKey}${KEY_SEPERATOR}${refMetaData.refMetaDataKey ?: ""}`;
@@ -409,6 +428,10 @@ public isolated client class RedisClient {
             }
             self.logQuery(SREM, {key: prevSetKey, suffixes: [recordKeySuffix].toJsonString()});
         }
+    }
+
+    private isolated function hasCacheExpiry() returns boolean {
+        return self.maxAge > 0;
     }
 
     # Retrieves all the associations of a given object
@@ -463,8 +486,22 @@ public isolated client class RedisClient {
             record {}[] associatedRecords = [];
             foreach string key in keySuffixes {
                 // Handling simple fields of the associated record
-                record {} valueToRecord = check self.queryRelationFieldsByKey(entity, cardinalityType,
-                string `${refMetaData.refCollection}${key}`, relationFields);
+                record {}|persist:Error valueToRecord = self.queryRelationFieldsByKey(entity, cardinalityType,
+                string `${refMetaData.refCollection}${KEY_SEPERATOR}${key}`, relationFields);
+
+                if valueToRecord is persist:Error {
+                    boolean isAssociationOwner = self.refMetadata[entity]?.joinFields != self.keyFields;
+                    if valueToRecord is persist:NotFoundError && !isAssociationOwner {
+                        string setKey = string `${self.getKeyFromObject('object)}${KEY_SEPERATOR}${refMetaData.fieldName}`;
+                        int|redis:Error sRem = self.dbClient->sRem(setKey, [key]);
+                        if sRem is redis:Error {
+                            return error persist:Error(sRem.message(), sRem);
+                        }
+                    } else if valueToRecord is persist:NotFoundError {
+                        return valueToRecord;
+                    }
+                    continue;
+                }
 
                 foreach string refField in valueToRecord.keys() {
                     if relationFields.indexOf(refField) is () {
@@ -524,8 +561,9 @@ public isolated client class RedisClient {
             string setKey = string `${self.getKeyFromObject('object)}${KEY_SEPERATOR}${refMetaData.fieldName}`;
             string[] keys = check self.dbClient->sMembers(setKey);
             self.logQuery(SMEMBERS, setKey);
+            check self.setExpireIfCache(setKey, refMetaData.refCollection, self.getKeyFromObject('object));
             return from string key in keys
-                select KEY_SEPERATOR + key;
+                select key;
         } else {
             map<any> recordWithRefFields = check self.dbClient->hMGet(self.getKeyFromObject('object),
             refMetaData.joinFields);
@@ -537,13 +575,27 @@ public isolated client class RedisClient {
             foreach string joinField in refMetaData.joinFields {
                 key += string `${KEY_SEPERATOR}${recordWithRefFields[joinField].toString()}`;
             }
-            return [key];
+            return [key.substring(1)];
         }
     }
 
     private isolated function querySimpleFieldsByKey(map<anydata> typeMap, string key, string[] fields)
-    returns record {|anydata...;|}|persist:Error {
+    returns record {|anydata...;|}|redis:Error|persist:Error {
         string[] simpleFields = self.getTargetSimpleFields(fields, typeMap);
+
+        // Add association fields if exists
+        string[] associationFields = [];
+        if self.hasCacheExpiry() {
+            foreach RefMetadata refMetaData in self.refMetadata {
+                foreach string joinField in refMetaData.joinFields {
+                    if self.fieldMetadata.hasKey(joinField) && self.keyFields.indexOf(joinField) is ()
+                    && simpleFields.indexOf(joinField) is () {
+                        associationFields.push(joinField);
+                        simpleFields.push(joinField);
+                    }
+                }
+            }
+        }
 
         do {
             // Retrieve the record
@@ -552,6 +604,30 @@ public isolated client class RedisClient {
             if self.isNoRecordFound(value) {
                 return persist:getNotFoundError(self.entityName, key);
             }
+            check self.setExpireIfCache(key, self.collectionName, key);
+
+            // Update the ttl for associations
+            if self.hasCacheExpiry() {
+                foreach RefMetadata refMetaData in self.refMetadata {
+                    string relatedRecordAssociationKey = refMetaData.refCollection;
+                    foreach string joinField in refMetaData.joinFields {
+                        relatedRecordAssociationKey
+                        = string `${relatedRecordAssociationKey}${KEY_SEPERATOR}${value[joinField].toString()}`;
+                    }
+                    relatedRecordAssociationKey
+                    = string `${relatedRecordAssociationKey}${KEY_SEPERATOR}${refMetaData.refMetaDataKey ?: ""}`;
+
+                    int ttlResult = check self.dbClient->ttl(relatedRecordAssociationKey);
+                    if ttlResult <= 0 {
+                        _ = check self.dbClient->sAdd(relatedRecordAssociationKey, [key]);
+                    }
+                    _ = check self.dbClient->expire(relatedRecordAssociationKey, self.maxAge);
+                }
+                foreach string associationField in associationFields {
+                    _ = value.remove(associationField);
+                }
+            }
+
             record {} valueToRecord = {};
             foreach string fieldKey in value.keys() {
                 // Convert the data type from 'any' to relevent type
@@ -587,8 +663,9 @@ public isolated client class RedisClient {
             map<any> value = check self.dbClient->hMGet(key, relationFields);
             self.logQuery(HMGET, {key: key, fieldNames: relationFields.toJsonString()});
             if self.isNoRecordFound(value) {
-                return error persist:Error(string `No '${entity}' found for the given key '${key}'`);
+                return persist:getNotFoundError(refMetaData.refCollection, key);
             }
+            check self.setExpireIfCache(key, refMetaData.refCollection, key);
 
             record {} valueToRecord = {};
             string fieldMetadataKeyPrefix = entity;
@@ -681,6 +758,8 @@ public isolated client class RedisClient {
                     return error persist:Error(sAdd.message(), sAdd);
                 }
 
+                check self.setExpireIfCache(setKey, self.collectionName, refRecordKey);
+
                 map<any> value = check self.dbClient->hMGet(refRecordKey, refMetadataValue.refFields);
                 self.logQuery(HMGET, {key: refRecordKey, fieldNames: refMetadataValue.refFields.toJsonString()});
                 if self.isNoRecordFound(value) {
@@ -691,6 +770,21 @@ public isolated client class RedisClient {
                     return e;
                 }
                 return error persist:Error(e.message(), e);
+            }
+        }
+    }
+
+    private isolated function setExpireIfCache(string expireKey, string collectionIfNotFound, string keyIfNotFound)
+    returns persist:Error|persist:NotFoundError? {
+        if self.hasCacheExpiry() {
+            boolean|redis:Error expire = self.dbClient->expire(expireKey, self.maxAge);
+            if expire is redis:Error {
+                return error persist:Error(expire.message(), expire);
+            } else {
+                self.logQuery(EXPIRE, expireKey);
+                if expire == false {
+                    return persist:getNotFoundError(collectionIfNotFound, keyIfNotFound);
+                }
             }
         }
     }
@@ -915,7 +1009,7 @@ public isolated client class RedisClient {
                 KEYS => {
                     info = string `Pattern : ${metadata}`;
                 }
-                REDISTYPE|SCARD|SMEMBERS => {
+                REDISTYPE|SCARD|SMEMBERS|EXPIRE => {
                     info = string `Key : ${metadata}`;
                 }
             }

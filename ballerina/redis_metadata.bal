@@ -28,5 +28,6 @@ enum RedisDBOperation {
     DEL,
     SCARD,
     SADD,
-    SMEMBERS
+    SMEMBERS,
+    EXPIRE
 }

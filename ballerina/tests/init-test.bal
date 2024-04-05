@@ -17,11 +17,14 @@ import ballerina/test;
 import ballerina/time;
 import ballerinax/redis;
 
-configurable redis:ConnectionConfig & readonly redis = ?;
+configurable redis:ConnectionConfig & readonly connectionConfig = ?;
+configurable record {|
+    int maxAge;
+|} & readonly cacheConfig = ?;
 
 @test:BeforeSuite
 function initTests() returns error? {
-    redis:Client redisDbClient = check new (redis);
+    redis:Client redisDbClient = check new (connectionConfig);
     _ = check redisDbClient.close();
 }
 
@@ -837,6 +840,17 @@ Apartment apartment1 = {
     ownpersonId: 2
 };
 
+Apartment apartment2 = {
+    code: "B002",
+    city: "New Jursey",
+    state: "New Jursey",
+    country: "USA",
+    postalCode: "10010",
+    'type: "Office",
+    soldpersonId: 1,
+    ownpersonId: 2
+};
+
 ApartmentUpdate apartmentUpdate = {
     postalCode: "00002"
 };
@@ -865,4 +879,70 @@ PersonWithAssociations person1WithAssociations = {
             code: "B002"
         }
     ]
+};
+
+PersonWithAssoc person1WithAssoc = {
+    id: 1,
+    name: "Jane",
+    soldBuildings: [{code: "B001"}]
+};
+
+PersonWithAssoc person1WithoutAssoc = {
+    id: 1,
+    name: "Jane",
+    soldBuildings: []
+};
+
+PersonWithAssoc[] peopleWithAssoc = [
+    {
+        id: 1,
+        name: "Jane",
+        soldBuildings: [{code: "B001"}]
+    },
+    {
+        id: 2,
+        name: "Mike",
+        soldBuildings: []
+    }
+];
+
+ApartmentWithAssoc[] apartmentsWithAssoc = [
+    {
+        code: "B001",
+        city: "New York",
+        state: "New York",
+        soldPerson: {id: 1, name: "Jane"}
+    }
+];
+
+ApartmentWithAssoc apartment1WithPerson = {
+    code: "B001",
+    city: "New York",
+    state: "New York",
+    soldPerson: {id: 1, name: "Jane"}
+};
+
+ApartmentWithAssoc apartment1WithPersonUpdated = {
+    code: "B001",
+    city: "New Jursey",
+    state: "New York",
+    soldPerson: {id: 1, name: "Mike"}
+};
+
+PersonWithAssoc person1OnlyPerson = {
+    id: 1,
+    name: "Jane",
+    soldBuildings: []
+};
+
+PersonWithAssoc person1WithAssocUpdated = {
+    id: 1,
+    name: "Mike",
+    soldBuildings: []
+};
+
+PersonWithAssoc person1WithAssocUpdated2 = {
+    id: 1,
+    name: "Mike",
+    soldBuildings: [{code: "B001"}]
 };
