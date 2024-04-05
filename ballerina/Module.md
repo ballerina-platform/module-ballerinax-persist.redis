@@ -76,7 +76,7 @@ host = "localhost"
 port = 6379
 ```
 
-Currently, the Redis data store only supports application-level caching. The `maxAge` parameter in the cache configuration specifies the maximum age in `seconds` for cached objects. A value of `-1` indicates that objects within the cache have no expiry time, persisting indefinitely until manually removed.
+Currently, the Redis data store only supports global cache configuration at the client level. The `maxAge` parameter in the cache configuration specifies the maximum age in `seconds` for cached objects. A value of `-1` indicates that objects within the cache have no expiry time, persisting indefinitely until manually removed.
 
 Additionally, you can set values for the advanced configuration parameters in the Config.toml file in your project to use the Redis data store. For more information on these parameters, see the [Redis Connector documentation](https://central.ballerina.io/ballerinax/redis/latest#ConnectionConfig).
 
