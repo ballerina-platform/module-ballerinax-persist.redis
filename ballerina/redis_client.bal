@@ -398,7 +398,7 @@ public isolated client class RedisClient {
             if !updatedEntities.hasKey(refMetaData.refCollection) {
                 string oldSetKey = string `${prevRelatedRecordKey}${KEY_SEPERATOR}${refMetaData.refMetaDataKey ?: ""}`;
                 // Update the ttl of unchanged associations
-                if self.isCache() {
+                if self.hasCacheExpiry() {
                     int|redis:Error ttlResult = self.dbClient->ttl(oldSetKey);
                     if ttlResult is int && ttlResult <= 0 {
                         int|error sAdd = self.dbClient->sAdd(oldSetKey, [recordKeySuffix.substring(1)]);
@@ -430,7 +430,7 @@ public isolated client class RedisClient {
         }
     }
 
-    private isolated function isCache() returns boolean {
+    private isolated function hasCacheExpiry() returns boolean {
         return self.maxAge > 0;
     }
 
@@ -585,7 +585,7 @@ public isolated client class RedisClient {
 
         // Add association fields if exists
         string[] associationFields = [];
-        if self.isCache() {
+        if self.hasCacheExpiry() {
             foreach RefMetadata refMetaData in self.refMetadata {
                 foreach string joinField in refMetaData.joinFields {
                     if self.fieldMetadata.hasKey(joinField) && self.keyFields.indexOf(joinField) is ()
@@ -607,7 +607,7 @@ public isolated client class RedisClient {
             check self.setExpireIfCache(key, self.collectionName, key);
 
             // Update the ttl for associations
-            if self.isCache() {
+            if self.hasCacheExpiry() {
                 foreach RefMetadata refMetaData in self.refMetadata {
                     string relatedRecordAssociationKey = refMetaData.refCollection;
                     foreach string joinField in refMetaData.joinFields {
@@ -776,7 +776,7 @@ public isolated client class RedisClient {
 
     private isolated function setExpireIfCache(string expireKey, string collectionIfNotFound, string keyIfNotFound)
     returns persist:Error|persist:NotFoundError? {
-        if self.isCache() {
+        if self.hasCacheExpiry() {
             boolean|redis:Error expire = self.dbClient->expire(expireKey, self.maxAge);
             if expire is redis:Error {
                 return error persist:Error(expire.message(), expire);
