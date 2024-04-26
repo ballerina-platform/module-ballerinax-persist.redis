@@ -24,9 +24,6 @@ dependencies = [
 	{org = "ballerina", name = "jballerina.java"},
 	{org = "ballerina", name = "lang.value"}
 ]
-modules = [
-	{org = "ballerina", packageName = "io", moduleName = "io"}
-]
 
 [[package]]
 org = "ballerina"
@@ -165,7 +162,6 @@ org = "ballerinax"
 name = "persist.redis"
 version = "0.1.0"
 dependencies = [
-	{org = "ballerina", name = "io"},
 	{org = "ballerina", name = "jballerina.java"},
 	{org = "ballerina", name = "lang.regexp"},
 	{org = "ballerina", name = "lang.runtime"},
@@ -182,7 +178,7 @@ modules = [
 [[package]]
 org = "ballerinax"
 name = "redis"
-version = "3.0.1"
+version = "3.0.2"
 dependencies = [
 	{org = "ballerina", name = "crypto"},
 	{org = "ballerina", name = "jballerina.java"}
