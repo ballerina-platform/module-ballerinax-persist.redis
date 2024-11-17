@@ -6,6 +6,7 @@ on:
     branches:
       - main
       - 2201.[0-9]+.x
+      - java21
     paths-ignore:
       - 'load-tests/**'
       - '*.md'
@@ -42,7 +43,7 @@ jobs:
           CLIENT_SECRET: ${{ secrets.CLIENT_SECRET }}
           REFRESH_TOKEN: ${{ secrets.REFRESH_TOKEN }}
         run: |
-          ./gradlew clean build publishAllPublicationsToGitHubPackagesRepository --scan --no-daemon
+          ./gradlew clean build publishAllPublicationsToGitHubPackagesRepository -x test --scan --no-daemon
       - name: Generate CodeCov Report
         uses: codecov/codecov-action@v2
       - name: Upload Artifact
