@@ -19,15 +19,9 @@
 package io.ballerina.stdlib.persist.redis.datastore;
 
 import io.ballerina.runtime.api.Environment;
-import io.ballerina.runtime.api.Future;
-import io.ballerina.runtime.api.PredefinedTypes;
-import io.ballerina.runtime.api.async.Callback;
-import io.ballerina.runtime.api.creators.TypeCreator;
+import io.ballerina.runtime.api.concurrent.StrandMetadata;
 import io.ballerina.runtime.api.creators.ValueCreator;
-import io.ballerina.runtime.api.types.ErrorType;
 import io.ballerina.runtime.api.types.RecordType;
-import io.ballerina.runtime.api.types.StreamType;
-import io.ballerina.runtime.api.types.Type;
 import io.ballerina.runtime.api.values.BArray;
 import io.ballerina.runtime.api.values.BError;
 import io.ballerina.runtime.api.values.BMap;
@@ -36,12 +30,10 @@ import io.ballerina.runtime.api.values.BStream;
 import io.ballerina.runtime.api.values.BString;
 import io.ballerina.runtime.api.values.BTypedesc;
 import io.ballerina.stdlib.persist.Constants;
-import io.ballerina.stdlib.persist.ModuleUtils;
 import io.ballerina.stdlib.persist.redis.Utils;
 
 import java.util.Map;
 
-import static io.ballerina.stdlib.persist.Constants.ERROR;
 import static io.ballerina.stdlib.persist.Constants.KEY_FIELDS;
 import static io.ballerina.stdlib.persist.Constants.RUN_READ_BY_KEY_QUERY_METHOD;
 import static io.ballerina.stdlib.persist.ErrorGenerator.wrapError;
@@ -69,48 +61,35 @@ public class RedisProcessor {
 
         RecordType recordTypeWithIdFields = getRecordTypeWithKeyFields(keyFields, recordType);
         BTypedesc targetTypeWithIdFields = ValueCreator.createTypedescValue(recordTypeWithIdFields);
-        StreamType streamTypeWithIdFields = TypeCreator.createStreamType(recordTypeWithIdFields,
-                PredefinedTypes.TYPE_NULL);
-
         Map<String, Object> trxContextProperties = getTransactionContextProperties();
-        String strandName = env.getStrandName().isPresent() ? env.getStrandName().get() : null;
-
         BArray[] metadata = getMetadata(recordType);
         BArray fields = metadata[0];
         BArray includes = metadata[1];
         BArray typeDescriptions = metadata[2];
         BMap<BString, Object> typeMap = getFieldTypes(recordType);
 
-        Future balFuture = env.markAsync();
-        env.getRuntime().invokeMethodAsyncSequentially(
-                // Call `RedisClient.runReadQuery(
-                // typedesc<record {}> rowType, map<anydata> typeMap, string[] fields = [],
-                // string[] include = []
-                // )`
-                // which returns `stream<record{}|error?>|persist:Error`
-
-                persistClient, Constants.RUN_READ_QUERY_METHOD, strandName, env.getStrandMetadata(), new Callback() {
-                    @Override
-                    public void notifySuccess(Object o) {
-                        if (o instanceof BStream) { // stream<record {}, redis:Error?>
-                            BStream redisStream = (BStream) o;
-                            balFuture.complete(Utils.createPersistRedisStreamValue(redisStream, targetType, fields,
-                                    includes, typeDescriptions, persistClient, null));
-                        } else { // persist:Error
-                            balFuture.complete(Utils.createPersistRedisStreamValue(null, targetType, fields, includes,
-                                    typeDescriptions, persistClient, (BError) o));
-                        }
-                    }
-
-                    @Override
-                    public void notifyFailure(BError bError) {
-                        balFuture.complete(Utils.createPersistRedisStreamValue(null, targetType, fields, includes,
-                                typeDescriptions, persistClient, wrapError(bError)));
-                    }
-                }, trxContextProperties, streamTypeWithIdFields,
-                targetTypeWithIdFields, true, typeMap, true, fields, true, includes, true);
-
-        return null;
+        return env.yieldAndRun(() -> {
+            try {
+                Object result = env.getRuntime().callMethod(
+                        // Call `RedisClient.runReadQuery(
+                        // typedesc<record {}> rowType, map<anydata> typeMap, string[] fields = [],
+                        // string[] include = []
+                        // )`
+                        // which returns `stream<record{}|error?>|persist:Error`
+                        persistClient, Constants.RUN_READ_QUERY_METHOD, new StrandMetadata(false, trxContextProperties),
+                        targetTypeWithIdFields, typeMap, fields, includes);
+                if (result instanceof BStream bStream) { // stream<record {}, redis:Error?>
+                    return Utils.createPersistRedisStreamValue(bStream, targetType, fields, includes,
+                            typeDescriptions, persistClient, null);
+                }
+                // persist:Error
+                return Utils.createPersistRedisStreamValue(null, targetType, fields, includes, typeDescriptions,
+                        persistClient, (BError) result);
+            } catch (BError bError) {
+                return Utils.createPersistRedisStreamValue(null, targetType, fields, includes, typeDescriptions,
+                        persistClient, wrapError(bError));
+            }
+        });
     }
 
     public static Object queryOne(Environment env, BObject client, BArray path, BTypedesc targetType) {
@@ -118,13 +97,7 @@ public class RedisProcessor {
 
         BString entity = getEntity(env);
         BObject persistClient = getPersistClient(client, entity);
-        BArray keyFields = (BArray) persistClient.get(KEY_FIELDS);
         RecordType recordType = (RecordType) targetType.getDescribingType();
-
-        RecordType recordTypeWithIdFields = getRecordTypeWithKeyFields(keyFields, recordType);
-        ErrorType persistErrorType = TypeCreator.createErrorType(ERROR, ModuleUtils.getModule());
-        Type unionType = TypeCreator.createUnionType(recordTypeWithIdFields, persistErrorType);
-
         BArray[] metadata = getMetadata(recordType);
         BArray fields = metadata[0];
         BArray includes = metadata[1];
@@ -132,34 +105,20 @@ public class RedisProcessor {
         BMap<BString, Object> typeMap = getFieldTypes(recordType);
 
         Object key = getKey(env, path);
-
         Map<String, Object> trxContextProperties = getTransactionContextProperties();
-        String strandName = env.getStrandName().isPresent() ? env.getStrandName().get() : null;
-
-        Future balFuture = env.markAsync();
-        env.getRuntime().invokeMethodAsyncSequentially(
-                // Call `RedisClient.runReadByKeyQuery(
-                // typedesc<record {}> rowType, anydata key, string[] fields = [], string[]
-                // include = [],
-                // typedesc<record {}>[] typeDescriptions = []
-                // )`
-                // which returns `record {}|persist:Error`
-
-                persistClient, RUN_READ_BY_KEY_QUERY_METHOD, strandName, env.getStrandMetadata(),
-                new Callback() {
-                    @Override
-                    public void notifySuccess(Object o) {
-                        balFuture.complete(o);
-                    }
-
-                    @Override
-                    public void notifyFailure(BError bError) {
-                        balFuture.complete(wrapError(bError));
-                    }
-                }, trxContextProperties, unionType,
-                targetType, true, typeMap, true, key, true, fields, true, includes, true,
-                typeDescriptions, true);
-
-        return null;
+        return env.yieldAndRun(() -> {
+            try {
+                return env.getRuntime().callMethod(
+                        // Call `RedisClient.runReadQuery(
+                        // typedesc<record {}> rowType, map<anydata> typeMap, string[] fields = [],
+                        // string[] include = []
+                        // )`
+                        // which returns `stream<record{}|error?>|persist:Error`
+                        persistClient, RUN_READ_BY_KEY_QUERY_METHOD, new StrandMetadata(false, trxContextProperties),
+                        targetType, typeMap, key, fields, includes, typeDescriptions);
+            } catch (BError bError) {
+                return wrapError(bError);
+            }
+        });
     }
 }
