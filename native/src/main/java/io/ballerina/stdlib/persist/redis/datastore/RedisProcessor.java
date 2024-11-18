@@ -19,7 +19,6 @@
 package io.ballerina.stdlib.persist.redis.datastore;
 
 import io.ballerina.runtime.api.Environment;
-import io.ballerina.runtime.api.concurrent.StrandMetadata;
 import io.ballerina.runtime.api.creators.ValueCreator;
 import io.ballerina.runtime.api.types.RecordType;
 import io.ballerina.runtime.api.values.BArray;
@@ -32,8 +31,6 @@ import io.ballerina.runtime.api.values.BTypedesc;
 import io.ballerina.stdlib.persist.Constants;
 import io.ballerina.stdlib.persist.redis.Utils;
 
-import java.util.Map;
-
 import static io.ballerina.stdlib.persist.Constants.KEY_FIELDS;
 import static io.ballerina.stdlib.persist.Constants.RUN_READ_BY_KEY_QUERY_METHOD;
 import static io.ballerina.stdlib.persist.ErrorGenerator.wrapError;
@@ -42,7 +39,6 @@ import static io.ballerina.stdlib.persist.Utils.getKey;
 import static io.ballerina.stdlib.persist.Utils.getMetadata;
 import static io.ballerina.stdlib.persist.Utils.getPersistClient;
 import static io.ballerina.stdlib.persist.Utils.getRecordTypeWithKeyFields;
-import static io.ballerina.stdlib.persist.Utils.getTransactionContextProperties;
 import static io.ballerina.stdlib.persist.redis.Utils.getFieldTypes;
 
 public class RedisProcessor {
@@ -61,7 +57,6 @@ public class RedisProcessor {
 
         RecordType recordTypeWithIdFields = getRecordTypeWithKeyFields(keyFields, recordType);
         BTypedesc targetTypeWithIdFields = ValueCreator.createTypedescValue(recordTypeWithIdFields);
-        Map<String, Object> trxContextProperties = getTransactionContextProperties();
         BArray[] metadata = getMetadata(recordType);
         BArray fields = metadata[0];
         BArray includes = metadata[1];
@@ -76,8 +71,8 @@ public class RedisProcessor {
                         // string[] include = []
                         // )`
                         // which returns `stream<record{}|error?>|persist:Error`
-                        persistClient, Constants.RUN_READ_QUERY_METHOD, new StrandMetadata(false, trxContextProperties),
-                        targetTypeWithIdFields, typeMap, fields, includes);
+                        persistClient, Constants.RUN_READ_QUERY_METHOD, null, targetTypeWithIdFields, typeMap, fields
+                        , includes);
                 if (result instanceof BStream bStream) { // stream<record {}, redis:Error?>
                     return Utils.createPersistRedisStreamValue(bStream, targetType, fields, includes,
                             typeDescriptions, persistClient, null);
@@ -105,7 +100,6 @@ public class RedisProcessor {
         BMap<BString, Object> typeMap = getFieldTypes(recordType);
 
         Object key = getKey(env, path);
-        Map<String, Object> trxContextProperties = getTransactionContextProperties();
         return env.yieldAndRun(() -> {
             try {
                 return env.getRuntime().callMethod(
@@ -114,8 +108,8 @@ public class RedisProcessor {
                         // string[] include = []
                         // )`
                         // which returns `stream<record{}|error?>|persist:Error`
-                        persistClient, RUN_READ_BY_KEY_QUERY_METHOD, new StrandMetadata(false, trxContextProperties),
-                        targetType, typeMap, key, fields, includes, typeDescriptions);
+                        persistClient, RUN_READ_BY_KEY_QUERY_METHOD, null, targetType, typeMap, key, fields, includes
+                        , typeDescriptions);
             } catch (BError bError) {
                 return wrapError(bError);
             }
