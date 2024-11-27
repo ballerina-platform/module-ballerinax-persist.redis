@@ -8,16 +8,16 @@ repository = "https://github.com/ballerina-platform/module-ballerinax-persist.re
 license = ["Apache-2.0"]
 distribution = "2201.10.0"
 
-[platform.java17]
+[platform.java21]
 graalvmCompatible = true
 
-[[platform.java17.dependency]]
+[[platform.java21.dependency]]
 groupId = "io.ballerina.lib"
 artifactId = "persist.redis-native"
 version = "@toml.version@"
 path = "../native/build/libs/persist.redis-native-@project.version@.jar"
 
-[[platform.java17.dependency]]
+[[platform.java21.dependency]]
 groupId = "io.ballerina.stdlib"
 artifactId = "persist-native"
 version = "@persist.version@"

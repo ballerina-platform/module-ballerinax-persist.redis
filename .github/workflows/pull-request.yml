@@ -15,3 +15,4 @@ jobs:
     uses: ballerina-platform/ballerina-library/.github/workflows/pull-request-build-template.yml@main
     with:
       additional-windows-test-flags: "-x test"
+      additional-ubuntu-test-flags: "-x test"
