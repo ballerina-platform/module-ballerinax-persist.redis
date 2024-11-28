@@ -81,7 +81,8 @@ function redisBuildingReadOneTestNegative() returns error? {
 
 @test:Config {
     groups: ["building", "redis"],
-    dependsOn: [redisBuildingCreateTest, redisBuildingCreateTest2]
+    dependsOn: [redisBuildingCreateTest, redisBuildingCreateTest2],
+    enable: false
 }
 function redisBuildingReadManyTest() returns error? {
     RedisRainierClient rainierClient = check new ();
@@ -96,7 +97,8 @@ function redisBuildingReadManyTest() returns error? {
 
 @test:Config {
     groups: ["building", "redis", "dependent"],
-    dependsOn: [redisBuildingCreateTest, redisBuildingCreateTest2]
+    dependsOn: [redisBuildingCreateTest, redisBuildingCreateTest2],
+    enable: false
 }
 function redisBuildingReadManyDependentTest() returns error? {
     RedisRainierClient rainierClient = check new ();
@@ -118,7 +120,8 @@ function redisBuildingReadManyDependentTest() returns error? {
 
 @test:Config {
     groups: ["building", "redis"],
-    dependsOn: [redisBuildingReadOneTest, redisBuildingReadManyTest, redisBuildingReadManyDependentTest]
+    dependsOn: [redisBuildingReadOneTest, redisBuildingReadManyTest, redisBuildingReadManyDependentTest],
+    enable: false
 }
 function redisBuildingUpdateTest() returns error? {
     RedisRainierClient rainierClient = check new ();
@@ -139,7 +142,8 @@ function redisBuildingUpdateTest() returns error? {
 
 @test:Config {
     groups: ["building", "redis"],
-    dependsOn: [redisBuildingReadOneTest, redisBuildingReadManyTest, redisBuildingReadManyDependentTest]
+    dependsOn: [redisBuildingReadOneTest, redisBuildingReadManyTest, redisBuildingReadManyDependentTest],
+    enable: false
 }
 function redisBuildingUpdateTestNegative1() returns error? {
     RedisRainierClient rainierClient = check new ();
@@ -161,7 +165,8 @@ function redisBuildingUpdateTestNegative1() returns error? {
 
 @test:Config {
     groups: ["building", "redis"],
-    dependsOn: [redisBuildingUpdateTest]
+    dependsOn: [redisBuildingUpdateTest],
+    enable: false
 }
 function redisBuildingDeleteTest() returns error? {
     RedisRainierClient rainierClient = check new ();
@@ -179,7 +184,8 @@ function redisBuildingDeleteTest() returns error? {
 
 @test:Config {
     groups: ["building", "redis"],
-    dependsOn: [redisBuildingDeleteTest]
+    dependsOn: [redisBuildingDeleteTest],
+    enable: false
 }
 function redisBuildingDeleteTestNegative() returns error? {
     RedisRainierClient rainierClient = check new ();

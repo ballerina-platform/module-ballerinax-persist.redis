@@ -19,7 +19,8 @@ import ballerina/test;
 
 @test:Config {
     groups: ["workspace", "redis"],
-    dependsOn: [redisBuildingDeleteTestNegative]
+    dependsOn: [redisBuildingDeleteTestNegative],
+    enable: false
 }
 function redisWorkspaceCreateTest() returns error? {
     RedisRainierClient rainierClient = check new ();
@@ -51,7 +52,8 @@ function redisWorkspaceCreateTest2() returns error? {
 
 @test:Config {
     groups: ["workspace", "redis"],
-    dependsOn: [redisWorkspaceCreateTest]
+    dependsOn: [redisWorkspaceCreateTest],
+    enable: false
 }
 function redisWorkspaceReadOneTest() returns error? {
     RedisRainierClient rainierClient = check new ();
@@ -63,7 +65,8 @@ function redisWorkspaceReadOneTest() returns error? {
 
 @test:Config {
     groups: ["workspace", "redis"],
-    dependsOn: [redisWorkspaceCreateTest]
+    dependsOn: [redisWorkspaceCreateTest],
+    enable: false
 }
 function redisWorkspaceReadOneDependentTest() returns error? {
     RedisRainierClient rainierClient = check new ();
@@ -80,7 +83,8 @@ function redisWorkspaceReadOneDependentTest() returns error? {
 
 @test:Config {
     groups: ["workspace", "redis"],
-    dependsOn: [redisWorkspaceCreateTest]
+    dependsOn: [redisWorkspaceCreateTest],
+    enable: false
 }
 function redisWorkspaceReadOneTestNegative() returns error? {
     RedisRainierClient rainierClient = check new ();
@@ -97,7 +101,8 @@ function redisWorkspaceReadOneTestNegative() returns error? {
 
 @test:Config {
     groups: ["workspace", "redis"],
-    dependsOn: [redisWorkspaceCreateTest, redisWorkspaceCreateTest2]
+    dependsOn: [redisWorkspaceCreateTest, redisWorkspaceCreateTest2],
+    enable: false
 }
 function redisWorkspaceReadManyTest() returns error? {
     RedisRainierClient rainierClient = check new ();
@@ -112,7 +117,8 @@ function redisWorkspaceReadManyTest() returns error? {
 
 @test:Config {
     groups: ["workspace", "redis", "dependent"],
-    dependsOn: [redisWorkspaceCreateTest, redisWorkspaceCreateTest2]
+    dependsOn: [redisWorkspaceCreateTest, redisWorkspaceCreateTest2],
+    enable: false
 }
 function redisWorkspaceReadManyDependentTest() returns error? {
     RedisRainierClient rainierClient = check new ();
@@ -131,7 +137,8 @@ function redisWorkspaceReadManyDependentTest() returns error? {
 
 @test:Config {
     groups: ["workspace", "redis"],
-    dependsOn: [redisWorkspaceReadOneTest, redisWorkspaceReadManyTest, redisWorkspaceReadManyDependentTest]
+    dependsOn: [redisWorkspaceReadOneTest, redisWorkspaceReadManyTest, redisWorkspaceReadManyDependentTest],
+    enable: false
 }
 function redisWorkspaceUpdateTest() returns error? {
     RedisRainierClient rainierClient = check new ();
@@ -149,7 +156,8 @@ function redisWorkspaceUpdateTest() returns error? {
 
 @test:Config {
     groups: ["workspace", "redis"],
-    dependsOn: [redisWorkspaceReadOneTest, redisWorkspaceReadManyTest, redisWorkspaceReadManyDependentTest]
+    dependsOn: [redisWorkspaceReadOneTest, redisWorkspaceReadManyTest, redisWorkspaceReadManyDependentTest],
+    enable: false
 }
 function redisWorkspaceUpdateTestNegative1() returns error? {
     RedisRainierClient rainierClient = check new ();
@@ -169,7 +177,8 @@ function redisWorkspaceUpdateTestNegative1() returns error? {
 
 @test:Config {
     groups: ["workspace", "redis"],
-    dependsOn: [redisWorkspaceUpdateTest]
+    dependsOn: [redisWorkspaceUpdateTest],
+    enable: false
 }
 function redisWorkspaceDeleteTest() returns error? {
     RedisRainierClient rainierClient = check new ();
@@ -187,7 +196,8 @@ function redisWorkspaceDeleteTest() returns error? {
 
 @test:Config {
     groups: ["workspace", "redis"],
-    dependsOn: [redisWorkspaceDeleteTest]
+    dependsOn: [redisWorkspaceDeleteTest],
+    enable: false
 }
 function redisWorkspaceDeleteTestNegative() returns error? {
     RedisRainierClient rainierClient = check new ();

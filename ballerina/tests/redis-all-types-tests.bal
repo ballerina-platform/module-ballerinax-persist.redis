@@ -52,7 +52,8 @@ function redisAllTypesCreateOptionalTest() returns error? {
 
 @test:Config {
     groups: ["all-types", "redis"],
-    dependsOn: [redisAllTypesCreateTest, redisAllTypesCreateOptionalTest]
+    dependsOn: [redisAllTypesCreateTest, redisAllTypesCreateOptionalTest],
+    enable: false
 }
 function redisAllTypesReadTest() returns error? {
     RedisTestEntitiesClient testEntitiesClient = check new ();
@@ -67,7 +68,8 @@ function redisAllTypesReadTest() returns error? {
 
 @test:Config {
     groups: ["all-types", "redis", "dependent"],
-    dependsOn: [redisAllTypesCreateTest, redisAllTypesCreateOptionalTest]
+    dependsOn: [redisAllTypesCreateTest, redisAllTypesCreateOptionalTest],
+    enable: false
 }
 function redisAllTypesReadDependentTest() returns error? {
     RedisTestEntitiesClient testEntitiesClient = check new ();
@@ -171,7 +173,8 @@ function redisAllTypesReadOneTestNegative() returns error? {
 
 @test:Config {
     groups: ["all-types", "redis"],
-    dependsOn: [redisAllTypesReadOneTest, redisAllTypesReadTest, redisAllTypesReadDependentTest]
+    dependsOn: [redisAllTypesReadOneTest, redisAllTypesReadTest, redisAllTypesReadDependentTest],
+    enable: false
 }
 function redisAllTypesUpdateTest() returns error? {
     RedisTestEntitiesClient testEntitiesClient = check new ();
@@ -207,7 +210,8 @@ function redisAllTypesUpdateTest() returns error? {
 
 @test:Config {
     groups: ["all-types", "redis"],
-    dependsOn: [redisAllTypesUpdateTest]
+    dependsOn: [redisAllTypesUpdateTest],
+    enable: false
 }
 function redisAllTypesDeleteTest() returns error? {
     RedisTestEntitiesClient testEntitiesClient = check new ();

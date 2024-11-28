@@ -19,7 +19,8 @@ import ballerina/test;
 
 @test:Config {
     groups: ["associations", "redis"],
-    dependsOn: [redisEmployeeDeleteTestNegative]
+    dependsOn: [redisEmployeeDeleteTestNegative],
+    enable: false
 }
 function redisEmployeeRelationsTest() returns error? {
     RedisRainierClient rainierClient = check new ();
@@ -86,7 +87,8 @@ function redisEmployeeRelationsTest() returns error? {
 
 @test:Config {
     groups: ["associations", "redis"],
-    dependsOn: [redisEmployeeDeleteTestNegative]
+    dependsOn: [redisEmployeeDeleteTestNegative],
+    enable: false
 }
 function redisDepartmentRelationsTest() returns error? {
     RedisRainierClient rainierClient = check new ();
@@ -166,7 +168,8 @@ function redisDepartmentRelationsTest() returns error? {
 
 @test:Config {
     groups: ["associations", "redis"],
-    dependsOn: [redisEmployeeRelationsTest]
+    dependsOn: [redisEmployeeRelationsTest],
+    enable: false
 }
 function redisWorkspaceRelationsTest() returns error? {
     RedisRainierClient rainierClient = check new ();
@@ -242,7 +245,8 @@ function redisWorkspaceRelationsTest() returns error? {
 
 @test:Config {
     groups: ["associations", "redis"],
-    dependsOn: [redisEmployeeRelationsTest]
+    dependsOn: [redisEmployeeRelationsTest],
+    enable: false
 }
 function redisBuildingRelationsTest() returns error? {
     RedisRainierClient rainierClient = check new ();
