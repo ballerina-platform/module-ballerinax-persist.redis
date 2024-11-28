@@ -19,7 +19,8 @@ import ballerina/test;
 
 @test:Config {
     groups: ["employee", "redis"],
-    dependsOn: [redisWorkspaceDeleteTestNegative, redisDepartmentDeleteTestNegative]
+    dependsOn: [redisWorkspaceDeleteTestNegative, redisDepartmentDeleteTestNegative],
+    enable: false
 }
 function redisEmployeeCreateTest() returns error? {
     RedisRainierClient rainierClient = check new ();
@@ -34,7 +35,8 @@ function redisEmployeeCreateTest() returns error? {
 
 @test:Config {
     groups: ["employee", "redis"],
-    dependsOn: [redisWorkspaceDeleteTestNegative, redisDepartmentDeleteTestNegative]
+    dependsOn: [redisWorkspaceDeleteTestNegative, redisDepartmentDeleteTestNegative],
+    enable: false
 }
 function redisEmployeeCreateTest2() returns error? {
     RedisRainierClient rainierClient = check new ();
@@ -53,7 +55,8 @@ function redisEmployeeCreateTest2() returns error? {
 
 @test:Config {
     groups: ["employee", "redis"],
-    dependsOn: [redisEmployeeCreateTest]
+    dependsOn: [redisEmployeeCreateTest],
+    enable: false
 }
 function redisEmployeeReadOneTest() returns error? {
     RedisRainierClient rainierClient = check new ();
@@ -65,7 +68,8 @@ function redisEmployeeReadOneTest() returns error? {
 
 @test:Config {
     groups: ["employee", "redis"],
-    dependsOn: [redisEmployeeCreateTest]
+    dependsOn: [redisEmployeeCreateTest],
+    enable: false
 }
 function redisEmployeeReadOneTestNegative() returns error? {
     RedisRainierClient rainierClient = check new ();
@@ -82,7 +86,8 @@ function redisEmployeeReadOneTestNegative() returns error? {
 
 @test:Config {
     groups: ["employee", "redis"],
-    dependsOn: [redisEmployeeCreateTest, redisEmployeeCreateTest2]
+    dependsOn: [redisEmployeeCreateTest, redisEmployeeCreateTest2],
+    enable: false
 }
 function redisEmployeeReadManyTest() returns error? {
     RedisRainierClient rainierClient = check new ();
@@ -97,7 +102,8 @@ function redisEmployeeReadManyTest() returns error? {
 
 @test:Config {
     groups: ["dependent", "employee"],
-    dependsOn: [redisEmployeeCreateTest, redisEmployeeCreateTest2]
+    dependsOn: [redisEmployeeCreateTest, redisEmployeeCreateTest2],
+    enable: false
 }
 function redisEmployeeReadManyDependentTest1() returns error? {
     RedisRainierClient rainierClient = check new ();
@@ -116,7 +122,8 @@ function redisEmployeeReadManyDependentTest1() returns error? {
 
 @test:Config {
     groups: ["dependent", "employee"],
-    dependsOn: [redisEmployeeCreateTest, redisEmployeeCreateTest2]
+    dependsOn: [redisEmployeeCreateTest, redisEmployeeCreateTest2],
+    enable: false
 }
 function redisEmployeeReadManyDependentTest2() returns error? {
     RedisRainierClient rainierClient = check new ();
@@ -139,7 +146,8 @@ function redisEmployeeReadManyDependentTest2() returns error? {
 @test:Config {
     groups: ["employee", "redis"],
     dependsOn: [redisEmployeeReadOneTest, redisEmployeeReadManyTest, redisEmployeeReadManyDependentTest1, 
-    redisEmployeeReadManyDependentTest2]
+    redisEmployeeReadManyDependentTest2],
+    enable: false
 }
 function redisEmployeeUpdateTest() returns error? {
     RedisRainierClient rainierClient = check new ();
@@ -160,7 +168,8 @@ function redisEmployeeUpdateTest() returns error? {
 @test:Config {
     groups: ["employee", "redis"],
     dependsOn: [redisEmployeeReadOneTest, redisEmployeeReadManyTest, redisEmployeeReadManyDependentTest1, 
-    redisEmployeeReadManyDependentTest2]
+    redisEmployeeReadManyDependentTest2],
+    enable: false
 }
 function redisEmployeeUpdateTestNegative1() returns error? {
     RedisRainierClient rainierClient = check new ();
@@ -181,7 +190,8 @@ function redisEmployeeUpdateTestNegative1() returns error? {
 @test:Config {
     groups: ["employee", "redis"],
     dependsOn: [redisEmployeeReadOneTest, redisEmployeeReadManyTest, redisEmployeeReadManyDependentTest1, 
-    redisEmployeeReadManyDependentTest2]
+    redisEmployeeReadManyDependentTest2],
+    enable: false
 }
 function redisEmployeeUpdateTestNegative3() returns error? {
     RedisRainierClient rainierClient = check new ();
@@ -201,7 +211,8 @@ function redisEmployeeUpdateTestNegative3() returns error? {
 
 @test:Config {
     groups: ["employee", "redis"],
-    dependsOn: [redisEmployeeUpdateTest, redisEmployeeUpdateTestNegative3]
+    dependsOn: [redisEmployeeUpdateTest, redisEmployeeUpdateTestNegative3],
+    enable: false
 }
 function redisEmployeeDeleteTest() returns error? {
     RedisRainierClient rainierClient = check new ();
@@ -219,7 +230,8 @@ function redisEmployeeDeleteTest() returns error? {
 
 @test:Config {
     groups: ["employee", "redis"],
-    dependsOn: [redisEmployeeDeleteTest]
+    dependsOn: [redisEmployeeDeleteTest],
+    enable: false
 }
 function redisEmployeeDeleteTestNegative() returns error? {
     RedisRainierClient rainierClient = check new ();

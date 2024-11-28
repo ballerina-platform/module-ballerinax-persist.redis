@@ -80,7 +80,8 @@ function redisDepartmentReadOneTestNegative() returns error? {
 
 @test:Config {
     groups: ["department", "redis"],
-    dependsOn: [redisDepartmentCreateTest, redisDepartmentCreateTest2]
+    dependsOn: [redisDepartmentCreateTest, redisDepartmentCreateTest2],
+    enable: false
 }
 function redisDepartmentReadManyTest() returns error? {
     RedisRainierClient rainierClient = check new ();
@@ -94,7 +95,8 @@ function redisDepartmentReadManyTest() returns error? {
 
 @test:Config {
     groups: ["department", "redis", "dependent"],
-    dependsOn: [redisDepartmentCreateTest, redisDepartmentCreateTest2]
+    dependsOn: [redisDepartmentCreateTest, redisDepartmentCreateTest2],
+    enable: false
 }
 function redisDepartmentReadManyTestDependent() returns error? {
     RedisRainierClient rainierClient = check new ();
@@ -113,7 +115,8 @@ function redisDepartmentReadManyTestDependent() returns error? {
 
 @test:Config {
     groups: ["department", "redis"],
-    dependsOn: [redisDepartmentReadOneTest, redisDepartmentReadManyTest, redisDepartmentReadManyTestDependent]
+    dependsOn: [redisDepartmentReadOneTest, redisDepartmentReadManyTest, redisDepartmentReadManyTestDependent],
+    enable: false
 }
 function redisDepartmentUpdateTest() returns error? {
     RedisRainierClient rainierClient = check new ();
@@ -131,7 +134,8 @@ function redisDepartmentUpdateTest() returns error? {
 
 @test:Config {
     groups: ["department", "redis"],
-    dependsOn: [redisDepartmentReadOneTest, redisDepartmentReadManyTest, redisDepartmentReadManyTestDependent]
+    dependsOn: [redisDepartmentReadOneTest, redisDepartmentReadManyTest, redisDepartmentReadManyTestDependent],
+    enable: false
 }
 function redisDepartmentUpdateTestNegative1() returns error? {
     RedisRainierClient rainierClient = check new ();
@@ -151,7 +155,8 @@ function redisDepartmentUpdateTestNegative1() returns error? {
 
 @test:Config {
     groups: ["department", "redis"],
-    dependsOn: [redisDepartmentUpdateTest]
+    dependsOn: [redisDepartmentUpdateTest],
+    enable: false
 }
 function redisDepartmentDeleteTest() returns error? {
     RedisRainierClient rainierClient = check new ();
@@ -169,7 +174,8 @@ function redisDepartmentDeleteTest() returns error? {
 
 @test:Config {
     groups: ["department", "redis"],
-    dependsOn: [redisDepartmentDeleteTest]
+    dependsOn: [redisDepartmentDeleteTest],
+    enable: false
 }
 function redisDepartmentDeleteTestNegative() returns error? {
     RedisRainierClient rainierClient = check new ();

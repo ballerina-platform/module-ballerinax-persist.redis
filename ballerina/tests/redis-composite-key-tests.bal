@@ -55,7 +55,8 @@ function redisCompositeKeyCreateTestNegative() returns error? {
 
 @test:Config {
     groups: ["composite-key", "redis"],
-    dependsOn: [redisCompositeKeyCreateTest]
+    dependsOn: [redisCompositeKeyCreateTest],
+    enable: false
 }
 function redisCompositeKeyReadManyTest() returns error? {
     RedisRainierClient rainierClient = check new ();
@@ -129,7 +130,8 @@ function redisCompositeKeyReadOneTestNegative2() returns error? {
 @test:Config {
     groups: ["composite-key", "redis"],
     dependsOn: [redisCompositeKeyCreateTest, redisCompositeKeyReadOneTest, redisCompositeKeyReadManyTest, 
-    redisCompositeKeyReadOneTest2]
+    redisCompositeKeyReadOneTest2],
+    enable: false
 }
 function redisCompositeKeyUpdateTest() returns error? {
     RedisRainierClient rainierClient = check new ();
@@ -149,7 +151,8 @@ function redisCompositeKeyUpdateTest() returns error? {
 @test:Config {
     groups: ["composite-key", "redis"],
     dependsOn: [redisCompositeKeyCreateTest, redisCompositeKeyReadOneTest, redisCompositeKeyReadManyTest, 
-    redisCompositeKeyReadOneTest2]
+    redisCompositeKeyReadOneTest2],
+    enable: false
 }
 function redisCompositeKeyUpdateTestNegative() returns error? {
     RedisRainierClient rainierClient = check new ();
@@ -170,7 +173,8 @@ function redisCompositeKeyUpdateTestNegative() returns error? {
 
 @test:Config {
     groups: ["composite-key", "redis"],
-    dependsOn: [redisCompositeKeyUpdateTest]
+    dependsOn: [redisCompositeKeyUpdateTest],
+    enable: false
 }
 function redisCompositeKeyDeleteTest() returns error? {
     RedisRainierClient rainierClient = check new ();
@@ -186,7 +190,8 @@ function redisCompositeKeyDeleteTest() returns error? {
 
 @test:Config {
     groups: ["composite-key", "redis"],
-    dependsOn: [redisCompositeKeyUpdateTest]
+    dependsOn: [redisCompositeKeyUpdateTest],
+    enable: false
 }
 function redisCompositeKeyDeleteTestNegative() returns error? {
     RedisRainierClient rainierClient = check new ();

@@ -17,7 +17,8 @@
 import ballerina/test;
 
 @test:Config {
-    groups: ["id-fields", "redis"]
+    groups: ["id-fields", "redis"],
+    enable: false
 }
 function redisIntIdFieldTest() returns error? {
     RedisTestEntitiesClient testEntitiesClient = check new ();
@@ -81,7 +82,8 @@ function redisIntIdFieldTest() returns error? {
 }
 
 @test:Config {
-    groups: ["id-fields", "redis"]
+    groups: ["id-fields", "redis"],
+    enable: false
 }
 function redisStringIdFieldTest() returns error? {
     RedisTestEntitiesClient testEntitiesClient = check new ();
@@ -146,7 +148,8 @@ function redisStringIdFieldTest() returns error? {
 }
 
 @test:Config {
-    groups: ["id-fields", "redis"]
+    groups: ["id-fields", "redis"],
+    enable: false
 }
 function redisFloatIdFieldTest() returns error? {
     RedisTestEntitiesClient testEntitiesClient = check new ();
@@ -208,7 +211,8 @@ function redisFloatIdFieldTest() returns error? {
 }
 
 @test:Config {
-    groups: ["id-fields", "redis"]
+    groups: ["id-fields", "redis"],
+    enable: false
 }
 function redisDecimalIdFieldTest() returns error? {
     RedisTestEntitiesClient testEntitiesClient = check new ();

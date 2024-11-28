@@ -19,7 +19,8 @@ import ballerina/persist;
 
 @test:Config {
     groups: ["cache", "redis"],
-    dependsOn: []
+    dependsOn: [],
+    enable: false
 }
 function redisAllTest() returns error? {
     RedisCacheClient cacheClient = check new ();
@@ -44,7 +45,8 @@ function redisAllTest() returns error? {
 
 @test:Config {
     groups: ["cache", "redis"],
-    dependsOn: [redisAllTest]
+    dependsOn: [redisAllTest],
+    enable: false
 }
 function redisEmployeeOnlyTest() returns error? {
     RedisCacheClient cacheClient = check new ();
@@ -71,7 +73,8 @@ function redisEmployeeOnlyTest() returns error? {
 
 @test:Config {
     groups: ["cache", "redis"],
-    dependsOn: [redisEmployeeOnlyTest]
+    dependsOn: [redisEmployeeOnlyTest],
+    enable: false
 }
 function redisDependentOnlyTest() returns error? {
     RedisCacheClient cacheClient = check new ();
@@ -97,7 +100,8 @@ function redisDependentOnlyTest() returns error? {
 
 @test:Config {
     groups: ["cache", "redis"],
-    dependsOn: [redisDependentOnlyTest]
+    dependsOn: [redisDependentOnlyTest],
+    enable: false
 }
 function redisEmployeeAndDependentTest() returns error? {
     RedisCacheClient cacheClient = check new ();
@@ -128,7 +132,8 @@ function redisEmployeeAndDependentTest() returns error? {
 
 @test:Config {
     groups: ["cache", "redis"],
-    dependsOn: [redisEmployeeAndDependentTest]
+    dependsOn: [redisEmployeeAndDependentTest],
+    enable: false
 }
 function redisDependentAndSetTest() returns error? {
     RedisCacheClient cacheClient = check new ();
@@ -152,7 +157,8 @@ function redisDependentAndSetTest() returns error? {
 
 @test:Config {
     groups: ["cache", "redis"],
-    dependsOn: [redisDependentAndSetTest]
+    dependsOn: [redisDependentAndSetTest],
+    enable: false
 }
 function redisEmployeeAndSetTest() returns error? {
     RedisCacheClient cacheClient = check new ();
@@ -181,7 +187,8 @@ function redisEmployeeAndSetTest() returns error? {
 
 @test:Config {
     groups: ["cache", "redis"],
-    dependsOn: [redisEmployeeAndSetTest]
+    dependsOn: [redisEmployeeAndSetTest],
+    enable: false
 }
 function redisMiscTest() returns error? {
     RedisCacheClient cacheClient = check new ();

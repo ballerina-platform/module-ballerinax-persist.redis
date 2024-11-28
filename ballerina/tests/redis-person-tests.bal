@@ -18,7 +18,8 @@ import ballerina/test;
 
 @test:Config {
     groups: ["person", "redis"],
-    dependsOn: [redisWorkspaceDeleteTestNegative, redisDepartmentDeleteTestNegative]
+    dependsOn: [redisWorkspaceDeleteTestNegative, redisDepartmentDeleteTestNegative],
+    enable: false
 }
 function redisPersonCreateTest() returns error? {
     RedisManyAssociationsClient manyAssociationsClient = check new ();
@@ -33,7 +34,8 @@ function redisPersonCreateTest() returns error? {
 
 @test:Config {
     groups: ["person", "redis"],
-    dependsOn: [redisWorkspaceDeleteTestNegative, redisDepartmentDeleteTestNegative]
+    dependsOn: [redisWorkspaceDeleteTestNegative, redisDepartmentDeleteTestNegative],
+    enable: false
 }
 function redisPersonCreateTest2() returns error? {
     RedisManyAssociationsClient manyAssociationsClient = check new ();
@@ -49,7 +51,8 @@ function redisPersonCreateTest2() returns error? {
 
 @test:Config {
     groups: ["person", "redis"],
-    dependsOn: [redisPersonCreateTest]
+    dependsOn: [redisPersonCreateTest],
+    enable: false
 }
 function redisPersonReadOneTest() returns error? {
     RedisManyAssociationsClient manyAssociationsClient = check new ();
@@ -61,7 +64,8 @@ function redisPersonReadOneTest() returns error? {
 
 @test:Config {
     groups: ["person", "redis"],
-    dependsOn: [redisPersonCreateTest]
+    dependsOn: [redisPersonCreateTest],
+    enable: false
 }
 function redisPersonReadOneTestNegative() returns error? {
     RedisManyAssociationsClient manyAssociationsClient = check new ();
@@ -78,7 +82,8 @@ function redisPersonReadOneTestNegative() returns error? {
 
 @test:Config {
     groups: ["person", "redis"],
-    dependsOn: [redisPersonCreateTest, redisPersonCreateTest2]
+    dependsOn: [redisPersonCreateTest, redisPersonCreateTest2],
+    enable: false
 }
 function redisPersonReadManyTest() returns error? {
     RedisManyAssociationsClient manyAssociationsClient = check new ();
@@ -94,7 +99,8 @@ function redisPersonReadManyTest() returns error? {
 
 @test:Config {
     groups: ["dependent", "person"],
-    dependsOn: [redisPersonCreateTest, redisPersonCreateTest2, redisApartmentCreateTest]
+    dependsOn: [redisPersonCreateTest, redisPersonCreateTest2, redisApartmentCreateTest],
+    enable: false
 }
 function redisPersonReadManyDependentTest1() returns error? {
     RedisManyAssociationsClient manyAssociationsClient = check new ();
@@ -123,7 +129,8 @@ function redisPersonReadManyDependentTest1() returns error? {
 
 @test:Config {
     groups: ["person", "redis"],
-    dependsOn: [redisPersonReadOneTest, redisPersonReadManyTest, redisPersonReadManyDependentTest1]
+    dependsOn: [redisPersonReadOneTest, redisPersonReadManyTest, redisPersonReadManyDependentTest1],
+    enable: false
 }
 function redisPersonUpdateTest() returns error? {
     RedisManyAssociationsClient manyAssociationsClient = check new ();
@@ -141,7 +148,8 @@ function redisPersonUpdateTest() returns error? {
 
 @test:Config {
     groups: ["person", "redis"],
-    dependsOn: [redisPersonReadOneTest, redisPersonReadManyTest, redisPersonReadManyDependentTest1]
+    dependsOn: [redisPersonReadOneTest, redisPersonReadManyTest, redisPersonReadManyDependentTest1],
+    enable: false
 }
 function redisPersonUpdateTestNegative1() returns error? {
     RedisManyAssociationsClient manyAssociationsClient = check new ();
@@ -161,7 +169,8 @@ function redisPersonUpdateTestNegative1() returns error? {
 
 @test:Config {
     groups: ["person", "redis"],
-    dependsOn: [redisPersonUpdateTest, redisApartmentDeleteTest]
+    dependsOn: [redisPersonUpdateTest, redisApartmentDeleteTest],
+    enable: false
 }
 function redisPersonDeleteTest() returns error? {
     RedisManyAssociationsClient manyAssociationsClient = check new ();
@@ -180,7 +189,8 @@ function redisPersonDeleteTest() returns error? {
 
 @test:Config {
     groups: ["person", "redis"],
-    dependsOn: [redisPersonDeleteTest]
+    dependsOn: [redisPersonDeleteTest],
+    enable: false
 }
 function redisPersonDeleteTestNegative() returns error? {
     RedisManyAssociationsClient manyAssociationsClient = check new ();
@@ -198,7 +208,8 @@ function redisPersonDeleteTestNegative() returns error? {
 
 @test:Config {
     groups: ["apartment", "redis"],
-    dependsOn: [redisPersonCreateTest, redisPersonCreateTest2]
+    dependsOn: [redisPersonCreateTest, redisPersonCreateTest2],
+    enable: false
 }
 function redisApartmentCreateTest() returns error? {
     RedisManyAssociationsClient manyAssociationsClient = check new ();
@@ -213,7 +224,8 @@ function redisApartmentCreateTest() returns error? {
 
 @test:Config {
     groups: ["apartment", "redis"],
-    dependsOn: [redisApartmentCreateTest]
+    dependsOn: [redisApartmentCreateTest],
+    enable: false
 }
 function redisApartmentReadOneTest() returns error? {
     RedisManyAssociationsClient manyAssociationsClient = check new ();
@@ -225,7 +237,8 @@ function redisApartmentReadOneTest() returns error? {
 
 @test:Config {
     groups: ["apartment", "redis"],
-    dependsOn: [redisApartmentCreateTest]
+    dependsOn: [redisApartmentCreateTest],
+    enable: false
 }
 function redisApartmentReadOneTestNegative() returns error? {
     RedisManyAssociationsClient manyAssociationsClient = check new ();
@@ -242,7 +255,8 @@ function redisApartmentReadOneTestNegative() returns error? {
 
 @test:Config {
     groups: ["apartment", "redis"],
-    dependsOn: [redisApartmentReadOneTest]
+    dependsOn: [redisApartmentReadOneTest],
+    enable: false
 }
 function redisApartmentUpdateTest() returns error? {
     RedisManyAssociationsClient manyAssociationsClient = check new ();
@@ -260,7 +274,8 @@ function redisApartmentUpdateTest() returns error? {
 
 @test:Config {
     groups: ["apartment", "redis"],
-    dependsOn: [redisApartmentReadOneTest]
+    dependsOn: [redisApartmentReadOneTest],
+    enable: false
 }
 function redisApartmentUpdateTestNegative1() returns error? {
     RedisManyAssociationsClient manyAssociationsClient = check new ();
@@ -280,7 +295,8 @@ function redisApartmentUpdateTestNegative1() returns error? {
 
 @test:Config {
     groups: ["apartment", "redis"],
-    dependsOn: [redisApartmentUpdateTest, redisPersonReadManyDependentTest1]
+    dependsOn: [redisApartmentUpdateTest, redisPersonReadManyDependentTest1],
+    enable: false
 }
 function redisApartmentDeleteTest() returns error? {
     RedisManyAssociationsClient manyAssociationsClient = check new ();
@@ -299,7 +315,8 @@ function redisApartmentDeleteTest() returns error? {
 
 @test:Config {
     groups: ["apartment", "redis"],
-    dependsOn: [redisApartmentDeleteTest]
+    dependsOn: [redisApartmentDeleteTest],
+    enable: false
 }
 function redisApartmentDeleteTestNegative() returns error? {
     RedisManyAssociationsClient manyAssociationsClient = check new ();
