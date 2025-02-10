@@ -15,7 +15,7 @@ graalvmCompatible = true
 groupId = "io.ballerina.lib"
 artifactId = "persist.redis-native"
 version = "0.3.0"
-path = "../native/build/libs/persist.redis-native-0.3.0-SNAPSHOT.jar"
+path = "../native/build/libs/persist.redis-native-0.3.0.jar"
 
 [[platform.java21.dependency]]
 groupId = "io.ballerina.stdlib"
