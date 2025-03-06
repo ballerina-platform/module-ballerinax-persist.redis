@@ -729,7 +729,7 @@ public isolated client class RedisClient {
     }
 
     private isolated function checkRelationFieldConstraints(string key, record {} insertRecord) returns persist:Error? {
-        if self.refMetadata != {} {
+        if self.refMetadata.length() > 0 {
             foreach RefMetadata & readonly refMetadataValue in self.refMetadata {
                 //  If the entity is not the relation owner
                 if refMetadataValue.joinFields == self.keyFields {
