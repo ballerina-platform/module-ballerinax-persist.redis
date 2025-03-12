@@ -15,10 +15,10 @@ graalvmCompatible = true
 groupId = "io.ballerina.lib"
 artifactId = "persist.redis-native"
 version = "0.4.0"
-path = "../native/build/libs/persist.redis-native-0.4.0-SNAPSHOT.jar"
+path = "../native/build/libs/persist.redis-native-0.4.0.jar"
 
 [[platform.java21.dependency]]
 groupId = "io.ballerina.stdlib"
 artifactId = "persist-native"
 version = "1.6.0"
-path = "./lib/persist-native-1.6.0-20250305-165700-4c89ca9.jar"
+path = "./lib/persist-native-1.6.0.jar"
