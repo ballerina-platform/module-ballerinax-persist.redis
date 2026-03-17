@@ -1,6 +1,13 @@
-# Overview
+## Overview
 
-This package provides Redis database support for the `bal persist` feature, which provides functionality to store and query data from a Redis database through a data model instead of writing Redis commands.
+The Persist Redis connector provides Redis database support for the `bal persist` feature, enabling data storage and querying from a Redis database through a data model instead of writing Redis commands.
+
+### Key Features
+
+- Store and query data from Redis through a data model
+- Support for multiple Ballerina data types with automatic conversion
+- Configurable caching with customizable TTL
+- Support for local, Docker, and cloud-based Redis deployments
 
 ## How to use with `bal persist`
 
