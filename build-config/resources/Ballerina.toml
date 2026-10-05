@@ -4,6 +4,7 @@ name = "persist.redis"
 version = "@toml.version@"
 authors = ["Ballerina"]
 keywords = ["Type/Library", "Vendor/Redis", "Area/Database", "persist", "experimental", "Name/Persist Redis"]
+icon = "icon.png"
 repository = "https://github.com/ballerina-platform/module-ballerinax-persist.redis"
 license = ["Apache-2.0"]
 distribution = "2201.12.0"
