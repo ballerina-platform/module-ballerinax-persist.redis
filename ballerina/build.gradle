@@ -17,6 +17,12 @@
  */
 
 import org.apache.tools.ant.taskdefs.condition.Os
+import org.gradle.process.ExecOperations
+import javax.inject.Inject
+
+abstract class BallerinaExecHelper {
+    @Inject abstract ExecOperations getExecOperations()
+}
 
 buildscript {
     repositories {
@@ -34,6 +40,8 @@ buildscript {
 }
 
 description = 'Ballerina - Persist Ballerina Generator'
+
+def execHelper = project.objects.newInstance(BallerinaExecHelper)
 
 def packageName = 'persist.redis'
 def packageOrg = 'ballerinax'
@@ -85,7 +93,7 @@ task updateTomlFiles {
 
 task commitTomlFiles {
     doLast {
-        project.exec {
+        execHelper.execOperations.exec {
             ignoreExitValue true
             if (Os.isFamily(Os.FAMILY_WINDOWS)) {
                 commandLine 'cmd', '/c', "git commit -m \"[Automated] Update native jar versions in toml files\" Ballerina.toml Dependencies.toml"
@@ -152,7 +160,7 @@ task createRedisTestDockerImage(type: Exec) {
 def checkRedisTestDockerContainerStatus(containerName) {
     if (!Os.isFamily(Os.FAMILY_WINDOWS)) {
         try {
-            return exec {
+            return execHelper.execOperations.exec {
                 commandLine 'sh', '-c', "docker exec ${containerName} redis-cli"
             }.exitValue
         } catch (all) {
@@ -160,7 +168,7 @@ def checkRedisTestDockerContainerStatus(containerName) {
         }
     } else {
         try {
-            return exec {
+            return execHelper.execOperations.exec {
                 commandLine 'cmd', '/c', "docker exec ${containerName} redis-cli"
             }.exitValue
         } catch (all) {
@@ -253,7 +261,7 @@ task stopRedisTestDockerContainer() {
         
         try {
             def stdOut = new ByteArrayOutputStream()
-            exec {
+            execHelper.execOperations.exec {
                 commandLine osFamily, option, "docker stop $containerName"
                 standardOutput = stdOut
             }
